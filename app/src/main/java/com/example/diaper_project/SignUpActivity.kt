@@ -65,13 +65,13 @@ class SignUpActivity :  BasicActivity() {
                 override fun onFailure(call: Call<success>, t: Throwable) {
                     loaderLayout.visibility = View.GONE         //로딩화면끔
                     Toast.makeText(this@SignUpActivity, "서버와 통신 실패하였습니다.", Toast.LENGTH_SHORT).show()
+
                 }
                 override fun onResponse(call: Call<success>, response: Response<success>) {
                     Log.e("성공",response.body().toString())
-                    Toast.makeText(this@SignUpActivity, "회원가입에 성공하였습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@SignUpActivity, "회원가입에 성공하였습니다. 로그인 해주세요.", Toast.LENGTH_SHORT).show()
 
-                    var i = Intent(this@SignUpActivity, MainActivity::class.java)    //회원가입 성공하면 바로 메인액티비티로 이동
-                    i.putExtra("current", currentuser)  //현재로그인한 유저정보를 메인액티비티에 넘김. name은 키값.
+                    var i = Intent(this@SignUpActivity, LoginActivity::class.java)    //회원가입 성공하면 바로 메인액티비티로 이동
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     startActivity(i)
                 }

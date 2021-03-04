@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
@@ -54,9 +55,6 @@
             android:background="#939393"></RelativeLayout>
 
 
-
-
-
         <LinearLayout
             android:id="@+id/contentsLayout"
             android:layout_width="match_parent"
@@ -64,8 +62,171 @@
             android:orientation="vertical">
 
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:weightSum="10">
 
+                <TextView
+                    android:id="@+id/textView_out"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:text="겉기저귀"
+                    android:textColor="#037C03"
+                    android:textFontWeight="6"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView_outer_open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text=" 개봉: 0"
+                    android:textFontWeight="1"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:textFontWeight="1">
+
+                    <Button
+                        android:id="@+id/button_plus_outer_open"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:text="+" />
+
+                    <Button
+                        android:id="@+id/button_minus_outer_open"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:text="-" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textView_outer_new"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="미개봉: 0"
+                    android:textFontWeight="1"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:textFontWeight="1">
+
+                    <Button
+                        android:id="@+id/button_plus_outer_new"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:text="+" />
+
+                    <Button
+                        android:id="@+id/button_minus_outer_new"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:text="-" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:weightSum="10">
+
+                <TextView
+                    android:id="@+id/textView_in"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:text="속기저귀"
+                    android:textColor="#0145CD"
+                    android:textFontWeight="6"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView_inner_open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text=" 개봉: 0"
+                    android:textFontWeight="1"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:textFontWeight="1">
+
+                    <Button
+                        android:id="@+id/button_plus_inner_open"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:text="+" />
+
+                    <Button
+                        android:id="@+id/button_minu_inner_open"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:text="-" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textView_inner_new"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="미개봉: 0"
+                    android:textFontWeight="1"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:textFontWeight="1">
+
+                    <Button
+                        android:id="@+id/button_plus_inner_new"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:text="+" />
+
+                    <Button
+                        android:id="@+id/button_minus_inner_new"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:text="-" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
 
         <TextView
@@ -73,7 +234,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="end"
-            android:text="2020-01-01" />
+            android:text="마지막 저장일: 2020-01-01" />
 
     </LinearLayout>
 
