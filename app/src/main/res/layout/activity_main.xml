@@ -6,10 +6,35 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="false"
+        android:background="#009688"
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitleTextColor="#090000"
+        app:titleTextColor="#000000">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Diaper"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold|italic" />
+
+
+    </androidx.appcompat.widget.Toolbar>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:background="#85FFFFFF">
 
     </androidx.recyclerview.widget.RecyclerView>
 

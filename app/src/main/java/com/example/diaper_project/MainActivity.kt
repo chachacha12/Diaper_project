@@ -4,8 +4,11 @@ package com.example.diaper_project
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +26,7 @@ import retrofit2.Response
 lateinit var mainAdapter: MainAdapter
 lateinit var jsonarray: JSONArray //여기안엔 모든 이용자들(cnt)정보가 들어감
 var currentuser: currentUser? = null //현재 로그인되어있는 회원정보
+lateinit var sp:SharedPreferences
 
 class MainActivity : BasicActivity() {
 
@@ -33,12 +37,20 @@ class MainActivity : BasicActivity() {
     }
 
     fun init() {
+        //툴바 만들기
+        setSupportActionBar(toolbar);
+        val actionBar = supportActionBar!!
+        actionBar.setDisplayShowCustomEnabled(true)
+        actionBar.setDisplayShowTitleEnabled(false)  //기본 제목을 없애줍니다.
+        //actionBar.setDisplayHomeAsUpEnabled(true) // 자동으로 뒤로가기 버튼을 툴바에 만들어줌
+
+
 
         currentuser = intent.getSerializableExtra("current") as currentUser?  //로그인창에서 로그인해서 여기로 왔을때, 유저정보를 여기서 받음.
                                                                                     //자동로그인으로 메인 왔을땐 밑에서 currentuser정보 받을거임.
 
         //SharedPreferences에 저장된 값들을 불러온다. (자동로그인 기능을 위해 주로 사용함)
-        val sp = getSharedPreferences("UserTokenKey", Context.MODE_PRIVATE)
+        sp = getSharedPreferences("UserTokenKey", Context.MODE_PRIVATE)
         val token = sp.getString("TokenCode", "")!! // TokenCode키값에 해당하는 value값을 불러온다. 없다면 ""로 처리한다.
         val name = sp.getString("name","")!!  //name키값에 해당하는 value값을 가져옴
 
@@ -58,8 +70,6 @@ class MainActivity : BasicActivity() {
             recyclerView.setHasFixedSize(true)
             recyclerView.layoutManager = LinearLayoutManager(this)
         }
-
-
 
 
         /*
@@ -85,6 +95,38 @@ class MainActivity : BasicActivity() {
          */
 
     }  //init
+
+
+    //툴바 버튼 눌렀을때 동작되는 함수 오버라이딩
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val menuInflater = menuInflater
+        menuInflater.inflate(R.menu.settings, menu)
+        return super.onCreateOptionsMenu(menu)
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.logout->{
+                //SharedPreferences에 있는 value값을 키값을 통해 접근해서 지워줌.
+                val editor = sp.edit()
+                editor.remove("TokenCode") // 키값을 통해 유저 access_token값을 삭제
+                editor.remove("name")  //키값을 통해 uesrname값을 삭제
+                editor.commit() // 여기서 커밋을 안해주면 저장이 안된다.
+
+                var i = Intent(this, SignUpActivity::class.java)   //회원가입창 화면으로 이동
+                startActivity(i)
+                Toast.makeText(this@MainActivity, currentuser?.username+"님이 로그아웃 하셨습니다.",Toast.LENGTH_SHORT).show()
+            }
+            R.id.account->{
+
+            }
+
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
 
 
     //액티비티가 재실행되거나 홈버튼 눌러서 나갔다왔을때 등의 경우에 onCreate말고 이 함수가 실행됨. (이때마다 게시글들 새로고침 해주면될듯)
