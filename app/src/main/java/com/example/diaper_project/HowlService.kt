@@ -39,6 +39,10 @@ interface HowlService {      //서버로 오고가는 api들을 관리해주는 
     @POST("api/logs")
     fun addlogResquest(@Header("Authorization")authorization:String, @Body log: Log):Call<success>
 
+    //서버의 url주소가 : 다음의 값은 {}로 묶어주고, ? 다음의 값들은 지워주고 @Query로 보내주면 됨!!!
+    //이용자별 로그 리스트 조회 (페이지네이션) - 페이지0, 사이즈2를 하면 로그값 2개가 조회됨.
+    @GET("api/logs/cnt/{cnt_id}")
+    fun getLogListRequest(@Header("Authorization")authorization:String, @Path("cnt_id") cnt_id: String, @Query("page") page: Number, @Query("size") size: Number): Call<GetAll>
 
 
 

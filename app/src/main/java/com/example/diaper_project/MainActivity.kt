@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.diaper_project.Adapter.MainAdapter
 import com.example.diaper_project.Class.GetAll
 import com.example.diaper_project.Class.currentUser
+import com.example.diaper_project.Class.log
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.cnt_post.*
 import org.json.JSONArray
@@ -40,7 +41,7 @@ class MainActivity : BasicActivity() {
         save_log()
     }
 
-    fun init() {
+     fun init() {
         //툴바 만들기
         setSupportActionBar(toolbar);
         val actionBar = supportActionBar!!
@@ -82,7 +83,6 @@ class MainActivity : BasicActivity() {
            // startActivity(i)
         }
          */
-
     }  //init
 
 
@@ -134,7 +134,7 @@ class MainActivity : BasicActivity() {
     //이용자 정보 cardVIew를 삭제하거나 수정하거나 만들거나 등등 했을때 다 지웠다가 다시 바뀐 jsonarray를 서버로부터 받아와서 화면에 업데이트 시켜줄거임
     private fun postUpdate() {
         if (currentuser != null) {
-
+            //cnt값(이용자) 모두 조회
             server.getAllRequest("Bearer " + currentuser?.access_token)
                 .enqueue(object : Callback<GetAll> {
                     override fun onFailure(
@@ -174,7 +174,12 @@ class MainActivity : BasicActivity() {
         }
     }
 
-    fun save_log(){
+
+
+
+
+
+    fun save_log(){  //저장하기 버튼 눌럿을때?
 
 
 
