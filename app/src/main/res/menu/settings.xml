@@ -4,8 +4,14 @@
         android:id="@+id/account"
         android:title="계정정보" />
     <item
+        android:id="@+id/statistic"
+        android:title="통계 및 보고서" />
+    <item
         android:id="@+id/logout"
         android:title="로그아웃" />
+
+
+
 
 
 </menu>

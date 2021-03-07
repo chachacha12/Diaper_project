@@ -1,6 +1,7 @@
 package com.example.diaper_project
 
 
+import android.util.Log
 import com.example.diaper_project.Class.GetAll
 import com.example.diaper_project.Class.Users
 import com.example.diaper_project.Class.currentUser
@@ -24,10 +25,9 @@ interface HowlService {      //서버로 오고가는 api들을 관리해주는 
     @POST("api/auth/login")
     fun loginRequest(@Body users: Users):Call<currentUser>
 
-    //로그아웃
+    //로그아웃  //이 기능은 SharedPreferences이용해서 만듬. 그래서 이거 안써도될듯
     @POST("api/auth/logoutc")
     fun logoutRequest(@Body currentUser: currentUser):Call<success>
-
 
 
     //이용자 모두조회
@@ -35,6 +35,9 @@ interface HowlService {      //서버로 오고가는 api들을 관리해주는 
     fun getAllRequest(@Header("Authorization")authorization:String): Call<GetAll>
 
 
+    //logs추가
+    @POST("api/logs")
+    fun addlogResquest(@Header("Authorization")authorization:String, @Body log: Log):Call<success>
 
 
 
