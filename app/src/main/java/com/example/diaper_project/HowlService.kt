@@ -2,10 +2,7 @@ package com.example.diaper_project
 
 
 import android.util.Log
-import com.example.diaper_project.Class.GetAll
-import com.example.diaper_project.Class.Users
-import com.example.diaper_project.Class.currentUser
-import com.example.diaper_project.Class.success
+import com.example.diaper_project.Class.*
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -37,7 +34,7 @@ interface HowlService {      //서버로 오고가는 api들을 관리해주는 
 
     //logs추가
     @POST("api/logs")
-    fun addlogResquest(@Header("Authorization")authorization:String, @Body log: Log):Call<success>
+    fun addlogResquest(@Header("Authorization")authorization:String, @Body log: log):Call<success>
 
     //서버의 url주소가 : 다음의 값은 {}로 묶어주고, ? 다음의 값들은 지워주고 @Query로 보내주면 됨!!!
     //이용자별 로그 리스트 조회 (페이지네이션) - 페이지0, 사이즈2를 하면 로그값 2개가 조회됨.

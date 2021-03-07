@@ -5,9 +5,12 @@ package com.example.diaper_project.Adapter
 import android.app.Activity
 import android.util.Log
 import android.view.*
+import android.view.accessibility.AccessibilityManager
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.diaper_project.Class.GetAll
+import com.example.diaper_project.Class.log
 import com.example.diaper_project.Class.success
 import com.example.diaper_project.HowlService
 import com.example.diaper_project.R
@@ -67,8 +70,6 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
         val iObject = myDataset.getJSONObject(position)  //이용자 객체 하나씩 순서대로 가져옴
         name.text = iObject?.getString("name")      //이용자 이름을 가져옴
 
-
-
         //UI상에 이용자들 각각 기저귀 수량 log값과 최신 생성일을 서버로부터 받아와서 띄워줄거임.
         //val iObject = myDataset.getJSONObject(mainViewHolder.adapterPosition)  //이용자 객체 하나씩 순서대로 가져옴 //adapterPosition으로 위치값 얻어냄
         //cnt조회를 통해 얻은 이용자들 이름값을 통해 cnt_id값을 각각 정의해줘서 log를 구할거임.
@@ -119,14 +120,12 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
                         cardView.textView_outer_new.text ="미개봉: " + outer_new_number
                         cardView.textView_inner_open.text ="개봉: " + inner_open_number
                         cardView.textView_inner_new.text ="미개봉: " +  inner_new_number
-                        cardView.timeTextView.text ="마지막 저장일: "+ Object.getString("time").toString()
-
+                        cardView.timeTextView.text ="마지막 저장일: "+Object.getString("time").toString()
                     } else {
                         Log.e("태그", "전체 로그 조회실패" + response.body().toString())
                     }
                 }
             })
-
 
         cardView.button_plus_outer_open.setOnClickListener {
             cardView.textView_outer_open.text = "개봉: " + (++outer_open_number)
@@ -153,6 +152,7 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
             cardView.textView_inner_new.text = "미개봉: " + (--inner_new_number)
         }
 
+        //저장버튼 클릭시 (생성일 즉각 바꿔주고, 서버에 로그값 추가해주기)
         cardView.button_save.setOnClickListener {
             //저장 눌렀을때 일단 화면상에서 생성일을 변경해준다. db에 처리는 따로 해야함
             //즉각 생성일을 만들어서 화면에 띄우기
@@ -162,31 +162,26 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
             cardView.timeTextView.text = "마지막 저장일: " + createdAt
 
 
-            /*
-            //서버통해 파베에 log 저장하기
-            var log = Log("","")
+            //서버통해 파베에 log값 저장하기
+            var log =log(cnt_id,createdAt, inner_open_number, inner_new_number, outer_open_number, outer_new_number,"코멘트없음")
             server.addlogResquest("Bearer " + currentuser?.access_token, log)
                 .enqueue(object : Callback<success> {
                     override fun onFailure(call: Call<success>, t: Throwable) {
                         Log.e("태그: ", "통신 아예 실패")
                     }
-
                     override fun onResponse(call: Call<success>, response: Response<success>) {
                         if (response.isSuccessful) {
                             Log.e("태그   성공: ", response.body()?.succeed.toString())
+                            Toast.makeText(activity, "$name 저장성공", Toast.LENGTH_SHORT).show()
                         } else {
                             Log.e("태그   실패: ", response.body()?.succeed.toString())
                         }
                     }
                 })
-
-             */
         } //button_save
 
 
     } //onbindViewHolder
 
-
     override fun getItemCount() = myDataset.length()
-
 }
