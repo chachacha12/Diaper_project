@@ -72,6 +72,7 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
 
         //UI상에 이용자들 각각 기저귀 수량 log값과 최신 생성일을 서버로부터 받아와서 띄워줄거임.
         var cnt_id = iObject.get("id").toString()  //cnt도큐먼트의 id값을 가져옴
+
         //이용자들의 가장 최신 log값들을 페이지네이션으로 하나씩만 가져와줌
         server.getLogListRequest("Bearer " + currentuser?.access_token, cnt_id, 0, 1)
             .enqueue(object : Callback<GetAll> {
@@ -83,21 +84,29 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
                 }
                 override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
                     if (response.isSuccessful) {
-                        val jsonArray = JSONArray(response.body()?.result.toString())
-                        Log.e("태그", "이용자 로그리스트 조회성공")
-                        val Object = jsonArray.getJSONObject(0)
+                        //로그값이 하나도 파베에 없을때 (이용자 막 추가했을때 등등,,)
+                        if(response.body()?.result.toString() == "[]"){
+                            cardView.textView_outer_open.text = "개봉: " + outer_open_number
+                            cardView.textView_outer_new.text ="미개봉: " + outer_new_number
+                            cardView.textView_inner_open.text ="개봉: " + inner_open_number
+                            cardView.textView_inner_new.text ="미개봉: " +  inner_new_number
+                            cardView.timeTextView.text ="마지막 저장일: <저장된 값 없음>"
+                        }else{
+                            //로그값이 하나라도 파베에 있을때
+                            val jsonArray = JSONArray(response.body()?.result.toString())
+                            val Object = jsonArray.getJSONObject(0)
 
-                        outer_open_number = Object.getInt("outer_opened")
-                        outer_new_number=Object.getInt("outer_new")
-                        inner_open_number=Object.getInt("inner_opened")
-                        inner_new_number= Object.getInt("inner_new")
-
-                        //화면상의 뷰들에 log조회로 받아온 값들 넣어줌(기저귀 수량, 생성일)
-                        cardView.textView_outer_open.text = "개봉: " + outer_open_number
-                        cardView.textView_outer_new.text ="미개봉: " + outer_new_number
-                        cardView.textView_inner_open.text ="개봉: " + inner_open_number
-                        cardView.textView_inner_new.text ="미개봉: " +  inner_new_number
-                        cardView.timeTextView.text ="마지막 저장일: "+Object.getString("time").toString()
+                            outer_open_number = Object.getInt("outer_opened")
+                            outer_new_number=Object.getInt("outer_new")
+                            inner_open_number=Object.getInt("inner_opened")
+                            inner_new_number= Object.getInt("inner_new")
+                            //화면상의 뷰들에 log조회로 받아온 값들 넣어줌(기저귀 수량, 생성일)
+                            cardView.textView_outer_open.text = "개봉: " + outer_open_number
+                            cardView.textView_outer_new.text ="미개봉: " + outer_new_number
+                            cardView.textView_inner_open.text ="개봉: " + inner_open_number
+                            cardView.textView_inner_new.text ="미개봉: " +  inner_new_number
+                            cardView.timeTextView.text ="마지막 저장일: "+Object.getString("time").toString()
+                        }
                     } else {
                         Log.e("태그", "전체 로그 조회실패" + response.body().toString())
                     }
@@ -148,7 +157,7 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
                     override fun onResponse(call: Call<success>, response: Response<success>) {
                         if (response.isSuccessful) {
                             Log.e("태그   성공: ", response.body()?.succeed.toString())
-                            Toast.makeText(activity, "$name 저장성공", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(activity, "저장 성공", Toast.LENGTH_SHORT).show()
                         } else {
                             Log.e("태그   실패: ", response.body()?.succeed.toString())
                         }

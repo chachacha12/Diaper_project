@@ -75,11 +75,11 @@ class MainActivity : BasicActivity() {
             recyclerView.setHasFixedSize(true)
             recyclerView.layoutManager = LinearLayoutManager(this)
         }
-         
+
         //새 게시글 만들기위해 floatingActionButton눌렀을때
         floatingActionButton.setOnClickListener {
-            //var i = Intent(this, WritePostActivity::class.java)
-           // startActivity(i)
+            var i = Intent(this, CntAddActivity::class.java)
+            startActivity(i)
         }
     }  //init
 
@@ -132,6 +132,7 @@ class MainActivity : BasicActivity() {
     //이용자 정보 cardVIew를 삭제하거나 수정하거나 만들거나 등등 했을때 다 지웠다가 다시 바뀐 jsonarray를 서버로부터 받아와서 화면에 업데이트 시켜줄거임
     private fun postUpdate() {
         if (currentuser != null) {
+
             //cnt값(이용자) 모두 조회
             server.getAllRequest("Bearer " + currentuser?.access_token)
                 .enqueue(object : Callback<GetAll> {
@@ -173,13 +174,7 @@ class MainActivity : BasicActivity() {
     }
 
 
-
-
-
-
     fun save_log(){  //저장하기 버튼 눌럿을때?
-
-
 
     }
 

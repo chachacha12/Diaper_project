@@ -41,6 +41,9 @@ interface HowlService {      //서버로 오고가는 api들을 관리해주는 
     @GET("api/logs/cnt/{cnt_id}")
     fun getLogListRequest(@Header("Authorization")authorization:String, @Path("cnt_id") cnt_id: String, @Query("page") page: Number, @Query("size") size: Number): Call<GetAll>
 
+    //이용자 추가
+    @POST("api/cnts")
+    fun addCntResquest(@Header("Authorization")authorization:String, @Body cnt: Cnt):Call<success>
 
 
 
