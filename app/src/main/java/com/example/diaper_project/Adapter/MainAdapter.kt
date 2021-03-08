@@ -67,34 +67,11 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
 
         var cardView = holder.cardView
         var name = cardView.nametextView
-        val iObject = myDataset.getJSONObject(position)  //이용자 객체 하나씩 순서대로 가져옴
+        val iObject = myDataset.getJSONObject(position)  //이용자 객체(cnt) 하나씩 순서대로 가져옴
         name.text = iObject?.getString("name")      //이용자 이름을 가져옴
 
         //UI상에 이용자들 각각 기저귀 수량 log값과 최신 생성일을 서버로부터 받아와서 띄워줄거임.
-        //val iObject = myDataset.getJSONObject(mainViewHolder.adapterPosition)  //이용자 객체 하나씩 순서대로 가져옴 //adapterPosition으로 위치값 얻어냄
-        //cnt조회를 통해 얻은 이용자들 이름값을 통해 cnt_id값을 각각 정의해줘서 log를 구할거임.
-        lateinit var cnt_id: String  //이용자들 각각 log값을 불러올때 서버에 넣어줄 값
-        when (iObject.getString("name")) {
-            "김명규" -> {
-                cnt_id = "2yIBG0kMlHBGngM6I02L"
-            }
-            "석재훈" -> {
-                cnt_id = "MKJEW3c4g53koEujGEmO"
-            }
-            "정재덕" -> {
-                cnt_id = "OA7KtWMhycQFuG9k6Bys"
-            }
-            "김민혁" -> {
-                cnt_id = "kQGamRHHBNl8xxcCeP8z"
-            }
-            "오상윤" -> {
-                cnt_id = "sMtI1Ekx7MlvT6bqzykQ"
-            }
-            "김범준" -> {
-                cnt_id = "u5WMDst9P2zh2iBtB3j4"
-            }
-        } //when
-
+        var cnt_id = iObject.get("id").toString()  //cnt도큐먼트의 id값을 가져옴
         //이용자들의 가장 최신 log값들을 페이지네이션으로 하나씩만 가져와줌
         server.getLogListRequest("Bearer " + currentuser?.access_token, cnt_id, 0, 1)
             .enqueue(object : Callback<GetAll> {
@@ -161,7 +138,6 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
             val createdAt: String = simpleDateFormat.format(date)
             cardView.timeTextView.text = "마지막 저장일: " + createdAt
 
-
             //서버통해 파베에 log값 저장하기
             var log =log(cnt_id,createdAt, inner_open_number, inner_new_number, outer_open_number, outer_new_number,"코멘트없음")
             server.addlogResquest("Bearer " + currentuser?.access_token, log)
@@ -179,7 +155,6 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
                     }
                 })
         } //button_save
-
 
     } //onbindViewHolder
 
