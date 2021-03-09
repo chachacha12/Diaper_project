@@ -25,6 +25,7 @@ import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
+var cnt_name =  ArrayList<String>()  //StatisticActivity에서 spinner만들어줄때 쓰려고.
 
 //전역으로 해둔 이유는 여러함수 안에서 불러와서 쓰고 싶기에. 등등
 lateinit var mainAdapter: MainAdapter
@@ -43,22 +44,20 @@ class MainActivity : BasicActivity() {
 
      fun init() {
         //툴바 만들기
-        setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar)
         val actionBar = supportActionBar!!
         actionBar.setDisplayShowCustomEnabled(true)
         actionBar.setDisplayShowTitleEnabled(false)  //기본 제목을 없애줍니다.
         //actionBar.setDisplayHomeAsUpEnabled(true) // 자동으로 뒤로가기 버튼을 툴바에 만들어줌
 
 
-        currentuser =
-            intent.getSerializableExtra("current") as currentUser?  //로그인창에서 로그인해서 여기로 왔을때, 유저정보를 여기서 받음.
+        currentuser = intent.getSerializableExtra("current") as currentUser?  //로그인창에서 로그인해서 여기로 왔을때, 유저정보를 여기서 받음.
         //자동로그인으로 메인 왔을땐 밑에서 currentuser정보 받을거임.
 
         //SharedPreferences에 저장된 값들을 불러온다. (자동로그인 기능을 위해 주로 사용함)
         sp = getSharedPreferences("UserTokenKey", Context.MODE_PRIVATE)
         val token = sp.getString("TokenCode", "")!! // TokenCode키값에 해당하는 value값을 불러온다. 없다면 ""로 처리한다.
         val name = sp.getString("name", "")!!  //name키값에 해당하는 value값을 가져옴
-
 
         if (token == "")   //만약 SharedPreferences에 저장된 값이 없다면, 즉 로그인 안되어있을때.
         {
@@ -108,13 +107,15 @@ class MainActivity : BasicActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            R.id.statistic -> {                    //통계 및 보고서를 선택했을시 (spinner를 이용해서 fragment여러개 해보는거 고려)
-
-
+            R.id.statistic -> {                    //통계 및 보고서를 선택했을시 (viewpager 이용해서 fragment여러개 해보는거 고려)
+                var i = Intent(this, StatisticActivity::class.java)   //회원가입창 화면으로 이동
+                i.putExtra("cnt_name", cnt_name)      //만약 내가 클래스 통해 만든 객체들을 putExtra로 보내려면 보내려는 객체 클래스(PostInfo)에 : Serializable 해줘야함. 여기선 객체아니라 ㄱㅊ
+                startActivity(i)
             }
             R.id.account -> {                    //계정정보버튼을 선택했을시
 
             }
+
         }
 
         return super.onOptionsItemSelected(item)
@@ -150,8 +151,8 @@ class MainActivity : BasicActivity() {
                             //리사이클러뷰를 여기서 제대로 만들어줌.
                             mainAdapter = MainAdapter(
                                 this@MainActivity,
-                                jsonarray, server
-                            )
+                                jsonarray, server, cnt_name
+                            )   //cnt_name리스트도 어댑터에 보내줘서 이용자 이름을 채워주도록 할거임. 그 후 Statistic액티비티에서 spinner만들때 쓸거.
                             recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
 
                             Log.e("태그", "모두조회 response.body()내용:" + response.body().toString())

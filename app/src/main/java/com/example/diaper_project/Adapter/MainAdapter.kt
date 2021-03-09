@@ -14,6 +14,7 @@ import com.example.diaper_project.Class.log
 import com.example.diaper_project.Class.success
 import com.example.diaper_project.HowlService
 import com.example.diaper_project.R
+import com.example.diaper_project.cnt_name
 import com.example.diaper_project.currentuser
 import kotlinx.android.synthetic.main.cnt_post.view.*
 import org.json.JSONArray
@@ -22,11 +23,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
-
-
-
-class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var server:HowlService)  //myDataset은 cnt정보, server는 어댑터에는 없으므로 여기서 받아와서 접근해줌
+     //cnt_name을 인자를 통해 어댑터로 보내준 이유는 어댑터에서 cnt정보를 서버에 접근할때 이 리스트안에 이용자들 이름 넣으면 나중에 통계 액티비티에서 서버에 접근 또 안해도 되어서임.
+class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var server:HowlService, var cnt_name:ArrayList<String>)  //myDataset은 cnt정보, server는 어댑터에는 없으므로 여기서 받아와서 접근해줌
  : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
     //뷰홀더에 텍스트뷰말고 카드뷰를 넣음
@@ -67,11 +67,18 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
 
         var cardView = holder.cardView
         var name = cardView.nametextView
+
         val iObject = myDataset.getJSONObject(position)  //이용자 객체(cnt) 하나씩 순서대로 가져옴
         name.text = iObject?.getString("name")      //이용자 이름을 가져옴
 
+        if(cnt_name.size <= position){
+            cnt_name.add(name.text.toString())                   //StatisticActivity에서 spinner만들어줄때 쓰려고.
+        }
+
         //UI상에 이용자들 각각 기저귀 수량 log값과 최신 생성일을 서버로부터 받아와서 띄워줄거임.
         var cnt_id = iObject.get("id").toString()  //cnt도큐먼트의 id값을 가져옴
+
+
 
         //이용자들의 가장 최신 log값들을 페이지네이션으로 하나씩만 가져와줌
         server.getLogListRequest("Bearer " + currentuser?.access_token, cnt_id, 0, 1)

@@ -40,7 +40,7 @@
                     android:id="@+id/button_save"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
-                    android:background="#F44336"
+                    android:background="#F45D52"
                     android:shadowRadius="100"
                     android:text="저장"
                     android:textSize="14sp"
