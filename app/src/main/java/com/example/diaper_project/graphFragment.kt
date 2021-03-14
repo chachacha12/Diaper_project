@@ -21,7 +21,8 @@ import kotlinx.android.synthetic.main.fragment_graph.*
  */
 class graphFragment : Fragment() {
 
-    val entries = mutableListOf<com.github.mikephil.charting.data.BarEntry>()
+    var entries = mutableListOf<com.github.mikephil.charting.data.BarEntry>()  //겉기저귀 개수를 저장
+    var entries2 = mutableListOf<com.github.mikephil.charting.data.BarEntry>()  //속기저귀 개수를 저장
 
     //아래에서 언급한 valueFormatter를 inner class로 등록해줌
     inner class MyXAxisFormatter : ValueFormatter(){
@@ -38,13 +39,25 @@ class graphFragment : Fragment() {
 
 
         //차트(그래프) 만들기 시작
-        entries.add(com.github.mikephil.charting.data.BarEntry(1.2f, 20.0f))  //BarEntry(1.2f라는 좌표에, 20.0f만큼의 그래프 영역을 그린다)
-        entries.add(com.github.mikephil.charting.data.BarEntry(2.2f,70.0f))
-        entries.add(com.github.mikephil.charting.data.BarEntry(3.2f,30.0f))
-        entries.add(com.github.mikephil.charting.data.BarEntry(4.2f,90.0f))
-        entries.add(com.github.mikephil.charting.data.BarEntry(5.2f,70.0f))
-        entries.add(com.github.mikephil.charting.data.BarEntry(6.2f,30.0f))
-        entries.add(com.github.mikephil.charting.data.BarEntry(7.2f,90.0f))
+
+        //겉기저귀
+        entries.add(com.github.mikephil.charting.data.BarEntry(1.0f, 20.0f))  //BarEntry(1.2f라는 좌표에, 20.0f만큼의 그래프 영역을 그린다)
+        entries.add(com.github.mikephil.charting.data.BarEntry(2.0f,70.0f))
+        entries.add(com.github.mikephil.charting.data.BarEntry(3.0f,30.0f))
+        entries.add(com.github.mikephil.charting.data.BarEntry(4.0f,90.0f))
+        entries.add(com.github.mikephil.charting.data.BarEntry(5.0f,70.0f))
+        entries.add(com.github.mikephil.charting.data.BarEntry(6.0f,30.0f))
+        entries.add(com.github.mikephil.charting.data.BarEntry(7.0f,90.0f))
+
+        //속기저귀
+        entries2.add(com.github.mikephil.charting.data.BarEntry(1.0f, 20.0f))  //BarEntry(1.2f라는 좌표에, 20.0f만큼의 그래프 영역을 그린다)
+        entries2.add(com.github.mikephil.charting.data.BarEntry(2.0f,70.0f))
+        entries2.add(com.github.mikephil.charting.data.BarEntry(3.0f,30.0f))
+        entries2.add(com.github.mikephil.charting.data.BarEntry(4.0f,90.0f))
+        entries2.add(com.github.mikephil.charting.data.BarEntry(5.0f,70.0f))
+        entries2.add(com.github.mikephil.charting.data.BarEntry(6.0f,30.0f))
+        entries2.add(com.github.mikephil.charting.data.BarEntry(7.0f,90.0f))
+
 
         return inflater.inflate(R.layout.fragment_graph, container, false)
     }
@@ -100,7 +113,7 @@ class graphFragment : Fragment() {
             //Chart 밑에 description 표시 유무
             description=null
 
-            //Legend는 차트의 범례를 의미합니다
+            //Legend는 차트의 범례(참고사항)를 의미합니다
             //범례가 표시될 위치를 설정
             legend.verticalAlignment = Legend.LegendVerticalAlignment.TOP
             legend.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
@@ -115,46 +128,45 @@ class graphFragment : Fragment() {
             axisRight.setDrawLabels(false)
 
             //xAxis, yAxis 둘다 존재하여 따로 설정이 가능합니다
-            //차트 내부에 Grid 표시 유무
-            xAxis.setDrawGridLines(false)
+            xAxis.run {
+                position = XAxis.XAxisPosition.BOTTOM//X축을 아래에다가 둔다.
+                granularity = 0.9f // 1 단위만큼 간격 두기
+                setDrawAxisLine(true) // 축 그림
+                setDrawGridLines(false) // 격자
+                textColor = ContextCompat.getColor(context,R.color.colorPrimary) //라벨 색상
+                valueFormatter = MyXAxisFormatter() // 축 라벨 값 바꿔주기 위함
+                textSize = 10f // 텍스트 크기
+                labelCount = entries.size
+            }
 
-            //x축 데이터 표시 위치
-            xAxis.position = XAxis.XAxisPosition.BOTTOM
 
-            //x축 데이터 갯수 설정
-            xAxis.labelCount = entries.size
         }
 
         //데이터셋 추가 및 차트 띄우기
-        var set = BarDataSet(entries,"DataSet")//데이터셋 초기화 하기
+
+        var graphArr = ArrayList<IBarDataSet>()
+
+        var set = BarDataSet(entries,"겉기저귀 개수")//데이터셋 만들기, (겉기저귀 수량)
         set.color = ContextCompat.getColor(context!!,R.color.colorPrimaryDark)
 
-        val dataSet :ArrayList<IBarDataSet> = ArrayList()
-        dataSet.add(set)
-        val data = BarData(dataSet)
-        data.barWidth = 0.3f//막대 너비 설정하기
+        var set2 = BarDataSet(entries2, "속기저귀 개수")//데이터셋 만들기, (속기저귀 수량)
+        set2.color = ContextCompat.getColor(context!!,R.color.design_default_color_on_secondary)
+
+        //막대그래프를 2개를 그룹으로해서 만들어줄거임 (그룹bar 형태로 만들거임)
+        graphArr.add(set)
+        graphArr.add(set2)
+        val data = BarData(graphArr)
+
+        data.barWidth = 0.2f//막대 너비 설정하기
+
         chart.run {
             this.data = data //차트의 데이터를 data로 설정해줌.
             setFitBars(true)
             invalidate()
+            chart!!.groupBars(0.7f, 0.5f, 0.02f)  //첫 인자는 그래프가 젤 왼쪽 y축으로 부터 얼마나 떨어질지, 두번째인자는 bar그룹들이 얼마나 떨어질지,
+                                                                                //세번째는 같은 그룹내의 바들이 얼마나 떨어질지를 정해줌.
         }
     }
-
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-    }
-
-
-
 
 
 
