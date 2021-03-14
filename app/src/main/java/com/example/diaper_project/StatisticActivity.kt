@@ -52,7 +52,6 @@ class StatisticActivity  :  BasicActivity() {
         }.attach()
 
 
-
     } //init
 
 
