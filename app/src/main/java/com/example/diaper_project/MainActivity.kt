@@ -15,15 +15,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.diaper_project.Adapter.MainAdapter
 import com.example.diaper_project.Class.GetAll
 import com.example.diaper_project.Class.currentUser
-import com.example.diaper_project.Class.log
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.cnt_post.*
 import org.json.JSONArray
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.SimpleDateFormat
 import java.util.*
+
 
 var cnt_name =  ArrayList<String>()  //StatisticActivity에서 spinner만들어줄때 쓰려고.
 
@@ -146,7 +145,10 @@ class MainActivity : BasicActivity() {
                     }
                     override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
                         if (response.isSuccessful) {
-                            jsonarray = JSONArray(response.body()?.result.toString())  //어댑터에 넘겨줄 값임
+
+
+
+                            jsonarray = JSONArray(response.body()?.result)  //어댑터에 넘겨줄 값임
 
                             //리사이클러뷰를 여기서 제대로 만들어줌.
                             mainAdapter = MainAdapter(

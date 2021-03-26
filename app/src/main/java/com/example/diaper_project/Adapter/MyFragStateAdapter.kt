@@ -19,6 +19,7 @@ class MyFragStateAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdap
     override fun createFragment(position: Int): Fragment {   //페이지마다 어떤 프래그먼트를 줄지 정하기
         return when(position){
             0-> graphFragment()
+
             1-> averageFragment()
             else -> graphFragment()
         }

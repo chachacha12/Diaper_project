@@ -1,45 +1,153 @@
 package com.example.diaper_project
 
-import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import com.github.mikephil.charting.components.AxisBase
+import androidx.fragment.app.Fragment
+import com.example.diaper_project.Class.GetAll
+import com.example.diaper_project.Class.log
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import kotlinx.android.synthetic.main.fragment_graph.*
+import org.json.JSONArray
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.reflect.InvocationTargetException
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * A simple [Fragment] subclass.
  */
 class graphFragment : Fragment() {
 
-    var entries = mutableListOf<com.github.mikephil.charting.data.BarEntry>()  //겉기저귀 개수를 저장
-    var entries2 = mutableListOf<com.github.mikephil.charting.data.BarEntry>()  //속기저귀 개수를 저장
+    //레트로핏을 만들어줌. 서버와 연결.  //프래그먼트는 BasicActivity를 상속 못 받아서,, (Statistic액티비티에서 server를 받아오려고 해봤는데 잘 모르겠음..)
+    var retrofit = Retrofit.Builder()
+        .baseUrl("https://diapers-dungji.herokuapp.com/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    var server = retrofit.create(HowlService::class.java)  //서버와 만들어둔 인터페이스를 연결시켜줌.
 
+    var entries = mutableListOf<BarEntry>()  //겉기저귀 개수를 저장
+    var entries2 = mutableListOf<BarEntry>()  //속기저귀 개수를 저장
+
+
+    /*
     //아래에서 언급한 valueFormatter를 inner class로 등록해줌
     inner class MyXAxisFormatter : ValueFormatter(){
+
         private val days = arrayOf("1차","2차","3차","4차","5차","6차","7차")
         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
             return days.getOrNull(value.toInt()-1) ?: value.toString()
         }
     }
+     */
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
+
     ): View? {
+
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
+        val cal = Calendar.getInstance()
+        cal.time = Date()
+        val createdAt: String = simpleDateFormat.format(cal.time)
+        cal.add(Calendar.DATE, -7)
+        val sevendaysAgo = simpleDateFormat.format(cal.time)
+
+        //서버로부터 특정기간 이용자별 로그를 페이지네이션해서 특정개수만 가져옴 (여기선 1개할거)
+        server.getLog_period_Request(
+            "Bearer " + currentuser?.access_token,
+            "2yIBG0kMlHBGngM6I02L",
+            0,
+            7,
+            sevendaysAgo,
+            createdAt
+        ).enqueue(object : Callback<GetAll> {
+            override fun onFailure(
+                call: Call<GetAll>,
+                t: Throwable
+            ) {  //object로 받아옴. 서버에서 받은 object모델과 맞지 않으면 실패함수로 빠짐
+                Log.e("태그", "통신 아예 실패")
+            }
+
+            override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
+                if (response.isSuccessful) {
+
+                    val jsonArray = JSONArray(response.body()?.result)
+                    Log.e("태그", "이용자 기간 로그리스트 조회성공:" + jsonArray+"   jsonArray.length(): "+jsonArray.length())
+                    //setDataAtFragment(graphFragment(), jsonArray) //이 프래그먼트로 데이터 전달해줌
+
+                    var i = 0
+                    repeat(jsonArray.length()) {
+
+                        val iObject = jsonArray.getJSONObject(i)
+                        Log.e(
+                            "태그",
+                            "로그 객체 outer_new 개수 :" + iObject.getInt("outer_new").toFloat()
+                        )
+                        Log.e("태그", "x값 :" + (i + 1).toFloat())
+                        //그래프를 만들어주는 데이터셋의 리스트요소에다가 겉기저귀, 속기저귀 로그값을 추가함.
+
+                        entries.add(
+                            BarEntry(
+                                (i + 1).toFloat(),
+                                iObject.getInt("outer_new").toFloat()
+                            )
+                        )
+                        entries2.add(
+                            BarEntry(
+                                (i + 1).toFloat(),
+                                iObject.getInt("inner_new").toFloat()
+                            )
+                        )
+                        Log.e("태그", "entries :" + entries)
+                        Log.e("태그", "entries2 :" + entries2)
+
+                        i++
+                    }
+
+                } else {
+                    Log.e("태그", "기간 로그 조회실패" + response.body().toString())
+                }
+
+            }
+        })
+
+
+        /*
+        val bundle = arguments
+        Log.e("태그", "arguments:"+arguments )
+        if (bundle != null) {
+            str = bundle.getString("key")
+        }
+        Log.e("태그", "str값:"+str )
+         */
+
+        /*
+        var jsonArray = JSONArray(a)  //액티비티에서 받아온 String값을 jsonarray로 바꿔줌
+         */
 
 
         //차트(그래프) 만들기 시작
-
+        /*
         //겉기저귀
         entries.add(com.github.mikephil.charting.data.BarEntry(1.0f, 20.0f))  //BarEntry(1.2f라는 좌표에, 20.0f만큼의 그래프 영역을 그린다)
         entries.add(com.github.mikephil.charting.data.BarEntry(2.0f,70.0f))
@@ -58,60 +166,68 @@ class graphFragment : Fragment() {
         entries2.add(com.github.mikephil.charting.data.BarEntry(6.0f,30.0f))
         entries2.add(com.github.mikephil.charting.data.BarEntry(7.0f,90.0f))
 
-
+         */
         return inflater.inflate(R.layout.fragment_graph, container, false)
     }
+
 
     override fun onStart() {
         super.onStart()
 
+    }
+
+
+
+    override fun onResume() {
+        super.onResume()
+        //현재에 맞는 date객체를 하나 만들어줌. 이걸 통해 현재부터 지난 일주일간의 데이터를 가져올거임
+
         //차트세팅
         chart.apply {
-
             /*
-           description.isEnabled = true //차트 옆에 별도로 표기되는 description이다. false로 설정하여 안보이게 했다.
-           setMaxVisibleValueCount(7) // 최대 보이는 그래프 개수를 7개로 정해주었다.
-           setPinchZoom(false) // 핀치줌(두손가락으로 줌인 줌 아웃하는것) 설정
-           setDrawBarShadow(false)//그래프의 그림자
-           setDrawGridBackground(false)//격자구조 넣을건지
-           axisLeft.run { //왼쪽 축. 즉 Y방향 축을 뜻한다.
-               axisMaximum = 101f //100 위치에 선을 그리기 위해 101f로 맥시멈을 정해주었다
-               axisMinimum = 0f // 최소값 0
-               granularity = 50f // 50 단위마다 선을 그리려고 granularity 설정 해 주었다.
-               //위 설정이 20f였다면 총 5개의 선이 그려졌을 것
-               setDrawLabels(true) // 값 적는거 허용 (0, 50, 100)
-               setDrawGridLines(true) //격자 라인 활용
-               setDrawAxisLine(false) // 축 그리기 설정
-               axisLineColor = ContextCompat.getColor(context,R.color.colorPrimary) // 축 색깔 설정
-               gridColor = ContextCompat.getColor(context,R.color.colorPrimaryDark) // 축 아닌 격자 색깔 설정
-               textColor = ContextCompat.getColor(context,R.color.colorAccent) // 라벨 텍스트 컬러 설정
-               textSize = 14f //라벨 텍스트 크기
-           }
-           xAxis.run {
-               position = XAxis.XAxisPosition.BOTTOM//X축을 아래에다가 둔다.
-               granularity = 1f // 1 단위만큼 간격 두기
-               setDrawAxisLine(true) // 축 그림
-               setDrawGridLines(false) // 격자
-               textColor = ContextCompat.getColor(context,R.color.colorPrimary) //라벨 색상
-               valueFormatter = MyXAxisFormatter() // 축 라벨 값 바꿔주기 위함
-               textSize = 14f // 텍스트 크기
-           }
-           axisRight.isEnabled = false // 오른쪽 Y축을 안보이게 해줌.
-           setTouchEnabled(false) // 그래프 터치해도 아무 변화없게 막음
-           animateY(1000) // 밑에서부터 올라오는 애니매이션 적용
-           legend.isEnabled = false //차트 범례 설정
+         description.isEnabled = true //차트 옆에 별도로 표기되는 description이다. false로 설정하여 안보이게 했다.
+         setMaxVisibleValueCount(7) // 최대 보이는 그래프 개수를 7개로 정해주었다.
+         setPinchZoom(false) // 핀치줌(두손가락으로 줌인 줌 아웃하는것) 설정
+         setDrawBarShadow(false)//그래프의 그림자
+         setDrawGridBackground(false)//격자구조 넣을건지
+         axisLeft.run { //왼쪽 축. 즉 Y방향 축을 뜻한다.
+             axisMaximum = 101f //100 위치에 선을 그리기 위해 101f로 맥시멈을 정해주었다
+             axisMinimum = 0f // 최소값 0
+             granularity = 50f // 50 단위마다 선을 그리려고 granularity 설정 해 주었다.
+             //위 설정이 20f였다면 총 5개의 선이 그려졌을 것
+             setDrawLabels(true) // 값 적는거 허용 (0, 50, 100)
+             setDrawGridLines(true) //격자 라인 활용
+             setDrawAxisLine(false) // 축 그리기 설정
+             axisLineColor = ContextCompat.getColor(context,R.color.colorPrimary) // 축 색깔 설정
+             gridColor = ContextCompat.getColor(context,R.color.colorPrimaryDark) // 축 아닌 격자 색깔 설정
+             textColor = ContextCompat.getColor(context,R.color.colorAccent) // 라벨 텍스트 컬러 설정
+             textSize = 14f //라벨 텍스트 크기
+         }
+         xAxis.run {
+             position = XAxis.XAxisPosition.BOTTOM//X축을 아래에다가 둔다.
+             granularity = 1f // 1 단위만큼 간격 두기
+             setDrawAxisLine(true) // 축 그림
+             setDrawGridLines(false) // 격자
+             textColor = ContextCompat.getColor(context,R.color.colorPrimary) //라벨 색상
+             valueFormatter = MyXAxisFormatter() // 축 라벨 값 바꿔주기 위함
+             textSize = 14f // 텍스트 크기
+         }
+         axisRight.isEnabled = false // 오른쪽 Y축을 안보이게 해줌.
+         setTouchEnabled(false) // 그래프 터치해도 아무 변화없게 막음
+         animateY(1000) // 밑에서부터 올라오는 애니매이션 적용
+         legend.isEnabled = false //차트 범례 설정
 
-             */
+           */
 
             //터치, Pinch 상호작용
             setScaleEnabled(false)
             setPinchZoom(false)
 
             //Chart가 그려질때 애니메이션
-            animateXY(0,800)
+            animateXY(0, 800)
 
             //Chart 밑에 description 표시 유무
-            description=null
+            description = null
 
             //Legend는 차트의 범례(참고사항)를 의미합니다
             //범례가 표시될 위치를 설정
@@ -133,41 +249,45 @@ class graphFragment : Fragment() {
                 granularity = 0.9f // 1 단위만큼 간격 두기
                 setDrawAxisLine(true) // 축 그림
                 setDrawGridLines(false) // 격자
-                textColor = ContextCompat.getColor(context,R.color.colorPrimary) //라벨 색상
-                valueFormatter = MyXAxisFormatter() // 축 라벨 값 바꿔주기 위함
+                textColor = ContextCompat.getColor(context, R.color.colorPrimary) //라벨 색상
+                //valueFormatter = MyXAxisFormatter() // 축 라벨 값 바꿔주기 위함
                 textSize = 10f // 텍스트 크기
                 labelCount = entries.size
             }
-
-
         }
 
         //데이터셋 추가 및 차트 띄우기
+        if (entries.size > 0 && entries2.size > 0) {
 
-        var graphArr = ArrayList<IBarDataSet>()
+            var graphArr = ArrayList<IBarDataSet>()
 
-        var set = BarDataSet(entries,"겉기저귀 개수")//데이터셋 만들기, (겉기저귀 수량)
-        set.color = ContextCompat.getColor(context!!,R.color.colorPrimaryDark)
+            var set = BarDataSet(entries, "겉기저귀 개수")//데이터셋 만들기, (겉기저귀 수량)
+            set.color = ContextCompat.getColor(context!!, R.color.colorPrimaryDark)
 
-        var set2 = BarDataSet(entries2, "속기저귀 개수")//데이터셋 만들기, (속기저귀 수량)
-        set2.color = ContextCompat.getColor(context!!,R.color.design_default_color_on_secondary)
+            var set2 = BarDataSet(entries2, "속기저귀 개수")//데이터셋 만들기, (속기저귀 수량)
+            set2.color =
+                ContextCompat.getColor(context!!, R.color.design_default_color_on_secondary)
 
-        //막대그래프를 2개를 그룹으로해서 만들어줄거임 (그룹bar 형태로 만들거임)
-        graphArr.add(set)
-        graphArr.add(set2)
-        val data = BarData(graphArr)
+            //막대그래프를 2개를 그룹으로해서 만들어줄거임 (그룹bar 형태로 만들거임)
+            graphArr.add(set)
+            graphArr.add(set2)
+            val data = BarData(graphArr)
 
-        data.barWidth = 0.2f//막대 너비 설정하기
+            data.barWidth = 0.2f//막대 너비 설정하기
 
-        chart.run {
-            this.data = data //차트의 데이터를 data로 설정해줌.
-            setFitBars(true)
-            invalidate()
-            chart!!.groupBars(0.7f, 0.5f, 0.02f)  //첫 인자는 그래프가 젤 왼쪽 y축으로 부터 얼마나 떨어질지, 두번째인자는 bar그룹들이 얼마나 떨어질지,
-                                                                                //세번째는 같은 그룹내의 바들이 얼마나 떨어질지를 정해줌.
+            chart.run {
+                this.data = data //차트의 데이터를 data로 설정해줌.
+                setFitBars(true)
+                invalidate()
+                chart!!.groupBars(
+                    0.7f,
+                    0.5f,
+                    0.02f
+                )  //첫 인자는 그래프가 젤 왼쪽 y축으로 부터 얼마나 떨어질지, 두번째인자는 bar그룹들이 얼마나 떨어질지,
+                //세번째는 같은 그룹내의 바들이 얼마나 떨어질지를 정해줌.
+            }
         }
     }
-
 
 
 

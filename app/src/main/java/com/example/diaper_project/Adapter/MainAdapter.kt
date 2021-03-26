@@ -100,7 +100,7 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
                             cardView.timeTextView.text ="마지막 저장일: <저장된 값 없음>"
                         }else{
                             //로그값이 하나라도 파베에 있을때
-                            val jsonArray = JSONArray(response.body()?.result.toString())
+                            val jsonArray = JSONArray(response.body()?.result)
                             val Object = jsonArray.getJSONObject(0)
 
                             outer_open_number = Object.getInt("outer_opened")
