@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.example.diaper_project.Class.Users
 import com.example.diaper_project.Class.currentUser
 import com.example.diaper_project.Class.success
@@ -16,8 +15,6 @@ import kotlinx.android.synthetic.main.view_loader.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 
 class SignUpActivity :  BasicActivity() {

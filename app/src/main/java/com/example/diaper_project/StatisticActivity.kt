@@ -1,21 +1,15 @@
 package com.example.diaper_project
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import com.example.diaper_project.Adapter.MyFragStateAdapter
-import com.example.diaper_project.Class.GetAll
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_statistic.*
-import org.json.JSONArray
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -39,7 +33,25 @@ class StatisticActivity  :  BasicActivity() {
         setContentView(R.layout.activity_statistic)
         init()
     }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+    }
+
+
     fun init(){
+/*
+        //var bundle=Bundle(1)
+        // bundle.putString("logs", "aaa")
+        graphFragment().apply{
+            arguments = Bundle().apply {
+                putString("logs", "aaa")
+            }
+        }
+        Log.e("태그","graphFragment().arguments: "+graphFragment().arguments)
+        //Log.e("태그","bundle값: "+bundle)
+ */
+
 
         var intent = intent         //이 액티비티로 넘어온 인텐트를 받음 (메인에서 이 액티비티로 올때 cnt_name 리스트 넘겨줌)
         var cnt_name_list = intent.getStringArrayListExtra("cnt_name")  //cnt_name_list라는 배열에 받아온 리스트값들 담어줌
@@ -60,6 +72,7 @@ class StatisticActivity  :  BasicActivity() {
         viewpager2.adapter =
             MyFragStateAdapter(this@StatisticActivity)
 
+
         //뷰페이저2객체를 슬라이딩 할때마다 tab의 위치도 바뀌어야함. 그 둘을 동기화 해주는 클래스인 TabLayoutMediator을 이용해줌.
         TabLayoutMediator(tabLayout, viewpager2){
                 tab, position -> tab.text = textArray[position]
@@ -68,11 +81,11 @@ class StatisticActivity  :  BasicActivity() {
     } //init
 
 
-    /*
+
     //이 액티비티에서 프래그먼트로 데이터 줄때 사용할 함수
-    fun setDataAtFragment(fragment: Fragment, logs:JSONArray){
-        val bundle=Bundle()
-        bundle.putString("logs", logs.toString())
+    fun setDataAtFragment(fragment: Fragment, log: String){
+        var bundle=Bundle(1)
+        bundle.putString("logs", log.toString())
         fragment.arguments = bundle
     }
 
@@ -82,7 +95,7 @@ class StatisticActivity  :  BasicActivity() {
         transaction.replace(R.id.viewpager2, fragment)
     }
 
-     */
+
 
 
 

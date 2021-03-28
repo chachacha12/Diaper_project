@@ -5,9 +5,8 @@ package com.example.diaper_project.Adapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.diaper_project.StatisticActivity
 import com.example.diaper_project.averageFragment
-import com.example.diaper_project.graphFragment
+import com.example.diaper_project.GraphFragment
 
 class MyFragStateAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
 
@@ -18,12 +17,16 @@ class MyFragStateAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdap
 
     override fun createFragment(position: Int): Fragment {   //페이지마다 어떤 프래그먼트를 줄지 정하기
         return when(position){
-            0-> graphFragment()
-
+            0-> {
+                GraphFragment()
+            }
             1-> averageFragment()
-            else -> graphFragment()
+            else -> GraphFragment()
         }
     }
+
+
+
 
 
 }

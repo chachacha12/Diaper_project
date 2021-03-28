@@ -64,7 +64,7 @@ class LoginActivity :  BasicActivity() {
                         editor.commit() // 여기서 커밋을 안해주면 저장이 안된다.
 
 
-                        var i = Intent(this@LoginActivity, MainActivity::class.java)    //회원가입 성공하면 바로 메인액티비티로 이동
+                          var i = Intent(this@LoginActivity, MainActivity::class.java)    //회원가입 성공하면 바로 메인액티비티로 이동
                         i.putExtra("current", currentuser)  //현재로그인한 유저정보를 다른 액티비티에 넘김. name은 키값.
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         startActivity(i)
