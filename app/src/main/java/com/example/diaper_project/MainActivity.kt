@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +17,8 @@ import com.example.diaper_project.Adapter.MainAdapter
 import com.example.diaper_project.Class.GetAll
 import com.example.diaper_project.Class.currentUser
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_graph.*
+import kotlinx.android.synthetic.main.view_loader.*
 import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
@@ -28,7 +31,7 @@ var cnt_name =  ArrayList<String>()  //StatisticActivity에서 spinner만들어�
 
 //전역으로 해둔 이유는 여러함수 안에서 불러와서 쓰고 싶기에. 등등
 lateinit var mainAdapter: MainAdapter
-lateinit var jsonarray: JSONArray //여기안엔 모든 이용자들(cnt)정보가 들어감
+var jsonarray: JSONArray? = null //여기안엔 모든 이용자들(cnt)정보가 들어감
 var currentuser: currentUser? = null //현재 로그인되어있는 회원정보
 lateinit var sp:SharedPreferences
 
@@ -38,7 +41,6 @@ class MainActivity : BasicActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         init()
-        save_log()
     }
 
      fun init() {
@@ -121,11 +123,39 @@ class MainActivity : BasicActivity() {
     }
 
 
+    override fun onStart() {
+        super.onStart()
+
+        //아직 서버로부터 데이터를 못받아왔을때는 로딩화면을 보여줌
+        if(jsonarray==null ) {
+            loaderLayout.visibility = View.VISIBLE
+        }
+
+
+    }
+
     //액티비티가 재실행되거나 홈버튼 눌러서 나갔다왔을때 등의 경우에 onCreate말고 이 함수가 실행됨. (이때마다 게시글들 새로고침 해주면될듯)
     //앱 처음 실행시엔 onCreate와 onResume함수가 둘다 실행되므로 중복되는 코드는 쓰지 않기
     override fun onResume() {
         super.onResume()
         postUpdate()
+
+
+        //다른 화면 갔다가 여기 왔을때 데이터작업 완료되었으면 로딩화면 없애줌
+        if(jsonarray!=null ){
+            //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
+            loaderLayout.visibility = View.GONE
+        }
+
+        //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
+        loaderLayout.setOnClickListener {
+            if(jsonarray!=null ){
+                //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
+                loaderLayout.visibility = View.GONE
+            }
+        }
+
+
     } //onResume
 
 
@@ -146,14 +176,12 @@ class MainActivity : BasicActivity() {
                     override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
                         if (response.isSuccessful) {
 
-
-
                             jsonarray = JSONArray(response.body()?.result)  //어댑터에 넘겨줄 값임
 
                             //리사이클러뷰를 여기서 제대로 만들어줌.
                             mainAdapter = MainAdapter(
                                 this@MainActivity,
-                                jsonarray, server, cnt_name
+                                jsonarray!!, server, cnt_name
                             )   //cnt_name리스트도 어댑터에 보내줘서 이용자 이름을 채워주도록 할거임. 그 후 Statistic액티비티에서 spinner만들때 쓸거.
                             recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
 
@@ -176,10 +204,6 @@ class MainActivity : BasicActivity() {
         }
     }
 
-
-    fun save_log(){  //저장하기 버튼 눌럿을때?
-
-    }
 
 
 

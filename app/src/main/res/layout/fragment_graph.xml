@@ -32,7 +32,18 @@
         android:layout_marginTop="40dp"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp" />
+        android:layout_marginBottom="20dp" >
+
+    </com.github.mikephil.charting.charts.BarChart>
+
+    <LinearLayout
+        android:id="@+id/LinearLayout_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/chart"
+        android:orientation="horizontal">
+    </LinearLayout>
+
 
     <include
         layout="@layout/view_loader"

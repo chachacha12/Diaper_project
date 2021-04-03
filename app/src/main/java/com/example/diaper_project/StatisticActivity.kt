@@ -4,12 +4,15 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.diaper_project.Adapter.MyFragStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_statistic.*
+import kotlinx.android.synthetic.main.fragment_graph.*
 import kotlin.collections.ArrayList
 
 
@@ -51,6 +54,22 @@ class StatisticActivity  :  BasicActivity() {
         Log.e("태그","graphFragment().arguments: "+graphFragment().arguments)
         //Log.e("태그","bundle값: "+bundle)
  */
+
+
+        /*
+        //텍스트뷰를 그래프 프래그먼트에 만들어줌. 7개만 일단.
+        for(view_id in 1..7)
+        {
+            val layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            var textView = TextView(this)
+            textView.layoutParams = layoutParams
+            textView.id = "$view_id"       //각각의 생성되는 텍스트뷰에 아이디를 줌
+            scrollView.addView(textView)
+        }
+         */
 
 
         var intent = intent         //이 액티비티로 넘어온 인텐트를 받음 (메인에서 이 액티비티로 올때 cnt_name 리스트 넘겨줌)

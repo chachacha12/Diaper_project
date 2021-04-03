@@ -50,4 +50,13 @@
         android:clickable="true"
         app:srcCompat="@drawable/ic_add_black_24dp"
         android:layout_alignParentRight="true" />
+
+
+    <include
+        layout="@layout/view_loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+
 </RelativeLayout>

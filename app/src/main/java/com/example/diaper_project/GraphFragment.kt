@@ -1,18 +1,22 @@
 package com.example.diaper_project
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.diaper_project.Class.GetAll
+import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import kotlinx.android.synthetic.main.fragment_graph.*
 import kotlinx.android.synthetic.main.view_loader.*
@@ -23,6 +27,8 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -39,17 +45,19 @@ class GraphFragment : Fragment() {
     var entries = ArrayList<BarEntry>()  //겉기저귀 개수를 저장
     var entries2 = ArrayList<BarEntry>()  //속기저귀 개수를 저장
 
+    var days = ArrayList<String>()  //x축 데이터에 날짜를 표기해주기 위함
 
-    /*
+
     //아래에서 언급한 valueFormatter를 inner class로 등록해줌
     inner class MyXAxisFormatter : ValueFormatter(){
 
-        private val days = arrayOf("1차","2차","3차","4차","5차","6차","7차")
+        //days = arrayOf("1차","2차","3차","4차","5차","6차","7차")
         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
             return days.getOrNull(value.toInt()-1) ?: value.toString()
         }
     }
-     */
+
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -87,7 +95,7 @@ class GraphFragment : Fragment() {
             val sevendaysAgo = simpleDateFormat.format(cal.time)
 
 
-            //서버로부터 특정기간 이용자별 로그를 페이지네이션해서 특정개수만 가져옴 (여기선 1개할거)
+            //서버로부터 특정기간 이용자별 로그를 페이지네이션해서 특정개수만 가져옴.size값으로 조절
             server.getLog_period_Request(
                 "Bearer " + currentuser?.access_token,
                 "2yIBG0kMlHBGngM6I02L",
@@ -103,6 +111,7 @@ class GraphFragment : Fragment() {
                     Log.e("태그", "통신 아예 실패")
                 }
 
+                @RequiresApi(Build.VERSION_CODES.O)
                 override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
                     if (response.isSuccessful) {
 
@@ -111,33 +120,37 @@ class GraphFragment : Fragment() {
                             "태그",
                             "이용자 기간 로그리스트 조회성공:" + jsonArray + "   jsonArray.length(): " + jsonArray.length()
                         )
-                        //setDataAtFragment(graphFragment(), jsonArray) //이 프래그먼트로 데이터 전달해줌
 
+                        //간단한 날짜로 변경해주려고
+                        var parser:SimpleDateFormat
+                        var formatter:SimpleDateFormat
+                        var output:String
                         var i = 0
                         repeat(jsonArray.length()) {
-
                             val iObject = jsonArray.getJSONObject(i)
-                            Log.e(
-                                "태그",
-                                "로그 객체 outer_new 개수 :" + iObject.getInt("outer_new").toFloat()
-                            )
-                            Log.e("태그", "x값 :" + (i + 1).toFloat())
+
                             //그래프를 만들어주는 데이터셋의 리스트요소에다가 겉기저귀, 속기저귀 로그값을 추가함.
 
-                            entries.add(
+                            //인덱스 0번째에 값을 넣어줌. 이러면 앞에 값이 있었으면 그대로 한칸씩 밀림. 즉 이런식으로 거꾸로 저장할수있음
+                            entries.add(0,
                                 BarEntry(
                                     (i + 1).toFloat(),
                                     iObject.getInt("outer_new").toFloat()
                                 )
                             )
-                            entries2.add(
+                            entries2.add(0,
                                 BarEntry(
                                     (i + 1).toFloat(),
                                     iObject.getInt("inner_new").toFloat()
                                 )
                             )
-                            Log.e("태그", "entries :" + entries)
-                            Log.e("태그", "entries2 :" + entries2)
+
+                            //가져온 날짜값을 다른 패턴으로 변환해서 그래프의 x축에 띄워줄거임
+                            parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                            formatter = SimpleDateFormat("MM/dd")
+                            output = formatter.format(parser.parse(iObject.getString("time")  ))
+
+                            days.add(0, output)  //days 리스트안에 저장.
                             i++
                         }
 
@@ -151,19 +164,17 @@ class GraphFragment : Fragment() {
         return  inflater.inflate(R.layout.fragment_graph, container, false)
     }
 
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
     }
 
-
     override fun onStart() {
         super.onStart()
+        //로딩화면 보여주기
         if(entries.size<=0) {
             chart.visibility = View.GONE
             loaderLayout.visibility = View.VISIBLE
         }
-
     }
 
 
@@ -230,7 +241,9 @@ class GraphFragment : Fragment() {
 
             //터치, Pinch 상호작용
             setScaleEnabled(false)
-            setPinchZoom(false)
+            setTouchEnabled(true)
+            setPinchZoom(true)
+
 
             //Chart가 그려질때 애니메이션
             animateXY(0, 800)
@@ -259,7 +272,7 @@ class GraphFragment : Fragment() {
                 setDrawAxisLine(true) // 축 그림
                 setDrawGridLines(false) // 격자
                 textColor = ContextCompat.getColor(context, R.color.colorPrimary) //라벨 색상
-                //valueFormatter = MyXAxisFormatter() // 축 라벨 값 바꿔주기 위함
+                valueFormatter = MyXAxisFormatter() // 축 라벨 값 바꿔주기 위함
                 textSize = 10f // 텍스트 크기
                 labelCount = entries.size
             }
