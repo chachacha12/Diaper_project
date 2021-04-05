@@ -2,10 +2,12 @@ package com.example.diaper_project
 
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -78,6 +80,17 @@ class GraphFragment : Fragment() {
 
     ): View? {
 
+        //액티비티에서 보낸 cnt id값을 여기서 받기
+        var id:String
+        if (arguments != null){
+            Log.e("태그","arguments: "+arguments)
+            id = arguments!!.getString("cnt_id").toString()
+            Log.e("태그","id: "+id)
+        }else{
+            Log.e("태그","arguments: "+arguments)
+            id = "2yIBG0kMlHBGngM6I02L"  //데이터를 못받아오면 김명규id로 초기화
+        }
+
 
         if (savedInstanceState != null) {  //이 프래그먼트가 한번이상 실행되었으면 데이터 상태 유지를 위해..
             entries =
@@ -98,7 +111,7 @@ class GraphFragment : Fragment() {
             //서버로부터 특정기간 이용자별 로그를 페이지네이션해서 특정개수만 가져옴.size값으로 조절
             server.getLog_period_Request(
                 "Bearer " + currentuser?.access_token,
-                "2yIBG0kMlHBGngM6I02L",
+                id,
                 0,
                 7,
                 sevendaysAgo,
@@ -183,6 +196,26 @@ class GraphFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
+
+        /*
+        //2초마다 총10번을 수시로 데이터가 서버로부터 왔는지 감시해줌. 데이터 들어왔으면 차트 만들어줌
+        if(loaderLayout.visibility == View.VISIBLE){
+            //for(i in 1..10) {
+                Handler().postDelayed({
+                    Log.e("태그", " Handler().postDelayed 구문 들어옴")
+                    if (entries.size>0) {
+                        chart.visibility = View.VISIBLE
+                        loaderLayout.visibility = View.GONE
+                        makeChart()
+                        Log.e("태그", " ( if (entries.size>0))  구문 들어옴")
+                    }
+                }, 5000)  //2초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
+
+           // }
+        }
+         */
+
+        
         //다른 프래그먼트 갔다가 여기 왔을때 동작완료되었다면 그래프띄워주기 위함
         if(entries.size>0){
             chart.visibility = View.VISIBLE

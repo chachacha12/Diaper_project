@@ -2,15 +2,20 @@ package com.example.diaper_project
 //로그인해서 들어왔을때 창임. 여기서 로그아웃 가능
 
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.util.ArrayMap
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.diaper_project.Adapter.MainAdapter
@@ -25,9 +30,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
+import java.util.concurrent.Delayed
 
 
-var cnt_name =  ArrayList<String>()  //StatisticActivity에서 spinner만들어줄때 쓰려고.
+var cnt_name =  ArrayList<String>()  //모든 이용자 이름을 저장해둔 리스트. StatisticActivity에서 spinner만들어줄때 쓰려고.
+var cnt_ids =  ArrayList<String>()  //모든 이용자 id를 저장해둔 리스트. StatisticActivity에서 spinner만들어줄때 쓰려고.
 
 //전역으로 해둔 이유는 여러함수 안에서 불러와서 쓰고 싶기에. 등등
 lateinit var mainAdapter: MainAdapter
@@ -41,6 +48,7 @@ class MainActivity : BasicActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         init()
+        postUpdate()
     }
 
      fun init() {
@@ -78,11 +86,28 @@ class MainActivity : BasicActivity() {
 
         //새 게시글 만들기위해 floatingActionButton눌렀을때
         floatingActionButton.setOnClickListener {
-            var i = Intent(this, CntAddActivity::class.java)
-            startActivity(i)
+            var i= Intent(this, CntAddActivity::class.java)
+            startActivityForResult(i, 100)
         }
     }  //init
 
+    //이용자 추가하기 액티비티(cntAddactivity)에 갔다오면서 받은 데이터에 따른 동작처리
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when(requestCode) {
+            100 -> {
+                when (resultCode) {
+                    Activity.RESULT_OK -> {
+                        jsonarray = null  //다시 초기화 시켜줌. 이렇게 해야 onStart와 onResume함수 통해 값 갱신(이용자 추가)되어서 보여짐
+                        postUpdate()
+                    }
+                    Activity.RESULT_CANCELED -> {
+                    }
+                }
+            }
+        }
+    }
 
     //툴바 버튼 눌렀을때 동작되는 함수 오버라이딩
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -109,19 +134,27 @@ class MainActivity : BasicActivity() {
                 ).show()
             }
             R.id.statistic -> {                    //통계 및 보고서를 선택했을시 (viewpager 이용해서 fragment여러개 해보는거 고려)
-                var i = Intent(this, StatisticActivity::class.java)   //회원가입창 화면으로 이동
-                i.putExtra("cnt_name", cnt_name)      //만약 내가 클래스 통해 만든 객체들을 putExtra로 보내려면 보내려는 객체 클래스(PostInfo)에 : Serializable 해줘야함. 여기선 객체아니라 ㄱㅊ
-                startActivity(i)
+
+                //통계 액티비티로 cnt값들의 name과 id값들을 각각 리스트로 담아서 보내줄거임. 그래서 spinner에서 사용자가 특정 이용자 선택하면 name과 id리스트의 같은 인덱스에 매칭시켜서 찾아주면됨
+                if(jsonarray !=null){  //서버로부터 cnt값 모두 조회성공해서 가져왔다면
+                    var i = Intent(this, StatisticActivity::class.java)   //회원가입창 화면으로 이동
+                    i.putExtra("cnt_name", cnt_name)      //만약 내가 클래스 통해 만든 객체들을 putExtra로 보내려면 보내려는 객체 클래스(PostInfo)에 : Serializable 해줘야함. 여기선 객체아니라 ㄱㅊ
+                    i.putExtra("cnt_ids", cnt_ids)
+                    startActivity(i)
+                }else{
+                    Toast.makeText(
+                        this@MainActivity,
+                         "데이터 가져오는 중이므로 잠시 기다려 주세요.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
             R.id.account -> {                    //계정정보버튼을 선택했을시
 
             }
-
         }
-
         return super.onOptionsItemSelected(item)
     }
-
 
     override fun onStart() {
         super.onStart()
@@ -130,16 +163,25 @@ class MainActivity : BasicActivity() {
         if(jsonarray==null ) {
             loaderLayout.visibility = View.VISIBLE
         }
-
-
     }
 
     //액티비티가 재실행되거나 홈버튼 눌러서 나갔다왔을때 등의 경우에 onCreate말고 이 함수가 실행됨. (이때마다 게시글들 새로고침 해주면될듯)
     //앱 처음 실행시엔 onCreate와 onResume함수가 둘다 실행되므로 중복되는 코드는 쓰지 않기
     override fun onResume() {
         super.onResume()
-        postUpdate()
 
+        //2초마다 총10번을 수시로 데이터가 서버로부터 왔는지 감시해줌. 데이터 들어왔으면  만들어줌
+        if(jsonarray==null){
+           // for(i in 1..10) {
+                Handler().postDelayed({
+                    Log.e("태그", " Handler().postDelayed 구문 들어옴")
+                    if (jsonarray != null) {
+                        loaderLayout.visibility = View.GONE
+                        Log.e("태그", " (jsonarray != null)  구문 들어옴")
+                    }
+                }, 5000)  //2초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
+           // }
+        }
 
         //다른 화면 갔다가 여기 왔을때 데이터작업 완료되었으면 로딩화면 없애줌
         if(jsonarray!=null ){
@@ -155,11 +197,9 @@ class MainActivity : BasicActivity() {
             }
         }
 
-
     } //onResume
 
-
-    //이용자 정보 cardVIew를 삭제하거나 수정하거나 만들거나 등등 했을때 다 지웠다가 다시 바뀐 jsonarray를 서버로부터 받아와서 화면에 업데이트 시켜줄거임
+    // 삭제하거나 수정하거나 만들거나 등등 했을때 다 지웠다가 다시 바뀐 jsonarray를 서버로부터 받아와서 화면에 업데이트 시켜줄거임
     private fun postUpdate() {
         if (currentuser != null) {
 
@@ -171,7 +211,7 @@ class MainActivity : BasicActivity() {
                         t: Throwable
                     ) {
                         Log.e("태그", "통신 아예 실패")
-                        //  Toast.makeText(this@MainActivity, "서버와 통신 실패하였습니다.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, "서버와 통신 실패하였습니다.", Toast.LENGTH_SHORT).show()
                     }
                     override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
                         if (response.isSuccessful) {
@@ -185,12 +225,18 @@ class MainActivity : BasicActivity() {
                             )   //cnt_name리스트도 어댑터에 보내줘서 이용자 이름을 채워주도록 할거임. 그 후 Statistic액티비티에서 spinner만들때 쓸거.
                             recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
 
-                            Log.e("태그", "모두조회 response.body()내용:" + response.body().toString())
+                            //통계 액티비티에 보내줄 MAP을 여기서 만들어줌
+                            var i = 0
+                            repeat(jsonarray!!.length()){
+                                val iObject = jsonarray!!.getJSONObject(i)
+                                cnt_name.add(iObject.getString("name"))
+                                cnt_ids.add(iObject.get("id").toString())
+                                i++
+                            }
+                            Log.e("태그", " cnt name:" +cnt_name +",  id:" +cnt_ids)
+                           // Log.e("태그", "모두조회 response.body()내용:" + response.body().toString())
                         } else {
-                            Log.e(
-                                "태그",
-                                "모두조회 실패:" + response.body().toString() + "errorbody: " + response.errorBody()
-                            )
+
                             Toast.makeText(
                                 this@MainActivity,
                                 "서버에 접근했지만 올바르지 않은 데이터를 받았습니다.",

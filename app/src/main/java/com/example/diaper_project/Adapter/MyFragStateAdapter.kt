@@ -8,8 +8,11 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.diaper_project.averageFragment
 import com.example.diaper_project.GraphFragment
 
-class MyFragStateAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
+//두번째 인자인 프래그먼트는 내가 추가해준것임. 사용자가 스피너에서 특정 이용자 선택했을때,
+//그때 액티비티에서 bundle객체 넣고 만든 프래그먼트를 여기서 받아와서 그걸로 프래그먼트 만들어 줄거임.
+class MyFragStateAdapter(fragmentActivity: FragmentActivity, fragment: Fragment? = null) : FragmentStateAdapter(fragmentActivity) {
 
+    var frag = fragment!!
 
     override fun getItemCount(): Int {  //몇개의 아이템(프래그먼트?)들을 제공해 줄건지 정하기
         return 2
@@ -18,7 +21,7 @@ class MyFragStateAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdap
     override fun createFragment(position: Int): Fragment {   //페이지마다 어떤 프래그먼트를 줄지 정하기
         return when(position){
             0-> {
-                GraphFragment()
+                frag  //즉, 이 프래그먼트는 내가 액티비티에서 만들어준, 특정이용자의 id값 정보를  bundle에 가진 그래프 프래그먼트이다.
             }
             1-> averageFragment()
             else -> GraphFragment()
