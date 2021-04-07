@@ -12,6 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.diaper_project.Class.GetAll
+import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
@@ -45,9 +46,9 @@ class GraphFragment : Fragment() {
     var server = retrofit.create(HowlService::class.java)  //서버와 만들어둔 인터페이스를 연결시켜줌.
 
     var entries = ArrayList<BarEntry>()  //겉기저귀 개수를 저장
-    var entries2 = ArrayList<BarEntry>()  //속기저귀 개수를 저장
-
+    var entries2= ArrayList<BarEntry>()  //속기저귀 개수를 저장
     var days = ArrayList<String>()  //x축 데이터에 날짜를 표기해주기 위함
+
 
 
     //아래에서 언급한 valueFormatter를 inner class로 등록해줌
@@ -145,13 +146,13 @@ class GraphFragment : Fragment() {
                             //그래프를 만들어주는 데이터셋의 리스트요소에다가 겉기저귀, 속기저귀 로그값을 추가함.
 
                             //인덱스 0번째에 값을 넣어줌. 이러면 앞에 값이 있었으면 그대로 한칸씩 밀림. 즉 이런식으로 거꾸로 저장할수있음
-                            entries.add(0,
+                            entries?.add(0,
                                 BarEntry(
                                     (i + 1).toFloat(),
                                     iObject.getInt("outer_new").toFloat()
                                 )
                             )
-                            entries2.add(0,
+                            entries2?.add(0,
                                 BarEntry(
                                     (i + 1).toFloat(),
                                     iObject.getInt("inner_new").toFloat()
@@ -187,40 +188,22 @@ class GraphFragment : Fragment() {
         if(entries.size<=0) {
             chart.visibility = View.GONE
             loaderLayout.visibility = View.VISIBLE
+            textView_clickorder.visibility = View.VISIBLE
         }
+
     }
-
-
 
     //다른 프래그먼트로 갔다가 다시 이 프래그먼트로 돌아오거나, 뭔가를 사용자가 클릭해서 상호작용할때마다 작동되는 함수인듯?
     override fun onResume() {
         super.onResume()
 
 
-        /*
-        //2초마다 총10번을 수시로 데이터가 서버로부터 왔는지 감시해줌. 데이터 들어왔으면 차트 만들어줌
-        if(loaderLayout.visibility == View.VISIBLE){
-            //for(i in 1..10) {
-                Handler().postDelayed({
-                    Log.e("태그", " Handler().postDelayed 구문 들어옴")
-                    if (entries.size>0) {
-                        chart.visibility = View.VISIBLE
-                        loaderLayout.visibility = View.GONE
-                        makeChart()
-                        Log.e("태그", " ( if (entries.size>0))  구문 들어옴")
-                    }
-                }, 5000)  //2초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
-
-           // }
-        }
-         */
-
-        
         //다른 프래그먼트 갔다가 여기 왔을때 동작완료되었다면 그래프띄워주기 위함
         if(entries.size>0){
             chart.visibility = View.VISIBLE
             loaderLayout.visibility = View.GONE
             makeChart()
+            textView_clickorder.visibility = View.INVISIBLE
         }
 
         //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
@@ -229,6 +212,7 @@ class GraphFragment : Fragment() {
                 chart.visibility = View.VISIBLE
                 loaderLayout.visibility = View.GONE
                 makeChart()
+                textView_clickorder.visibility = View.INVISIBLE
             }
         }
     }
@@ -307,12 +291,12 @@ class GraphFragment : Fragment() {
                 textColor = ContextCompat.getColor(context, R.color.colorPrimary) //라벨 색상
                 valueFormatter = MyXAxisFormatter() // 축 라벨 값 바꿔주기 위함
                 textSize = 10f // 텍스트 크기
-                labelCount = entries.size
+                labelCount = entries!!.size
             }
         }
 
         //데이터셋 추가 및 차트 띄우기
-        if (entries.size > 0 && entries2.size > 0) {
+        if (entries!!.size > 0 && entries2!!.size > 0) {
 
             var graphArr = ArrayList<IBarDataSet>()
 

@@ -41,6 +41,7 @@ lateinit var mainAdapter: MainAdapter
 var jsonarray: JSONArray? = null //여기안엔 모든 이용자들(cnt)정보가 들어감
 var currentuser: currentUser? = null //현재 로그인되어있는 회원정보
 lateinit var sp:SharedPreferences
+var server_access_success:Boolean = true  //처음에 앱 킬때 서버에서 값가져오기 실패했을때 다시 postUpdate()를 실행해주기 위한 변수
 
 class MainActivity : BasicActivity() {
 
@@ -179,10 +180,11 @@ class MainActivity : BasicActivity() {
                         loaderLayout.visibility = View.GONE
                         Log.e("태그", " (jsonarray != null)  구문 들어옴")
                     }
-                }, 5000)  //2초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
+                }, 5000)  //5초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
            // }
         }
-
+        
+        
         //다른 화면 갔다가 여기 왔을때 데이터작업 완료되었으면 로딩화면 없애줌
         if(jsonarray!=null ){
             //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
@@ -194,6 +196,9 @@ class MainActivity : BasicActivity() {
             if(jsonarray!=null ){
                 //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
                 loaderLayout.visibility = View.GONE
+            }
+            if(server_access_success==false){  //처음 앱켰을때 서버접근 실패했을때를 대비해서 다시한번 서버에 요청해줄 작업
+                postUpdate()
             }
         }
 
@@ -210,12 +215,13 @@ class MainActivity : BasicActivity() {
                         call: Call<GetAll>,
                         t: Throwable
                     ) {
+                        server_access_success=false  //이 전역변수를 변경해줌으로 다시한번 요청해줄거임
                         Log.e("태그", "통신 아예 실패")
                         Toast.makeText(this@MainActivity, "서버와 통신 실패하였습니다.", Toast.LENGTH_SHORT).show()
                     }
                     override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
                         if (response.isSuccessful) {
-
+                            server_access_success = true
                             jsonarray = JSONArray(response.body()?.result)  //어댑터에 넘겨줄 값임
 
                             //리사이클러뷰를 여기서 제대로 만들어줌.
@@ -225,18 +231,19 @@ class MainActivity : BasicActivity() {
                             )   //cnt_name리스트도 어댑터에 보내줘서 이용자 이름을 채워주도록 할거임. 그 후 Statistic액티비티에서 spinner만들때 쓸거.
                             recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
 
-                            //통계 액티비티에 보내줄 MAP을 여기서 만들어줌
-                            var i = 0
-                            repeat(jsonarray!!.length()){
-                                val iObject = jsonarray!!.getJSONObject(i)
-                                cnt_name.add(iObject.getString("name"))
-                                cnt_ids.add(iObject.get("id").toString())
-                                i++
+                            if(cnt_name.size==0){ //이 조건문 안해주면, 앱 나갔다 들어왔을때 통계 액티비티에서 스피너에 이용자 이름 두배로 계속 늘어나는 오류 생김. (앱 나갔다오면 다시 main이 onCreate되어서 이미 값 들어간 전역변수에 또 값들어와서 그러는듯)
+                                //통계 액티비티에 보내줄 리스트를 여기서 만들어줌
+                                var i = 0
+                                repeat(jsonarray!!.length()){
+                                    val iObject = jsonarray!!.getJSONObject(i)
+                                    cnt_name.add(iObject.getString("name"))
+                                    cnt_ids.add(iObject.get("id").toString())
+                                    i++
+                                }
+                                Log.e("태그", " cnt name:" +cnt_name +",  id:" +cnt_ids)
                             }
-                            Log.e("태그", " cnt name:" +cnt_name +",  id:" +cnt_ids)
-                           // Log.e("태그", "모두조회 response.body()내용:" + response.body().toString())
                         } else {
-
+                            server_access_success=false  //이 전역변수를 변경해줌으로 다시한번 요청해줄거임
                             Toast.makeText(
                                 this@MainActivity,
                                 "서버에 접근했지만 올바르지 않은 데이터를 받았습니다.",
