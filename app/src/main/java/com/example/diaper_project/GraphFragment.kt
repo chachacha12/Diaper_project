@@ -49,7 +49,7 @@ class GraphFragment : Fragment() {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     var server = retrofit.create(HowlService::class.java)  //서버와 만들어둔 인터페이스를 연결시켜줌.
-
+    lateinit var id:String //액티비티에서 보낸 cnt id값임
     var entries = ArrayList<BarEntry>()  //겉기저귀 개수를 저장
     var entries2= ArrayList<BarEntry>()  //속기저귀 개수를 저장
     var days = ArrayList<String>()  //x축 데이터에 날짜를 표기해주기 위함
@@ -76,9 +76,7 @@ class GraphFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,7 +85,6 @@ class GraphFragment : Fragment() {
     ): View? {
 
         //액티비티에서 보낸 cnt id값을 여기서 받기
-        var id:String
         if (arguments != null){
             Log.e("태그","arguments: "+arguments)
             id = arguments!!.getString("cnt_id").toString()
@@ -97,7 +94,6 @@ class GraphFragment : Fragment() {
             id = "2yIBG0kMlHBGngM6I02L"  //데이터를 못받아오면 김명규id로 초기화
         }
 
-
         if (savedInstanceState != null) {  //이 프래그먼트가 한번이상 실행되었으면 데이터 상태 유지를 위해..
             entries =
                 savedInstanceState?.getParcelableArrayList<BarEntry>("entries") as java.util.ArrayList<BarEntry>
@@ -105,97 +101,7 @@ class GraphFragment : Fragment() {
                 savedInstanceState?.getParcelableArrayList<BarEntry>("entries2") as java.util.ArrayList<BarEntry>
             Log.e("태그", "savedInstanceState에 값 있는거확인: " + entries)
         } else {  //처음 앱 실행했을때
-
-            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
-            val cal = Calendar.getInstance()
-            cal.time = Date()
-            val createdAt: String = simpleDateFormat.format(cal.time)
-            cal.add(Calendar.DATE, -7)
-            val sevendaysAgo = simpleDateFormat.format(cal.time)
-
-            //Statistic_LogAdapter에 로그 객체로 만들어 보내줄 값들. 로그 리사이클러뷰를 만들기위해
-            var time:String
-            var inner_opened:Number
-            var inner_new:Number
-            var outer_opened:Number
-            var outer_new:Number
-            var created_by:String
-            var modified_by:String
-            var log: log
-
-            //서버로부터 특정기간 이용자별 로그를 페이지네이션해서 특정개수만 가져옴.size값으로 조절
-            server.getLog_period_Request(
-                "Bearer " + currentuser?.access_token,
-                id,
-                0,
-                7,
-                sevendaysAgo,
-                createdAt
-            ).enqueue(object : Callback<GetAll> {
-                override fun onFailure(
-                    call: Call<GetAll>,
-                    t: Throwable
-                ) {  //object로 받아옴. 서버에서 받은 object모델과 맞지 않으면 실패함수로 빠짐
-                    Log.e("태그", "통신 아예 실패")
-                }
-
-
-                @RequiresApi(Build.VERSION_CODES.O)
-                override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
-                    if (response.isSuccessful) {
-
-                        val jsonArray = JSONArray(response.body()?.result)
-                        Log.e(
-                            "태그",
-                            "이용자 기간 로그리스트 조회성공:" + jsonArray + "   jsonArray.length(): " + jsonArray.length()
-                        )
-
-                        //간단한 날짜로 변경해주려고
-                        var parser:SimpleDateFormat
-                        var formatter:SimpleDateFormat
-                        var output:String
-                        var i = 0
-                        repeat(jsonArray.length()) {
-                            val iObject = jsonArray.getJSONObject(i)
-
-                            //받아온 각각의 로그값들을 로그객체로 만들어서 logArray안에 넣어줌. 어댑터 클래스 인자로 보내줄거임
-                            time = iObject.getString("time")
-                            inner_opened = iObject.getInt("inner_opened")
-                            inner_new = iObject.getInt("inner_new")
-                            outer_opened= iObject.getInt("outer_opened")
-                            outer_new= iObject.getInt("outer_new")
-                            created_by= iObject.getString("created_by")
-                            modified_by = iObject.getString("modified_by")
-                            log = log(id,time,inner_opened, inner_new, outer_opened, outer_new,"코멘트없음", created_by, modified_by)
-                            logArray.add(log)
-
-                            //그래프를 만들어주는 데이터셋의 리스트요소에다가 겉기저귀, 속기저귀 로그값을 추가함.
-                            //인덱스 0번째에 값을 넣어줌. 이러면 앞에 값이 있었으면 그대로 한칸씩 밀림. 즉 이런식으로 거꾸로 저장할수있음
-                            entries?.add(0,
-                                BarEntry(
-                                    (i + 1).toFloat(),
-                                    iObject.getInt("outer_new").toFloat()
-                                )
-                            )
-                            entries2?.add(0,
-                                BarEntry(
-                                    (i + 1).toFloat(),
-                                    iObject.getInt("inner_new").toFloat()
-                                )
-                            )
-                            //가져온 날짜값을 다른 패턴으로 변환해서 그래프의 x축에 띄워줄거임
-                            parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                            formatter = SimpleDateFormat("MM/dd")
-                            output = formatter.format(parser.parse(iObject.getString("time")  ))
-                            days.add(0, output)  //days 리스트안에 저장.
-                            i++
-                        }
-                        Log.e("태그","logArray생성완료:  "+logArray)
-                    } else {
-                        Log.e("태그", "기간 로그 조회실패" + response.body().toString())
-                    }
-                }
-            })
+            fragUpdate() //서버로부터 로그값들 가져오고, 그래프와 리사이클러뷰 만드는 재료 리스트들 초기화해줌
         }
         return  inflater.inflate(R.layout.fragment_graph, container, false)
     }
@@ -210,34 +116,139 @@ class GraphFragment : Fragment() {
     //인터페이스 객체를 어댑터말고 액티비티에 구현해둬야하는 이유는 onResume함수 등이 있어서 게시글 업데이트를 해줄수 있어서?
     //인터페이스를 구현한 익명객체를 생성해서 사용할거임. 그리고 이걸 어댑터에 인자로 넣어주면 어댑터에서도 사용가능.
     val onLogListener = object : OnLogListener {
-        override fun onDelete(position: Int) {        //postList상에서의 게시글 위치값을 받아서 지워줄거임
-
-
+        override fun onDelete(position: Int) {
+            logArray.get(position).id  //특정위치의 로그 id값
             //로그삭제 로직
-            server.deleteLogRequest("Bearer " + currentuser?.access_token, "y1HBUq9LmUbrhhWDvLYz")
+            server.deleteLogRequest("Bearer " + currentuser?.access_token,  logArray.get(position).id!!)
                 .enqueue(object : Callback<success> {
                     override fun onFailure(call: Call<success>, t: Throwable) {
                     }
-
                     override fun onResponse(call: Call<success>, response: Response<success>) {
                         if (response.isSuccessful) {
-                            Log.e("태그   로그 삭제성공: ", response.body()?.succeed.toString())
+                            fragUpdate()  //다시 새로 리사이클러뷰와 그래프를 만들거임, 즉 갱신해줄거임
+                            Toast.makeText(activity, "선택한 기록을 삭제하였습니다.",Toast.LENGTH_SHORT).show()
+                            //onStart()함수와 같은 작업(서버로부터 데이터 다 안가져왔으면 로딩화면 보여줌)
+                            if(entries.size<=0) {
+                                LinearLayout_record.visibility = View.INVISIBLE //로그들 보여주는 리사이클러뷰를 가려줌
+                                chart.visibility = View.GONE
+                                loaderLayout.visibility = View.VISIBLE
+                                textView_clickorder.visibility = View.VISIBLE
+                            }
                         } else {
+                            Toast.makeText(activity, "기록 삭제 실패.",Toast.LENGTH_SHORT).show()
                             Log.e("태그   로그 삭제실패: ", response.body()?.succeed.toString())
                         }
                     }
                 })
-
-
-
-
         }
-
         //게시글 수정작업
         override fun onModify(position: Int) {
 
         }
     }
+
+    //앱 처음 시작했을때나 로그를 수정, 삭제 해서 화면상에서 업데이트 해줄때 씀
+    fun fragUpdate(){
+
+        logArray.clear()
+        entries.clear()
+        entries2.clear()
+        days.clear()
+
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
+        val cal = Calendar.getInstance()
+        cal.time = Date()
+        val createdAt: String = simpleDateFormat.format(cal.time)
+        cal.add(Calendar.DATE, -7)
+        val sevendaysAgo = simpleDateFormat.format(cal.time)
+
+        //Statistic_LogAdapter에 로그 객체로 만들어 보내줄 값들. 로그 리사이클러뷰를 만들기위해
+        var time:String
+        var inner_opened:Number
+        var inner_new:Number
+        var outer_opened:Number
+        var outer_new:Number
+        var created_by:String
+        var modified_by:String
+        var log_id:String
+        var log: log
+
+        //서버로부터 특정기간 이용자별 로그를 페이지네이션해서 특정개수만 가져옴.size값으로 조절
+        server.getLog_period_Request(
+            "Bearer " + currentuser?.access_token,
+            id,
+            0,
+            7,
+            sevendaysAgo,
+            createdAt
+        ).enqueue(object : Callback<GetAll> {
+            override fun onFailure(
+                call: Call<GetAll>,
+                t: Throwable
+            ) {  //object로 받아옴. 서버에서 받은 object모델과 맞지 않으면 실패함수로 빠짐
+                Log.e("태그", "통신 아예 실패")
+            }
+
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
+                if (response.isSuccessful) {
+
+                    val jsonArray = JSONArray(response.body()?.result)
+                    Log.e(
+                        "태그",
+                        "이용자 기간 로그리스트 조회성공:" + jsonArray + "   jsonArray.length(): " + jsonArray.length()
+                    )
+
+                    //간단한 날짜로 변경해주려고
+                    var parser:SimpleDateFormat
+                    var formatter:SimpleDateFormat
+                    var output:String
+                    var i = 0
+
+                    repeat(jsonArray.length()) {
+                        val iObject = jsonArray.getJSONObject(i)
+
+                        //받아온 각각의 로그값들을 로그객체로 만들어서 logArray안에 넣어줌. 어댑터 클래스 인자로 보내줄거임
+                        time = iObject.getString("time")
+                        inner_opened = iObject.getInt("inner_opened")
+                        inner_new = iObject.getInt("inner_new")
+                        outer_opened= iObject.getInt("outer_opened")
+                        outer_new= iObject.getInt("outer_new")
+                        created_by= iObject.getString("created_by")
+                        modified_by = iObject.getString("modified_by")
+                        log_id = iObject.get("id").toString()  //로그의 id값 가져옴. 이를 통해 로그삭제, 수정 해줄거임
+                        log = log(id,time,inner_opened, inner_new, outer_opened, outer_new,"코멘트없음", created_by, modified_by, log_id)
+                        logArray.add(log)
+
+                        //그래프를 만들어주는 데이터셋의 리스트요소에다가 겉기저귀, 속기저귀 로그값을 추가함.
+                        //인덱스 0번째에 값을 넣어줌. 이러면 앞에 값이 있었으면 그대로 한칸씩 밀림. 즉 이런식으로 거꾸로 저장할수있음
+                        entries?.add(0,
+                            BarEntry(
+                                (i + 1).toFloat(),
+                                iObject.getInt("outer_new").toFloat()
+                            )
+                        )
+                        entries2?.add(0,
+                            BarEntry(
+                                (i + 1).toFloat(),
+                                iObject.getInt("inner_new").toFloat()
+                            )
+                        )
+                        //가져온 날짜값을 다른 패턴으로 변환해서 그래프의 x축에 띄워줄거임
+                        parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                        formatter = SimpleDateFormat("MM/dd")
+                        output = formatter.format(parser.parse(iObject.getString("time")  ))
+                        days.add(0, output)  //days 리스트안에 저장.
+                        i++
+                    }
+                    Log.e("태그","logArray생성완료:  "+logArray)
+                } else {
+                    Log.e("태그", "기간 로그 조회실패" + response.body().toString())
+                }
+            }
+        })
+    }
+
 
     //리사이클러뷰를 여기서 제대로 만들어줌.
     fun makerecyclerView(){
@@ -257,6 +268,7 @@ class GraphFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+
         //로딩화면 보여주기
         if(entries.size<=0) {
             LinearLayout_record.visibility = View.INVISIBLE //로그들 보여주는 리사이클러뷰를 가려줌
@@ -274,6 +286,7 @@ class GraphFragment : Fragment() {
 
         //다른 프래그먼트 갔다가 여기 왔을때 동작완료되었다면 그래프띄워주기 위함
         if(entries.size>0){
+            //Statistic_LogAdapter.notifyDataSetChanged()
             makerecyclerView()  //로그 리사이클러뷰 생성
             chart.visibility = View.VISIBLE
             LinearLayout_record.visibility = View.VISIBLE
@@ -285,6 +298,7 @@ class GraphFragment : Fragment() {
         //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
         loaderLayout.setOnClickListener {
             if(entries.size>0){
+                //Statistic_LogAdapter.notifyDataSetChanged()
                 makerecyclerView()  //로그 리사이클러뷰 생성
                 chart.visibility = View.VISIBLE
                 LinearLayout_record.visibility = View.VISIBLE
