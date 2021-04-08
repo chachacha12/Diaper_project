@@ -6,31 +6,25 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.ArrayMap
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.diaper_project.Adapter.MainAdapter
 import com.example.diaper_project.Class.GetAll
 import com.example.diaper_project.Class.currentUser
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_graph.*
 import kotlinx.android.synthetic.main.view_loader.*
 import org.json.JSONArray
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
-import java.util.concurrent.Delayed
 
 
 var cnt_name =  ArrayList<String>()  //모든 이용자 이름을 저장해둔 리스트. StatisticActivity에서 spinner만들어줄때 쓰려고.
@@ -217,7 +211,7 @@ class MainActivity : BasicActivity() {
                     ) {
                         server_access_success=false  //이 전역변수를 변경해줌으로 다시한번 요청해줄거임
                         Log.e("태그", "통신 아예 실패")
-                        Toast.makeText(this@MainActivity, "서버와 통신 실패하였습니다.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, "서버와 통신 실패하였습니다. 화면을 터치해서 데이터를 다시 가져와주세요.", Toast.LENGTH_LONG).show()
                     }
                     override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
                         if (response.isSuccessful) {

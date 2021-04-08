@@ -2,8 +2,9 @@ package com.example.diaper_project
 
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
+import android.provider.DocumentsContract
 import android.util.Log
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +12,11 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.diaper_project.Adapter.MainAdapter
+import com.example.diaper_project.Adapter.Statistic_LogAdapter
 import com.example.diaper_project.Class.GetAll
-import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
@@ -21,6 +25,7 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_graph.*
 import kotlinx.android.synthetic.main.view_loader.*
 import org.json.JSONArray
@@ -30,8 +35,6 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -48,8 +51,7 @@ class GraphFragment : Fragment() {
     var entries = ArrayList<BarEntry>()  //겉기저귀 개수를 저장
     var entries2= ArrayList<BarEntry>()  //속기저귀 개수를 저장
     var days = ArrayList<String>()  //x축 데이터에 날짜를 표기해주기 위함
-
-
+    lateinit var Statistic_LogAdapter: Statistic_LogAdapter  //리사이클러뷰에 쓸 어댑터
 
     //아래에서 언급한 valueFormatter를 inner class로 등록해줌
     inner class MyXAxisFormatter : ValueFormatter(){
@@ -59,8 +61,6 @@ class GraphFragment : Fragment() {
             return days.getOrNull(value.toInt()-1) ?: value.toString()
         }
     }
-
-
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -92,7 +92,6 @@ class GraphFragment : Fragment() {
             id = "2yIBG0kMlHBGngM6I02L"  //데이터를 못받아오면 김명규id로 초기화
         }
 
-
         if (savedInstanceState != null) {  //이 프래그먼트가 한번이상 실행되었으면 데이터 상태 유지를 위해..
             entries =
                 savedInstanceState?.getParcelableArrayList<BarEntry>("entries") as java.util.ArrayList<BarEntry>
@@ -107,7 +106,6 @@ class GraphFragment : Fragment() {
             val createdAt: String = simpleDateFormat.format(cal.time)
             cal.add(Calendar.DATE, -7)
             val sevendaysAgo = simpleDateFormat.format(cal.time)
-
 
             //서버로부터 특정기간 이용자별 로그를 페이지네이션해서 특정개수만 가져옴.size값으로 조절
             server.getLog_period_Request(
@@ -158,7 +156,6 @@ class GraphFragment : Fragment() {
                                     iObject.getInt("inner_new").toFloat()
                                 )
                             )
-
                             //가져온 날짜값을 다른 패턴으로 변환해서 그래프의 x축에 띄워줄거임
                             parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                             formatter = SimpleDateFormat("MM/dd")
@@ -167,16 +164,52 @@ class GraphFragment : Fragment() {
                             days.add(0, output)  //days 리스트안에 저장.
                             i++
                         }
-
                     } else {
                         Log.e("태그", "기간 로그 조회실패" + response.body().toString())
                     }
-
                 }
             })
         }
         return  inflater.inflate(R.layout.fragment_graph, container, false)
     }
+
+    //프래그먼트에서 리사이클러뷰를 만들땐 꼭 onViewCreated안에서 리사이클러뷰 만들어주는 작업해주기. onCreatView에서 만들면 리사이클러뷰가 초기화가 제대로 진행 안되서 null로 되는거 같음
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        makerecyclerView()  //로그 리사이클러뷰 생성
+    }
+
+    var Array = ArrayList<String>()
+
+    fun makerecyclerView(){
+        Array.add("aaaa")
+        Array.add("bbbb")
+
+        var recyclerView = view?.findViewById<RecyclerView>(R.id.recycler_log)!!  //화면에 보일 리사이클러뷰객체
+        //리사이클러뷰를 여기서 제대로 만들어줌.
+        Statistic_LogAdapter = Statistic_LogAdapter(
+            activity!!, Array
+        )   //cnt_name리스트도 어댑터에 보내줘서 이용자 이름을 채워주도록 할거임. 그 후 Statistic액티비티에서 spinner만들때 쓸거.
+        recyclerView?.layoutManager = LinearLayoutManager(activity)         ///
+        recyclerView?.adapter = Statistic_LogAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
+        Log.e("태그", "makerecyclerView()함수 돌아감")
+    }
+
+    /*
+    //사용자가 실시간으로 게시글 삭제, 수정할때에 맞춰서 리스트 업데이트 해줄거임
+    //인터페이스 객체를 어댑터말고 액티비티에 구현해둬야하는 이유는 onResume함수 등이 있어서 게시글 업데이트를 해줄수 있어서?
+    //인터페이스를 구현한 익명객체를 생성해서 사용할거임. 그리고 이걸 어댑터에 인자로 넣어주면 어댑터에서도 사용가능.
+    val onLogListener = object : OnLogListener {
+        override fun onDelete(position: Int) {        //postList상에서의 게시글 위치값을 받아서 지워줄거임
+
+        }
+        //게시글 수정작업
+        override fun onModify(position: Int) {
+        }
+    }
+     */
+
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -186,6 +219,7 @@ class GraphFragment : Fragment() {
         super.onStart()
         //로딩화면 보여주기
         if(entries.size<=0) {
+            LinearLayout_record.visibility = View.INVISIBLE //로그들 보여주는 리사이클러뷰를 가려줌
             chart.visibility = View.GONE
             loaderLayout.visibility = View.VISIBLE
             textView_clickorder.visibility = View.VISIBLE
@@ -201,6 +235,7 @@ class GraphFragment : Fragment() {
         //다른 프래그먼트 갔다가 여기 왔을때 동작완료되었다면 그래프띄워주기 위함
         if(entries.size>0){
             chart.visibility = View.VISIBLE
+            LinearLayout_record.visibility = View.VISIBLE
             loaderLayout.visibility = View.GONE
             makeChart()
             textView_clickorder.visibility = View.INVISIBLE
@@ -210,6 +245,7 @@ class GraphFragment : Fragment() {
         loaderLayout.setOnClickListener {
             if(entries.size>0){
                 chart.visibility = View.VISIBLE
+                LinearLayout_record.visibility = View.VISIBLE
                 loaderLayout.visibility = View.GONE
                 makeChart()
                 textView_clickorder.visibility = View.INVISIBLE
