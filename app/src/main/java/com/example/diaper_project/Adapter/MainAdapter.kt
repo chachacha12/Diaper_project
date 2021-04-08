@@ -47,7 +47,6 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
 
         val mainViewHolder = MainViewHolder(cardView)  //밑의 setOnClickListener에서 사용자가 선택한 특정뷰의 위치값 알아야해서 여기서 뷰홀더객체생성
 
-
         //
         return mainViewHolder
     }
@@ -76,6 +75,7 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
 
         //UI상에 이용자들 각각 기저귀 수량 log값과 최신 생성일을 서버로부터 받아와서 띄워줄거임.
         var cnt_id = iObject.get("id").toString()  //cnt도큐먼트의 id값을 가져옴
+
 
         //이용자들의 가장 최신 log값들을 페이지네이션으로 하나씩만 가져와줌
         server.getLogListRequest("Bearer " + currentuser?.access_token, cnt_id, 0, 1)
@@ -164,7 +164,7 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
             cardView.timeTextView.text = "마지막 저장일: " + createdAt
 
             //서버통해 파베에 log값 저장하기
-            var log =log(cnt_id,createdAt, inner_open_number, inner_new_number, outer_open_number, outer_new_number,"코멘트없음")
+            var log =log(cnt_id,createdAt, inner_open_number, inner_new_number, outer_open_number, outer_new_number,"코멘트없음", currentuser.toString(),"")
             server.addlogResquest("Bearer " + currentuser?.access_token, log)
                 .enqueue(object : Callback<success> {
                     override fun onFailure(call: Call<success>, t: Throwable) {

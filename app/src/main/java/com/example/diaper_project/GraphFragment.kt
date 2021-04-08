@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.diaper_project.Adapter.MainAdapter
 import com.example.diaper_project.Adapter.Statistic_LogAdapter
 import com.example.diaper_project.Class.GetAll
+import com.example.diaper_project.Class.log
+import com.example.diaper_project.Class.success
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
@@ -52,6 +54,8 @@ class GraphFragment : Fragment() {
     var entries2= ArrayList<BarEntry>()  //속기저귀 개수를 저장
     var days = ArrayList<String>()  //x축 데이터에 날짜를 표기해주기 위함
     lateinit var Statistic_LogAdapter: Statistic_LogAdapter  //리사이클러뷰에 쓸 어댑터
+    var logArray = ArrayList<log>() //StatisticAdapter에 인자로 보내줄 값임. 그리고 어댑터에서 이걸로 로그 리사이클러뷰 만듬
+
 
     //아래에서 언급한 valueFormatter를 inner class로 등록해줌
     inner class MyXAxisFormatter : ValueFormatter(){
@@ -75,6 +79,7 @@ class GraphFragment : Fragment() {
 
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -92,6 +97,7 @@ class GraphFragment : Fragment() {
             id = "2yIBG0kMlHBGngM6I02L"  //데이터를 못받아오면 김명규id로 초기화
         }
 
+
         if (savedInstanceState != null) {  //이 프래그먼트가 한번이상 실행되었으면 데이터 상태 유지를 위해..
             entries =
                 savedInstanceState?.getParcelableArrayList<BarEntry>("entries") as java.util.ArrayList<BarEntry>
@@ -106,6 +112,16 @@ class GraphFragment : Fragment() {
             val createdAt: String = simpleDateFormat.format(cal.time)
             cal.add(Calendar.DATE, -7)
             val sevendaysAgo = simpleDateFormat.format(cal.time)
+
+            //Statistic_LogAdapter에 로그 객체로 만들어 보내줄 값들. 로그 리사이클러뷰를 만들기위해
+            var time:String
+            var inner_opened:Number
+            var inner_new:Number
+            var outer_opened:Number
+            var outer_new:Number
+            var created_by:String
+            var modified_by:String
+            var log: log
 
             //서버로부터 특정기간 이용자별 로그를 페이지네이션해서 특정개수만 가져옴.size값으로 조절
             server.getLog_period_Request(
@@ -122,6 +138,7 @@ class GraphFragment : Fragment() {
                 ) {  //object로 받아옴. 서버에서 받은 object모델과 맞지 않으면 실패함수로 빠짐
                     Log.e("태그", "통신 아예 실패")
                 }
+
 
                 @RequiresApi(Build.VERSION_CODES.O)
                 override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
@@ -141,8 +158,18 @@ class GraphFragment : Fragment() {
                         repeat(jsonArray.length()) {
                             val iObject = jsonArray.getJSONObject(i)
 
-                            //그래프를 만들어주는 데이터셋의 리스트요소에다가 겉기저귀, 속기저귀 로그값을 추가함.
+                            //받아온 각각의 로그값들을 로그객체로 만들어서 logArray안에 넣어줌. 어댑터 클래스 인자로 보내줄거임
+                            time = iObject.getString("time")
+                            inner_opened = iObject.getInt("inner_opened")
+                            inner_new = iObject.getInt("inner_new")
+                            outer_opened= iObject.getInt("outer_opened")
+                            outer_new= iObject.getInt("outer_new")
+                            created_by= iObject.getString("created_by")
+                            modified_by = iObject.getString("modified_by")
+                            log = log(id,time,inner_opened, inner_new, outer_opened, outer_new,"코멘트없음", created_by, modified_by)
+                            logArray.add(log)
 
+                            //그래프를 만들어주는 데이터셋의 리스트요소에다가 겉기저귀, 속기저귀 로그값을 추가함.
                             //인덱스 0번째에 값을 넣어줌. 이러면 앞에 값이 있었으면 그대로 한칸씩 밀림. 즉 이런식으로 거꾸로 저장할수있음
                             entries?.add(0,
                                 BarEntry(
@@ -160,10 +187,10 @@ class GraphFragment : Fragment() {
                             parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                             formatter = SimpleDateFormat("MM/dd")
                             output = formatter.format(parser.parse(iObject.getString("time")  ))
-
                             days.add(0, output)  //days 리스트안에 저장.
                             i++
                         }
+                        Log.e("태그","logArray생성완료:  "+logArray)
                     } else {
                         Log.e("태그", "기간 로그 조회실패" + response.body().toString())
                     }
@@ -179,36 +206,49 @@ class GraphFragment : Fragment() {
         makerecyclerView()  //로그 리사이클러뷰 생성
     }
 
-    var Array = ArrayList<String>()
-
-    fun makerecyclerView(){
-        Array.add("aaaa")
-        Array.add("bbbb")
-
-        var recyclerView = view?.findViewById<RecyclerView>(R.id.recycler_log)!!  //화면에 보일 리사이클러뷰객체
-        //리사이클러뷰를 여기서 제대로 만들어줌.
-        Statistic_LogAdapter = Statistic_LogAdapter(
-            activity!!, Array
-        )   //cnt_name리스트도 어댑터에 보내줘서 이용자 이름을 채워주도록 할거임. 그 후 Statistic액티비티에서 spinner만들때 쓸거.
-        recyclerView?.layoutManager = LinearLayoutManager(activity)         ///
-        recyclerView?.adapter = Statistic_LogAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
-        Log.e("태그", "makerecyclerView()함수 돌아감")
-    }
-
-    /*
     //사용자가 실시간으로 게시글 삭제, 수정할때에 맞춰서 리스트 업데이트 해줄거임
     //인터페이스 객체를 어댑터말고 액티비티에 구현해둬야하는 이유는 onResume함수 등이 있어서 게시글 업데이트를 해줄수 있어서?
     //인터페이스를 구현한 익명객체를 생성해서 사용할거임. 그리고 이걸 어댑터에 인자로 넣어주면 어댑터에서도 사용가능.
     val onLogListener = object : OnLogListener {
         override fun onDelete(position: Int) {        //postList상에서의 게시글 위치값을 받아서 지워줄거임
 
+
+            //로그삭제 로직
+            server.deleteLogRequest("Bearer " + currentuser?.access_token, "y1HBUq9LmUbrhhWDvLYz")
+                .enqueue(object : Callback<success> {
+                    override fun onFailure(call: Call<success>, t: Throwable) {
+                    }
+
+                    override fun onResponse(call: Call<success>, response: Response<success>) {
+                        if (response.isSuccessful) {
+                            Log.e("태그   로그 삭제성공: ", response.body()?.succeed.toString())
+                        } else {
+                            Log.e("태그   로그 삭제실패: ", response.body()?.succeed.toString())
+                        }
+                    }
+                })
+
+
+
+
         }
+
         //게시글 수정작업
         override fun onModify(position: Int) {
+
         }
     }
-     */
 
+    //리사이클러뷰를 여기서 제대로 만들어줌.
+    fun makerecyclerView(){
+        var recyclerView = view?.findViewById<RecyclerView>(R.id.recycler_log)!!  //화면에 보일 리사이클러뷰객체
+        Statistic_LogAdapter = Statistic_LogAdapter(
+            activity!!, logArray, onLogListener
+        )   //cnt_name리스트도 어댑터에 보내줘서 이용자 이름을 채워주도록 할거임. 그 후 Statistic액티비티에서 spinner만들때 쓸거.
+        recyclerView?.layoutManager = LinearLayoutManager(activity)         ///
+        recyclerView?.adapter = Statistic_LogAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
+        Log.e("태그", "makerecyclerView()함수 돌아감"+ "logArray: "+logArray)
+    }
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -234,6 +274,7 @@ class GraphFragment : Fragment() {
 
         //다른 프래그먼트 갔다가 여기 왔을때 동작완료되었다면 그래프띄워주기 위함
         if(entries.size>0){
+            makerecyclerView()  //로그 리사이클러뷰 생성
             chart.visibility = View.VISIBLE
             LinearLayout_record.visibility = View.VISIBLE
             loaderLayout.visibility = View.GONE
@@ -244,6 +285,7 @@ class GraphFragment : Fragment() {
         //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
         loaderLayout.setOnClickListener {
             if(entries.size>0){
+                makerecyclerView()  //로그 리사이클러뷰 생성
                 chart.visibility = View.VISIBLE
                 LinearLayout_record.visibility = View.VISIBLE
                 loaderLayout.visibility = View.GONE
@@ -257,40 +299,6 @@ class GraphFragment : Fragment() {
     //차트세팅, 만들기
     fun makeChart(){
         chart.apply {
-            /*
-             description.isEnabled = true //차트 옆에 별도로 표기되는 description이다. false로 설정하여 안보이게 했다.
-             setMaxVisibleValueCount(7) // 최대 보이는 그래프 개수를 7개로 정해주었다.
-             setPinchZoom(false) // 핀치줌(두손가락으로 줌인 줌 아웃하는것) 설정
-             setDrawBarShadow(false)//그래프의 그림자
-             setDrawGridBackground(false)//격자구조 넣을건지
-             axisLeft.run { //왼쪽 축. 즉 Y방향 축을 뜻한다.
-                 axisMaximum = 101f //100 위치에 선을 그리기 위해 101f로 맥시멈을 정해주었다
-                 axisMinimum = 0f // 최소값 0
-                 granularity = 50f // 50 단위마다 선을 그리려고 granularity 설정 해 주었다.
-                 //위 설정이 20f였다면 총 5개의 선이 그려졌을 것
-                 setDrawLabels(true) // 값 적는거 허용 (0, 50, 100)
-                 setDrawGridLines(true) //격자 라인 활용
-                 setDrawAxisLine(false) // 축 그리기 설정
-                 axisLineColor = ContextCompat.getColor(context,R.color.colorPrimary) // 축 색깔 설정
-                 gridColor = ContextCompat.getColor(context,R.color.colorPrimaryDark) // 축 아닌 격자 색깔 설정
-                 textColor = ContextCompat.getColor(context,R.color.colorAccent) // 라벨 텍스트 컬러 설정
-                 textSize = 14f //라벨 텍스트 크기
-             }
-             xAxis.run {
-                 position = XAxis.XAxisPosition.BOTTOM//X축을 아래에다가 둔다.
-                 granularity = 1f // 1 단위만큼 간격 두기
-                 setDrawAxisLine(true) // 축 그림
-                 setDrawGridLines(false) // 격자
-                 textColor = ContextCompat.getColor(context,R.color.colorPrimary) //라벨 색상
-                 valueFormatter = MyXAxisFormatter() // 축 라벨 값 바꿔주기 위함
-                 textSize = 14f // 텍스트 크기
-             }
-             axisRight.isEnabled = false // 오른쪽 Y축을 안보이게 해줌.
-             setTouchEnabled(false) // 그래프 터치해도 아무 변화없게 막음
-             animateY(1000) // 밑에서부터 올라오는 애니매이션 적용
-             legend.isEnabled = false //차트 범례 설정
-
-               */
 
             //터치, Pinch 상호작용
             setScaleEnabled(false)

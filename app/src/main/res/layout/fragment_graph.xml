@@ -56,17 +56,78 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView2"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:text="시간  겉  속  등등" />
+            android:layout_height="1dp"
+            android:background="#090909" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="#FAFAFA"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:text="기준시간" />
+
+            <TextView
+                android:id="@+id/outer_textView"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:text="겉\n(개봉)"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/outer_new_textView"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:text="겉\n(미개봉)"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/inner_textView"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:text="속\n(개봉)"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/inner_new_textView"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:text="속\n(미개봉)"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/created_by_textView"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:text="작성자"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/modified_by_textView"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:text="수정자"
+                android:textSize="12sp" />
+
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_log"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </androidx.recyclerview.widget.RecyclerView>
+            android:layout_height="match_parent"/>
     </LinearLayout>
 
 

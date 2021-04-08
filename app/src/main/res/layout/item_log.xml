@@ -15,51 +15,51 @@
 
         <TextView
             android:id="@+id/time_textView"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_margin="3dp"
             android:text="기준시간" />
 
         <TextView
             android:id="@+id/outer_textView"
-            android:layout_width="wrap_content"
+            android:layout_width="35dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_margin="3dp"
             android:text="겉 (개봉)" />
 
         <TextView
             android:id="@+id/outer_new_textView"
-            android:layout_width="wrap_content"
+            android:layout_width="35dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_margin="3dp"
             android:text="TextView" />
 
         <TextView
             android:id="@+id/inner_textView"
-            android:layout_width="wrap_content"
+            android:layout_width="35dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_margin="3dp"
             android:text="TextView" />
 
         <TextView
             android:id="@+id/inner_new_textView"
-            android:layout_width="wrap_content"
+            android:layout_width="35dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_margin="3dp"
             android:text="TextView" />
 
         <TextView
-            android:id="@+id/writter_textView"
-            android:layout_width="wrap_content"
+            android:id="@+id/created_by_textView"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_margin="3dp"
             android:text="작성자" />
 
         <TextView
-            android:id="@+id/aditter_textView"
-            android:layout_width="wrap_content"
+            android:id="@+id/modified_by_textView"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_margin="3dp"
             android:text="수정자" />
 
         <androidx.cardview.widget.CardView
@@ -71,7 +71,7 @@
 
             <ImageView
                 android:id="@+id/imageView2"
-                android:layout_width="match_parent"
+                android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:layout_margin="3dp"
                 app:srcCompat="@android:drawable/ic_menu_edit" />

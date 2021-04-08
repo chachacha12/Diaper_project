@@ -50,6 +50,9 @@ interface HowlService {      //서버로 오고가는 api들을 관리해주는 
     @GET("api/logs/cnt/{cnt_id}")
     fun getLog_period_Request(@Header("Authorization")authorization:String, @Path("cnt_id") cnt_id: String, @Query("page") page: Number, @Query("size") size: Number, @Query("start") start: String, @Query("end") end: String): Call<GetAll>
 
+    //특정로그 삭제
+    @DELETE("api/logs/{log_id}")
+    fun deleteLogRequest(@Header("Authorization")authorization:String,@Path("log_id") log_id: String):Call<success>
 
 
 

@@ -23,7 +23,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Diaper"
+            android:text="Diapers"
             android:textColor="#000000"
             android:textSize="24sp"
             android:textStyle="bold|italic" />
@@ -36,7 +36,7 @@
         android:layout_width="150dp"
         android:layout_height="30dp"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="50dp"
+        android:layout_margin="30dp"
         android:background="#DADADA" />
 
     <com.google.android.material.tabs.TabLayout
