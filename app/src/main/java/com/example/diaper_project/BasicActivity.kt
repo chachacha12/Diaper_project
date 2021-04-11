@@ -14,9 +14,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 open class BasicActivity : AppCompatActivity() {
 
-
-    //lateinit var currentuser: currentUser  //모든 클래스에 넣어둠
-
     //레트로핏을 만들어줌. 서버와 연결
     var retrofit = Retrofit.Builder()
         .baseUrl("https://diapers-dungji.herokuapp.com/")

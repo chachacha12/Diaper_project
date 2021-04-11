@@ -54,6 +54,10 @@ interface HowlService {      //서버로 오고가는 api들을 관리해주는 
     @DELETE("api/logs/{log_id}")
     fun deleteLogRequest(@Header("Authorization")authorization:String,@Path("log_id") log_id: String):Call<success>
 
+    //이용자Log 정보 수정
+    @PATCH("api/logs/{log_id}")
+    fun modifiy_log(@Header("Authorization")authorization:String,@Path("log_id") log_id: String, @Body log: log) :Call<success>
+
 
 
 

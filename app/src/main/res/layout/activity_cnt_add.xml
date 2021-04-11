@@ -5,9 +5,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp"
     tools:context=".CntAddActivity">
 
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar4"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="false"
+        android:background="#009688"
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitleTextColor="#090000"
+        app:titleTextColor="#000000">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="한벗둥지 기저귀 관리 시스템 - Diapers"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+
+    </androidx.appcompat.widget.Toolbar>
 
     <TextView
         android:id="@+id/textView8"
@@ -23,6 +44,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="20dp"
         android:orientation="vertical"
         android:padding="10dp">
 
@@ -141,7 +163,7 @@
         layout="@layout/view_loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 
 </LinearLayout>

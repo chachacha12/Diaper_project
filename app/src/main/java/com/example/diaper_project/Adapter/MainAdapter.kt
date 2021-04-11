@@ -164,7 +164,7 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
             cardView.timeTextView.text = "마지막 저장일: " + createdAt
 
             //서버통해 파베에 log값 저장하기
-            var log =log(cnt_id,createdAt, inner_open_number, inner_new_number, outer_open_number, outer_new_number,"코멘트없음", currentuser.toString(),"")
+            var log =log(cnt_id,createdAt, inner_open_number, inner_new_number, outer_open_number, outer_new_number,"코멘트없음")
             server.addlogResquest("Bearer " + currentuser?.access_token, log)
                 .enqueue(object : Callback<success> {
                     override fun onFailure(call: Call<success>, t: Throwable) {

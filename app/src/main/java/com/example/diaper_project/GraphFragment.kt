@@ -1,5 +1,8 @@
 package com.example.diaper_project
 
+import android.app.Activity
+import android.content.Intent
+import android.content.Intent.getIntent
 import android.os.Build
 import android.os.Bundle
 import android.provider.DocumentsContract
@@ -73,11 +76,6 @@ class GraphFragment : Fragment() {
         outState.putParcelableArrayList("entries2", entries2)
     }
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -141,15 +139,22 @@ class GraphFragment : Fragment() {
                     }
                 })
         }
-        //게시글 수정작업
+        //로그 수정작업
         override fun onModify(position: Int) {
-
+            myStartActivity(LogModifyActivity::class.java, logArray.get(position))  //사용자가 선택한 로그를 인텐트에 실어서 보냄
         }
     }
 
+    //데이터를 실어서 특정 액티비티에 보내주는 인텐트를 함수로 만들어둠  //로그 수정작업에 씀
+    fun myStartActivity(c: Class<*>, log: log) {
+        var i = Intent(activity, c)
+        i.putExtra("log", log)  //내가 클래스 통해 만든 객체들을 putExtra로 보내려면 보내려는 객체 클래스(PostInfo)에 : Serializable 해줘야함
+        startActivityForResult(i, 100)  //다른 액티비티 갔다가 그 결과값을 다시 이 액티비티로 가져올것이다.
+    }
+
+
     //앱 처음 시작했을때나 로그를 수정, 삭제 해서 화면상에서 업데이트 해줄때 씀
     fun fragUpdate(){
-
         logArray.clear()
         entries.clear()
         entries2.clear()
@@ -207,7 +212,6 @@ class GraphFragment : Fragment() {
 
                     repeat(jsonArray.length()) {
                         val iObject = jsonArray.getJSONObject(i)
-
                         //받아온 각각의 로그값들을 로그객체로 만들어서 logArray안에 넣어줌. 어댑터 클래스 인자로 보내줄거임
                         time = iObject.getString("time")
                         inner_opened = iObject.getInt("inner_opened")
@@ -261,7 +265,6 @@ class GraphFragment : Fragment() {
         Log.e("태그", "makerecyclerView()함수 돌아감"+ "logArray: "+logArray)
     }
 
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
     }
@@ -276,13 +279,11 @@ class GraphFragment : Fragment() {
             loaderLayout.visibility = View.VISIBLE
             textView_clickorder.visibility = View.VISIBLE
         }
-
     }
 
     //다른 프래그먼트로 갔다가 다시 이 프래그먼트로 돌아오거나, 뭔가를 사용자가 클릭해서 상호작용할때마다 작동되는 함수인듯?
     override fun onResume() {
         super.onResume()
-
 
         //다른 프래그먼트 갔다가 여기 왔을때 동작완료되었다면 그래프띄워주기 위함
         if(entries.size>0){
@@ -385,6 +386,32 @@ class GraphFragment : Fragment() {
             }
         }
     } //makechart()
+
+
+    //로그 수정하기 액티비티(cntAddactivity)에 갔다오면서 받은 데이터에 따른 동작처리
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when(requestCode) {
+            100 -> {
+                when (resultCode) {
+                    Activity.RESULT_OK -> {  //로그 수정에 성공했다면
+                        fragUpdate()  //다시 새로 리사이클러뷰와 그래프를 만들거임, 즉 갱신해줄거임
+                        //onStart()함수와 같은 작업(서버로부터 데이터 다 안가져왔으면 로딩화면 보여줌)
+                        if(entries.size<=0) {
+                            LinearLayout_record.visibility = View.INVISIBLE //로그들 보여주는 리사이클러뷰를 가려줌
+                            chart.visibility = View.GONE
+                            loaderLayout.visibility = View.VISIBLE
+                            textView_clickorder.visibility = View.VISIBLE
+                        }
+                    }
+                    Activity.RESULT_CANCELED -> {
+                    }
+                }
+            }
+        }
+    }
+
 
 
 }

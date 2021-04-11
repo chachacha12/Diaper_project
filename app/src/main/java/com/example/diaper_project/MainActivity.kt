@@ -26,16 +26,17 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 
-
+//mainActivity에 있는 전역변수들은 다른 액티비티에서도 접근가능!!
 var cnt_name =  ArrayList<String>()  //모든 이용자 이름을 저장해둔 리스트. StatisticActivity에서 spinner만들어줄때 쓰려고.
 var cnt_ids =  ArrayList<String>()  //모든 이용자 id를 저장해둔 리스트. StatisticActivity에서 spinner만들어줄때 쓰려고.
 
 //전역으로 해둔 이유는 여러함수 안에서 불러와서 쓰고 싶기에. 등등
 lateinit var mainAdapter: MainAdapter
 var jsonarray: JSONArray? = null //여기안엔 모든 이용자들(cnt)정보가 들어감
-var currentuser: currentUser? = null //현재 로그인되어있는 회원정보
+var currentuser: currentUser? = null //현재 로그인되어있는 회원정보.
 lateinit var sp:SharedPreferences
 var server_access_success:Boolean = true  //처음에 앱 킬때 서버에서 값가져오기 실패했을때 다시 postUpdate()를 실행해주기 위한 변수
+
 
 class MainActivity : BasicActivity() {
 
@@ -156,6 +157,7 @@ class MainActivity : BasicActivity() {
 
         //아직 서버로부터 데이터를 못받아왔을때는 로딩화면을 보여줌
         if(jsonarray==null ) {
+            textView_clickorder2.visibility = View.VISIBLE
             loaderLayout.visibility = View.VISIBLE
         }
     }
@@ -171,6 +173,7 @@ class MainActivity : BasicActivity() {
                 Handler().postDelayed({
                     Log.e("태그", " Handler().postDelayed 구문 들어옴")
                     if (jsonarray != null) {
+                        textView_clickorder2.visibility = View.INVISIBLE
                         loaderLayout.visibility = View.GONE
                         Log.e("태그", " (jsonarray != null)  구문 들어옴")
                     }
@@ -183,6 +186,7 @@ class MainActivity : BasicActivity() {
         if(jsonarray!=null ){
             //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
             loaderLayout.visibility = View.GONE
+            textView_clickorder2.visibility = View.INVISIBLE
         }
 
         //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
@@ -190,6 +194,7 @@ class MainActivity : BasicActivity() {
             if(jsonarray!=null ){
                 //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
                 loaderLayout.visibility = View.GONE
+                textView_clickorder2.visibility = View.INVISIBLE
             }
             if(server_access_success==false){  //처음 앱켰을때 서버접근 실패했을때를 대비해서 다시한번 서버에 요청해줄 작업
                 postUpdate()
