@@ -11,6 +11,7 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -58,22 +59,59 @@ class GraphFragment : Fragment() {
     var days = ArrayList<String>()  //x축 데이터에 날짜를 표기해주기 위함
     lateinit var Statistic_LogAdapter: Statistic_LogAdapter  //리사이클러뷰에 쓸 어댑터
     var logArray = ArrayList<log>() //StatisticAdapter에 인자로 보내줄 값임. 그리고 어댑터에서 이걸로 로그 리사이클러뷰 만듬
-
+    var log_size:Int = 0  //스피너를 통해 특정기간이 정해지면 그에 맞춰서 이 변수를 초기화 해줄거임. 일주일은 7로, 1개월을 30 등..
+    lateinit var recyclerView:RecyclerView  //로그들 띄워주는 리사이클러뷰
 
     //아래에서 언급한 valueFormatter를 inner class로 등록해줌
     inner class MyXAxisFormatter : ValueFormatter(){
-
         //days = arrayOf("1차","2차","3차","4차","5차","6차","7차")
         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
             return days.getOrNull(value.toInt()-1) ?: value.toString()
         }
     }
 
+    //로그값 가져올 기간(일주, 한달, 세달)을 정하는 스피너에 이벤트처리로 달아줄 리스너를 내부클래스로 만듬.
+    inner class CustomOnItemSelectedListener: AdapterView.OnItemSelectedListener{
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+            log_size = 7   //여기 안써주고 전역변수로 그냥 7로 초기화해두면 에러남..
+        }
+
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            when(parent?.getItemAtPosition(position).toString()){
+                "일주일"->{
+                    log_size = 7
+                    uiUpdate()  //ui를 다시 업데이트 시킴
+                }
+                "1개월"->{
+                    log_size = 30
+                    uiUpdate()
+                }
+                "3개월"->{
+                    log_size = 90
+                    uiUpdate()
+                }
+            }
+        }
+    }
+
+
+    //스피너를 다른거 선택하거나 해서 데이터값이 바뀌었거나 했을때 다시 갱신시켜줌
+    fun uiUpdate(){
+        fragUpdate()  //다시 새로 리사이클러뷰와 그래프를 만들거임, 즉 갱신해줄거임
+        //onStart()함수와 같은 작업(서버로부터 데이터 다 안가져왔으면 로딩화면 보여줌)
+        if(entries.size<=0) {
+            LinearLayout_record.visibility = View.INVISIBLE //로그들 보여주는 리사이클러뷰를 가려줌
+            LinearLayout_title.visibility = View.INVISIBLE  // "한달간 기저귀 수량변화" 등의 화면 가려줌
+            chart.visibility = View.GONE
+            loaderLayout.visibility = View.VISIBLE
+            textView_clickorder.visibility = View.VISIBLE
+        }
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-
-        outState.putParcelableArrayList("entries", entries)
-        outState.putParcelableArrayList("entries2", entries2)
+        //outState.putParcelableArrayList("entries", entries)
+       // outState.putParcelableArrayList("entries2", entries2)
     }
 
     override fun onCreateView(
@@ -107,7 +145,10 @@ class GraphFragment : Fragment() {
     //프래그먼트에서 리사이클러뷰를 만들땐 꼭 onViewCreated안에서 리사이클러뷰 만들어주는 작업해주기. onCreatView에서 만들면 리사이클러뷰가 초기화가 제대로 진행 안되서 null로 되는거 같음
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        makerecyclerView()  //로그 리사이클러뷰 생성
+
+        //스피너에 내가만든 리스너 클래스 객체를 달아줌 (이제 이벤트처리 가능해짐)
+        spinner_period.onItemSelectedListener = CustomOnItemSelectedListener()
+       makerecyclerView()  //로그 리사이클러뷰 생성
     }
 
     //사용자가 실시간으로 게시글 삭제, 수정할때에 맞춰서 리스트 업데이트 해줄거임
@@ -123,15 +164,8 @@ class GraphFragment : Fragment() {
                     }
                     override fun onResponse(call: Call<success>, response: Response<success>) {
                         if (response.isSuccessful) {
-                            fragUpdate()  //다시 새로 리사이클러뷰와 그래프를 만들거임, 즉 갱신해줄거임
                             Toast.makeText(activity, "선택한 기록을 삭제하였습니다.",Toast.LENGTH_SHORT).show()
-                            //onStart()함수와 같은 작업(서버로부터 데이터 다 안가져왔으면 로딩화면 보여줌)
-                            if(entries.size<=0) {
-                                LinearLayout_record.visibility = View.INVISIBLE //로그들 보여주는 리사이클러뷰를 가려줌
-                                chart.visibility = View.GONE
-                                loaderLayout.visibility = View.VISIBLE
-                                textView_clickorder.visibility = View.VISIBLE
-                            }
+                            uiUpdate()
                         } else {
                             Toast.makeText(activity, "기록 삭제 실패.",Toast.LENGTH_SHORT).show()
                             Log.e("태그   로그 삭제실패: ", response.body()?.succeed.toString())
@@ -152,7 +186,6 @@ class GraphFragment : Fragment() {
         startActivityForResult(i, 100)  //다른 액티비티 갔다가 그 결과값을 다시 이 액티비티로 가져올것이다.
     }
 
-
     //앱 처음 시작했을때나 로그를 수정, 삭제 해서 화면상에서 업데이트 해줄때 씀
     fun fragUpdate(){
         logArray.clear()
@@ -163,9 +196,19 @@ class GraphFragment : Fragment() {
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
         val cal = Calendar.getInstance()
         cal.time = Date()
-        val createdAt: String = simpleDateFormat.format(cal.time)
-        cal.add(Calendar.DATE, -7)
-        val sevendaysAgo = simpleDateFormat.format(cal.time)
+        val createdAt: String = simpleDateFormat.format(cal.time)  //현재시각
+        val fewdaysAgo:String  //현재시각으로부터 특정기간 전의 시각
+
+        if(log_size==7){
+            cal.add(Calendar.DATE, -7)
+            fewdaysAgo = simpleDateFormat.format(cal.time)
+        }else if(log_size==30){
+            cal.add(Calendar.DATE, -30)
+            fewdaysAgo = simpleDateFormat.format(cal.time)
+        }else{
+            cal.add(Calendar.DATE, -90)
+            fewdaysAgo = simpleDateFormat.format(cal.time)
+        }
 
         //Statistic_LogAdapter에 로그 객체로 만들어 보내줄 값들. 로그 리사이클러뷰를 만들기위해
         var time:String
@@ -178,13 +221,13 @@ class GraphFragment : Fragment() {
         var log_id:String
         var log: log
 
-        //서버로부터 특정기간 이용자별 로그를 페이지네이션해서 특정개수만 가져옴.size값으로 조절
+        //서버로부터 특정기간 이용자별 로그를 페이지네이션해서 특정개수만 가져옴.size값으로 가져올 개수 조절.
         server.getLog_period_Request(
             "Bearer " + currentuser?.access_token,
             id,
             0,
-            7,
-            sevendaysAgo,
+            log_size,
+            fewdaysAgo,
             createdAt
         ).enqueue(object : Callback<GetAll> {
             override fun onFailure(
@@ -203,7 +246,6 @@ class GraphFragment : Fragment() {
                         "태그",
                         "이용자 기간 로그리스트 조회성공:" + jsonArray + "   jsonArray.length(): " + jsonArray.length()
                     )
-
                     //간단한 날짜로 변경해주려고
                     var parser:SimpleDateFormat
                     var formatter:SimpleDateFormat
@@ -253,10 +295,9 @@ class GraphFragment : Fragment() {
         })
     }
 
-
     //리사이클러뷰를 여기서 제대로 만들어줌.
     fun makerecyclerView(){
-        var recyclerView = view?.findViewById<RecyclerView>(R.id.recycler_log)!!  //화면에 보일 리사이클러뷰객체
+        recyclerView = view?.findViewById<RecyclerView>(R.id.recycler_log)!!  //화면에 보일 리사이클러뷰객체
         Statistic_LogAdapter = Statistic_LogAdapter(
             activity!!, logArray, onLogListener
         )   //cnt_name리스트도 어댑터에 보내줘서 이용자 이름을 채워주도록 할거임. 그 후 Statistic액티비티에서 spinner만들때 쓸거.
@@ -265,16 +306,13 @@ class GraphFragment : Fragment() {
         Log.e("태그", "makerecyclerView()함수 돌아감"+ "logArray: "+logArray)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
-
     override fun onStart() {
         super.onStart()
 
         //로딩화면 보여주기
         if(entries.size<=0) {
             LinearLayout_record.visibility = View.INVISIBLE //로그들 보여주는 리사이클러뷰를 가려줌
+            LinearLayout_title.visibility = View.INVISIBLE
             chart.visibility = View.GONE
             loaderLayout.visibility = View.VISIBLE
             textView_clickorder.visibility = View.VISIBLE
@@ -285,11 +323,12 @@ class GraphFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
+        Log.e("태그","onResume돌아감")
         //다른 프래그먼트 갔다가 여기 왔을때 동작완료되었다면 그래프띄워주기 위함
         if(entries.size>0){
-            //Statistic_LogAdapter.notifyDataSetChanged()
             makerecyclerView()  //로그 리사이클러뷰 생성
             chart.visibility = View.VISIBLE
+            LinearLayout_title.visibility = View.VISIBLE
             LinearLayout_record.visibility = View.VISIBLE
             loaderLayout.visibility = View.GONE
             makeChart()
@@ -299,8 +338,8 @@ class GraphFragment : Fragment() {
         //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
         loaderLayout.setOnClickListener {
             if(entries.size>0){
-                //Statistic_LogAdapter.notifyDataSetChanged()
                 makerecyclerView()  //로그 리사이클러뷰 생성
+                LinearLayout_title.visibility = View.VISIBLE
                 chart.visibility = View.VISIBLE
                 LinearLayout_record.visibility = View.VISIBLE
                 loaderLayout.visibility = View.GONE
@@ -319,7 +358,6 @@ class GraphFragment : Fragment() {
             setScaleEnabled(false)
             setTouchEnabled(true)
             setPinchZoom(true)
-
 
             //Chart가 그려질때 애니메이션
             animateXY(0, 800)
@@ -348,7 +386,7 @@ class GraphFragment : Fragment() {
                 setDrawAxisLine(true) // 축 그림
                 setDrawGridLines(false) // 격자
                 textColor = ContextCompat.getColor(context, R.color.colorPrimary) //라벨 색상
-                valueFormatter = MyXAxisFormatter() // 축 라벨 값 바꿔주기 위함
+                valueFormatter = MyXAxisFormatter() // 축 라벨 값 바꿔주기 위함         //GraphFragment.MyXAxisFormatter()원랜 이거엿음
                 textSize = 10f // 텍스트 크기
                 labelCount = entries!!.size
             }
@@ -386,7 +424,6 @@ class GraphFragment : Fragment() {
             }
         }
     } //makechart()
-
 
     //로그 수정하기 액티비티(cntAddactivity)에 갔다오면서 받은 데이터에 따른 동작처리
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

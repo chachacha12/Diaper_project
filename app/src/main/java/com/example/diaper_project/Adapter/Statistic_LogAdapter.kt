@@ -38,20 +38,16 @@ class Statistic_LogAdapter(var activity: Activity, private var myDataset: ArrayL
         viewType: Int
     ): MainViewHolder {
         val cardView: CardView = LayoutInflater.from(parent.context).inflate(R.layout.item_log , parent, false) as CardView   //item_Log에 있는 뷰들에 접근가능하게 해줌.  inflate에 들어간 레이아웃은 row파일과 같은거임.
-
         val mainViewHolder = MainViewHolder(cardView)  //밑의 setOnClickListener에서 사용자가 선택한 특정뷰의 위치값 알아야해서 여기서 뷰홀더객체생성
 
         //특정 게시글을 눌렀을때 효과
         cardView.setOnClickListener {
         }
-
-
         //게시글의 toolbar(점3개)버튼을 클릭했을때 효과
         cardView.menu.setOnClickListener {
             showPopup(it, mainViewHolder.adapterPosition)      //post.xml을 띄워줌. 밑에 있음. 구글에 android menu검색하고 developers사이트들어가서 코드 가져옴
         }
                                                          //mainViewHolder.adapterPosition을 넣어주는 이유는 사용자가 선택한 특정위치의 게시글을 삭제or수정해야 하기에.
-
         Log.e("태그", "onCreateViewHolder 돌아감")
         return mainViewHolder
     }
@@ -60,7 +56,6 @@ class Statistic_LogAdapter(var activity: Activity, private var myDataset: ArrayL
      lateinit var parser:SimpleDateFormat
      lateinit var formatter:SimpleDateFormat
      lateinit var output:String
-
 
     // 여기서 리사이클러뷰의 리스트 하나하나 가리키는 뷰홀더와 내가 주는 데이터(게시글)가 연결되어짐. 즉 리사이클러뷰 화면에 띄워짐
      //액티비티에서 게시글 업데이트 해주려고 mainAdapter.notifyDataSetChanged() 하면 이 함수만 작동함.
@@ -94,7 +89,6 @@ class Statistic_LogAdapter(var activity: Activity, private var myDataset: ArrayL
         //수정자
         var modified_by_textView = cardView.modified_by_textView
         modified_by_textView.text = myDataset.get(position).modified_by
-
     }
 
 

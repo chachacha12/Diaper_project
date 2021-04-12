@@ -19,6 +19,13 @@ class StatisticActivity  :  BasicActivity() {
     var cnt_name_list: ArrayList<String>? =null//전역변수로 둠. onCreate에서 초기화
     var cnt_ids_list: ArrayList<String>? =null //전역변수로 둠. onCreate에서 초기화
 
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
+    }
+
+
     //스피너의 항목 선택했을때 이벤트 처리를 위해서 내부 클래스에 OnItemSelectedListener를 상속받고 이 클래스의 객체를 스피너에 달아줄거임
     inner class CustomOnItemSelectedListener : AdapterView.OnItemSelectedListener{
 
@@ -58,18 +65,14 @@ class StatisticActivity  :  BasicActivity() {
     }
 
 
-
     fun init(){
         var intent = intent         //이 액티비티로 넘어온 인텐트를 받음 (메인에서 이 액티비티로 올때 cnt_name, cnt_ids 리스트 넘겨줌)
 
             if(cnt_name_list !=null){
                 cnt_name_list!!.clear()
-                Log.e("태그","clear한후 cnt_name_list: "+cnt_name_list)
                 cnt_name_list = intent.getStringArrayListExtra("cnt_name")  //넘어온 이용자들 이름값들 담어줌
-                Log.e("태그","getStringArrayListExtra한 후 cnt_name_list: "+cnt_name_list)
             }else{
                 cnt_name_list = intent.getStringArrayListExtra("cnt_name")  //넘어온 이용자들 이름값들 담어줌
-                Log.e("태그","null이라서 getStringArrayListExtra한 후 cnt_name_list: "+cnt_name_list)
             }
 
         if(cnt_ids_list !=null){
@@ -79,24 +82,6 @@ class StatisticActivity  :  BasicActivity() {
             cnt_ids_list =   intent.getStringArrayListExtra("cnt_ids") //넘어온 이용자들 id값들 담아줌
         }
 
-
-
-
-
-        /*
-        //텍스트뷰를 그래프 프래그먼트에 만들어줌. 7개만 일단.
-        for(view_id in 1..7)
-        {
-            val layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            var textView = TextView(this)
-            textView.layoutParams = layoutParams
-            textView.id = "$view_id"       //각각의 생성되는 텍스트뷰에 아이디를 줌
-            scrollView.addView(textView)
-        }
-         */
         var adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, ArrayList<String>())
 
         var i=0
@@ -104,7 +89,6 @@ class StatisticActivity  :  BasicActivity() {
             adapter.add(cnt_name_list!!.get(i))
             i++
         }
-
 
         spinner.adapter = adapter  // 스피너 객체에 바로 위에서 만든 어댑터를 달아줌 - 스피너위젯에 항목들 나열됨
         spinner.onItemSelectedListener= CustomOnItemSelectedListener() //특정 항목 클릭되었을때 이벤트가 처리. 내부클래스 만들어서 함.
