@@ -19,4 +19,18 @@ class averageFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_average, container, false)
     }
 
+
+    override fun onStart() {
+        super.onStart()
+    }
+
+
+    //프래그먼트 갱신시
+    override fun onResume() {
+        super.onResume()
+    }
+
+
+
+
 }

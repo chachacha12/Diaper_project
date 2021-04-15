@@ -20,7 +20,9 @@
             android:layout_height="wrap_content"
             android:background="#FAFAFA"
             android:entries="@array/period_arrays"
+            android:fadeScrollbars="false"
             android:gravity="right"
+            android:hapticFeedbackEnabled="false"
             android:prompt="@string/period_prompt" />
 
         <TextView
@@ -56,7 +58,8 @@
         android:layout_marginTop="40dp"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp" >
+        android:layout_marginBottom="20dp"
+        android:fadeScrollbars="true">
 
     </com.github.mikephil.charting.charts.BarChart>
 
@@ -99,7 +102,7 @@
                 android:layout_width="35dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
-                android:text="겉\n(미개봉)"
+                android:text="겉\n(미개봉팩)"
                 android:textSize="12sp" />
 
             <TextView
@@ -115,7 +118,7 @@
                 android:layout_width="35dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
-                android:text="속\n(미개봉)"
+                android:text="속\n(미개봉팩)"
                 android:textSize="12sp" />
 
             <TextView
