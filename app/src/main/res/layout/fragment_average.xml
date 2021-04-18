@@ -39,12 +39,12 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/outer_hold_average"
+                android:id="@+id/Outer_hold_average"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="left"
-                android:text="0"
+                android:text="100"
                 android:textSize="18sp" />
         </LinearLayout>
 
@@ -63,7 +63,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/inner_hold_average"
+                android:id="@+id/Inner_hold_average"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -87,7 +87,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/outer_nohold_daycount"
+                android:id="@+id/Outer_nohold_daycount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -110,7 +110,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/inner_nohold_daycount"
+                android:id="@+id/Inner_nohold_daycount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

@@ -1,7 +1,6 @@
 package com.example.diaper_project
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -13,11 +12,23 @@ import kotlinx.android.synthetic.main.activity_statistic.*
 import kotlin.collections.ArrayList
 
 
-class StatisticActivity  :  BasicActivity() {
+class StatisticActivity  :  BasicActivity(),
+    FragmentListener {
 
     var textArray = arrayListOf<String>("그래프","통계")  //tabLayout에 붙을 텍스트 들임.
     var cnt_name_list: ArrayList<String>? =null//전역변수로 둠. onCreate에서 초기화
     var cnt_ids_list: ArrayList<String>? =null //전역변수로 둠. onCreate에서 초기화
+
+    //이 액티비티에 붙힐 프래그먼트 2개를 만들어줌
+     var gfragment: GraphFragment? = null
+     var afragment: averageFragment? =null
+
+    //FragmentListener 인터페이스 상속받아서 이 함수 꼭 오버라이드 해줘야함. 프래그먼트들 통신에 사용됨
+    override fun onCommand(message: ArrayList<Double>) {
+        Log.e("태그","통계 액티비티통해서 통계프래그먼트의 display함수 실행시작은 함")
+        afragment?.display(message)
+        Log.e("태그","통계 액티비티통해서 통계프래그먼트의 display함수 실행완료")
+    }
 
 
     override fun onBackPressed() {
@@ -30,7 +41,6 @@ class StatisticActivity  :  BasicActivity() {
     inner class CustomOnItemSelectedListener : AdapterView.OnItemSelectedListener{
 
         override fun onNothingSelected(parent: AdapterView<*>?) {
-
         }
 
         //특정 이용자 선택되었을때 발생할 이벤트 작업 - 해당 이용자에 맞는 log값들을 불러와서 그래프 그리기, 통계값 구하기
@@ -39,7 +49,10 @@ class StatisticActivity  :  BasicActivity() {
 
             var i=0
             var cnt_id:String
-            var Gfragment:Fragment = GraphFragment()
+            //여기서 그래프 프래그먼트를 한번 다시 만들어주지 않으면 그래프 ui가 에러났음..
+            gfragment = null
+            gfragment = GraphFragment()
+
             repeat(cnt_name_list!!.size){
                 if(name== cnt_name_list!![i]){
                     cnt_id = cnt_ids_list!![i]  //cnt_id 변수에 사용자가 스피너에서 선택한 이용자 id값을 저장함
@@ -47,13 +60,13 @@ class StatisticActivity  :  BasicActivity() {
                     //프래그먼트로 이용자 이름에 맞는 cnt id값을 보내기
                     var bundle = Bundle()
                     bundle.putString("cnt_id", cnt_id )
-                    Gfragment.arguments = bundle
+                    gfragment!!.arguments = bundle
                     Log.e("태그"," 액티비티에서 있는 GraphFragment().arguments: "+ GraphFragment().arguments)
                 }
                  i++
             }
             //뷰페이저에 다시 프래그먼트들을 붙혀줌. 이때 어댑터에 인자를 하나 추가해서 내가 위에서 bundle넣어서 새로 만든 프래그먼트를 어댑터에 전달해줌
-            viewpager2.adapter = MyFragStateAdapter(this@StatisticActivity, Gfragment)
+            viewpager2.adapter = MyFragStateAdapter(this@StatisticActivity, gfragment, afragment)
         }
 
     }
@@ -66,6 +79,11 @@ class StatisticActivity  :  BasicActivity() {
 
 
     fun init(){
+        //프래그먼트들 여기서 초기화
+        gfragment = GraphFragment()
+        afragment = averageFragment()
+
+
         var intent = intent         //이 액티비티로 넘어온 인텐트를 받음 (메인에서 이 액티비티로 올때 cnt_name, cnt_ids 리스트 넘겨줌)
 
             if(cnt_name_list !=null){
@@ -97,7 +115,7 @@ class StatisticActivity  :  BasicActivity() {
         //뷰페이저에 내가 만든 어댑터(몇개의 프래그먼트를 붙일지와 어떤 프래그먼트를 어느 페이지에 붙일지를 정해둠)를 붙혀줌.
         //스피너에서 아무도 첨에 선택안하면 그냥 bundle객체 안가지고있는 그래프 프래그먼트를 만들어줌
         viewpager2.adapter =
-            MyFragStateAdapter(this@StatisticActivity, GraphFragment())
+            MyFragStateAdapter(this@StatisticActivity, gfragment,afragment )
 
 
         //뷰페이저2객체를 슬라이딩 할때마다 tab의 위치도 바뀌어야함. 그 둘을 동기화 해주는 클래스인 TabLayoutMediator을 이용해줌.

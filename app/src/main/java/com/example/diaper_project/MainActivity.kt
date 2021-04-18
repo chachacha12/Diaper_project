@@ -13,6 +13,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.diaper_project.Adapter.MainAdapter
@@ -36,7 +37,6 @@ var jsonarray: JSONArray? = null //여기안엔 모든 이용자들(cnt)정보�
 var currentuser: currentUser? = null //현재 로그인되어있는 회원정보.
 lateinit var sp:SharedPreferences
 var server_access_success:Boolean = true  //처음에 앱 킬때 서버에서 값가져오기 실패했을때 다시 postUpdate()를 실행해주기 위한 변수
-
 
 class MainActivity : BasicActivity() {
 

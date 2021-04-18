@@ -1,13 +1,11 @@
 package com.example.diaper_project
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
-import android.content.Intent.getIntent
 import android.os.Build
 import android.os.Bundle
-import android.provider.DocumentsContract
 import android.util.Log
-import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +16,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.diaper_project.Adapter.MainAdapter
 import com.example.diaper_project.Adapter.Statistic_LogAdapter
 import com.example.diaper_project.Class.GetAll
 import com.example.diaper_project.Class.log
@@ -31,7 +28,6 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_graph.*
 import kotlinx.android.synthetic.main.view_loader.*
 import org.json.JSONArray
@@ -43,6 +39,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.time.toDuration
 
 
 class GraphFragment : Fragment() {
@@ -61,6 +58,24 @@ class GraphFragment : Fragment() {
     var logArray = ArrayList<log>() //StatisticAdapter에 인자로 보내줄 값임. 그리고 어댑터에서 이걸로 로그 리사이클러뷰 만듬
     var log_size:Int = 0  //스피너를 통해 특정기간이 정해지면 그에 맞춰서 이 변수를 초기화 해줄거임. 일주일은 7로, 1개월을 30 등..
     lateinit var recyclerView:RecyclerView  //로그들 띄워주는 리사이클러뷰
+
+    var fragmentListener: FragmentListener? = null  //통계 프래그먼트와 통신을 위해 인터페이스 객체 선언
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if(context is FragmentListener){  //액티비티가 FragmentListener 타입이라면, (즉, 상속받았다면)
+            fragmentListener = context   //액티비티를 가져옴. (액티비티가 인터페이스를 상속받아서 가져와서 이 객체에 대입가능), 이제 액티비티에 있는 onCommand함수를 이 객체 통해 여기서도 쓸 수 있음
+        }
+    }
+
+
+    override fun onDetach() {
+        super.onDetach()
+        if(fragmentListener !=null)
+            fragmentListener = null
+    }
+
 
     //아래에서 언급한 valueFormatter를 inner class로 등록해줌
     inner class MyXAxisFormatter : ValueFormatter(){
@@ -106,12 +121,6 @@ class GraphFragment : Fragment() {
             loaderLayout.visibility = View.VISIBLE
             textView_clickorder.visibility = View.VISIBLE
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        //outState.putParcelableArrayList("entries", entries)
-       // outState.putParcelableArrayList("entries2", entries2)
     }
 
     override fun onCreateView(
@@ -251,6 +260,12 @@ class GraphFragment : Fragment() {
                     var formatter:SimpleDateFormat
                     var output:String
                     var i = 0
+                    //여기안에 순서대로 1. 겉기저귀 평균 보유량, 2. 속기저귀 평균 보유량 3. 겉 기저귀 재고 무보유 일수 4. 속기저귀 재고 무보유 일수 를 저장함
+                    var statistic_numbers = ArrayList<Double>()
+                    var outer_average_sum =0 //겉기저귀 평균 보유량 합
+                    var inner_average_sum=0  //속 기저귀 평균 보유량 합
+                    var outer_nohold_daysum=0  //겉 기저귀 재고 무보유 일수
+                    var inner_nohold_daysum=0 //속 기저귀 재고 무보유 일수
 
                     repeat(jsonArray.length()) {
                         val iObject = jsonArray.getJSONObject(i)
@@ -265,6 +280,16 @@ class GraphFragment : Fragment() {
                         log_id = iObject.get("id").toString()  //로그의 id값 가져옴. 이를 통해 로그삭제, 수정 해줄거임
                         log = log(id,time,inner_opened, inner_new, outer_opened, outer_new,"코멘트없음", created_by, modified_by, log_id)
                         logArray.add(log)
+
+                        //통계프래그먼트에 보내줘서 통계치 만들 값들 함께 생성
+                        outer_average_sum += outer_new.toInt()
+                        inner_average_sum += inner_new.toInt()
+                        if(outer_new.toInt()==0 && outer_opened.toInt()==0 ){
+                            outer_nohold_daysum++  //재고 무보유 일수를 1증가
+                        }
+                        if(inner_new.toInt()==0 && inner_opened.toInt()==0 ){
+                            inner_nohold_daysum++
+                        }
 
                         //그래프를 만들어주는 데이터셋의 리스트요소에다가 겉기저귀, 속기저귀 로그값을 추가함.
                         //인덱스 0번째에 값을 넣어줌. 이러면 앞에 값이 있었으면 그대로 한칸씩 밀림. 즉 이런식으로 거꾸로 저장할수있음
@@ -287,7 +312,16 @@ class GraphFragment : Fragment() {
                         days.add(0, output)  //days 리스트안에 저장.
                         i++
                     }
-                    Log.e("태그","logArray생성완료:  "+logArray)
+
+                    outer_average_sum/i
+
+                    //arrayList안에 위에서 구한 값들을 넣어줌
+                    statistic_numbers.add((outer_average_sum/i).toDouble() )
+                    statistic_numbers.add((inner_average_sum/i).toDouble() )
+                    statistic_numbers.add(outer_nohold_daysum.toDouble())
+                    statistic_numbers.add(inner_nohold_daysum.toDouble())
+                    Log.e("태그", "그래프 액티비티에서fragmentListener?.onCommand실행 ")
+                    fragmentListener?.onCommand(statistic_numbers)  //어떻게 보면 액티비티 객체라고 할 수 있는 fragmentListener을 이용해서 액티비티에 있는 onCommand함수를 실행
                 } else {
                     Log.e("태그", "기간 로그 조회실패" + response.body().toString())
                 }
