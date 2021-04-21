@@ -5,7 +5,6 @@ package com.example.diaper_project.Adapter
 import android.app.Activity
 import android.util.Log
 import android.view.*
-import android.view.accessibility.AccessibilityManager
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView

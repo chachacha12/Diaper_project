@@ -58,7 +58,13 @@ interface HowlService {      //서버로 오고가는 api들을 관리해주는 
     @PATCH("api/logs/{log_id}")
     fun modifiy_log(@Header("Authorization")authorization:String,@Path("log_id") log_id: String, @Body log: log) :Call<success>
 
+    //사용자 모두 조회
+    @GET("api/users")
+    fun getAllusers_Request(@Header("Authorization")authorization:String): Call<GetAll>
 
+    //사용자 삭제
+    @DELETE("api/users/{user_id}")
+    fun deleteUserRequest(@Header("Authorization")authorization:String,@Path("user_id") user_id: String):Call<success>
 
 
 

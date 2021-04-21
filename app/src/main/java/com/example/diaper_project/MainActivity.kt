@@ -75,7 +75,7 @@ class MainActivity : BasicActivity() {
                 currentuser = currentUser(name, token)
             }
 
-            var recyclerView = findViewById<RecyclerView>(R.id.recyclerView)  //화면에 보일 리사이클러뷰객체
+            //var recyclerView = findViewById<RecyclerView>(R.id.recyclerView)  //화면에 보일 리사이클러뷰객체
             recyclerView.setHasFixedSize(true)
             recyclerView.layoutManager = LinearLayoutManager(this)
         }
@@ -146,8 +146,14 @@ class MainActivity : BasicActivity() {
                 }
             }
             R.id.account -> {                    //계정정보버튼을 선택했을시
+                var i = Intent(this, UserinfoActivity::class.java)   //회원가입창 화면으로 이동
+                startActivity(i)
+            }
+            R.id.cnt_info -> {                    //이용자정보버튼을 선택했을시
 
             }
+
+
         }
         return super.onOptionsItemSelected(item)
     }
@@ -167,7 +173,7 @@ class MainActivity : BasicActivity() {
     override fun onResume() {
         super.onResume()
 
-        //2초마다 총10번을 수시로 데이터가 서버로부터 왔는지 감시해줌. 데이터 들어왔으면  만들어줌
+        // 데이터가 서버로부터 왔는지 감시해줌. 데이터 들어왔으면  만들어줌
         if(jsonarray==null){
            // for(i in 1..10) {
                 Handler().postDelayed({
@@ -177,7 +183,7 @@ class MainActivity : BasicActivity() {
                         loaderLayout.visibility = View.GONE
                         Log.e("태그", " (jsonarray != null)  구문 들어옴")
                     }
-                }, 5000)  //5초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
+                }, 4000)  //5초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
            // }
         }
         
@@ -200,7 +206,6 @@ class MainActivity : BasicActivity() {
                 postUpdate()
             }
         }
-
     } //onResume
 
     // 삭제하거나 수정하거나 만들거나 등등 했을때 다 지웠다가 다시 바뀐 jsonarray를 서버로부터 받아와서 화면에 업데이트 시켜줄거임
