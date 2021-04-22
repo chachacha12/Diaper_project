@@ -152,8 +152,6 @@ class MainActivity : BasicActivity() {
             R.id.cnt_info -> {                    //이용자정보버튼을 선택했을시
 
             }
-
-
         }
         return super.onOptionsItemSelected(item)
     }

@@ -2,13 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/account"
-        android:title="계정정보" />
+        android:title="계정 정보" />
     <item
         android:id="@+id/cnt_info"
-        android:title="이용자들 정보" />
+        android:title="이용자 정보" />
     <item
         android:id="@+id/statistic"
-        android:title="통계 및 보고서" />
+        android:title="기저귀 관리 통계" />
     <item
         android:id="@+id/logout"
         android:title="로그아웃" />

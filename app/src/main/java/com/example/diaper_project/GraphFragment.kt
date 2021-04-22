@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -57,8 +58,6 @@ class GraphFragment : Fragment() {
     lateinit var Statistic_LogAdapter: Statistic_LogAdapter  //리사이클러뷰에 쓸 어댑터
     var logArray = ArrayList<log>() //StatisticAdapter에 인자로 보내줄 값임. 그리고 어댑터에서 이걸로 로그 리사이클러뷰 만듬
     var log_size:Int = 0  //스피너를 통해 특정기간이 정해지면 그에 맞춰서 이 변수를 초기화 해줄거임. 일주일은 7로, 1개월을 30 등..
-    lateinit var recyclerView:RecyclerView  //로그들 띄워주는 리사이클러뷰
-
     var fragmentListener: FragmentListener? = null  //통계 프래그먼트와 통신을 위해 인터페이스 객체 선언
 
     override fun onAttach(context: Context) {
@@ -121,6 +120,23 @@ class GraphFragment : Fragment() {
             loaderLayout.visibility = View.VISIBLE
             textView_clickorder.visibility = View.VISIBLE
         }
+        //주로 앱 실행하고 처음 통계 액티비티 들어왔을때나 스피너로 가져올 날짜 일수 바꿀때 실행됨. 그 후엔 밑의 조건문들이 수행될 가능성 높음
+        if(entries.size<=0){
+            Handler().postDelayed({
+                Log.e("태그", " Handler().postDelayed 구문 들어옴-그래프 프래그먼트onResume에서")
+                if (entries.size>0) {
+                    //textView_clickorder2.visibility = View.INVISIBLE
+                    makerecyclerView()  //로그 리사이클러뷰 생성
+                    LinearLayout_title.visibility = View.VISIBLE
+                    chart.visibility = View.VISIBLE
+                    LinearLayout_record.visibility = View.VISIBLE
+                    loaderLayout.visibility = View.GONE
+                    makeChart()
+                    textView_clickorder.visibility = View.INVISIBLE
+                }
+            }, 3000)  //3초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
+        }
+
     }
 
     override fun onCreateView(
@@ -331,12 +347,12 @@ class GraphFragment : Fragment() {
 
     //리사이클러뷰를 여기서 제대로 만들어줌.
     fun makerecyclerView(){
-        recyclerView = view?.findViewById<RecyclerView>(R.id.recycler_log)!!  //화면에 보일 리사이클러뷰객체
+        //recycler_log= view?.findViewById<RecyclerView>(R.id.recycler_log)!!  //화면에 보일 리사이클러뷰객체
         Statistic_LogAdapter = Statistic_LogAdapter(
             activity!!, logArray, onLogListener
         )   //cnt_name리스트도 어댑터에 보내줘서 이용자 이름을 채워주도록 할거임. 그 후 Statistic액티비티에서 spinner만들때 쓸거.
-        recyclerView?.layoutManager = LinearLayoutManager(activity)         ///
-        recyclerView?.adapter = Statistic_LogAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
+        recycler_log?.layoutManager = LinearLayoutManager(activity)         ///
+        recycler_log?.adapter = Statistic_LogAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
         Log.e("태그", "makerecyclerView()함수 돌아감"+ "logArray: "+logArray)
     }
 
@@ -358,6 +374,23 @@ class GraphFragment : Fragment() {
         super.onResume()
 
         Log.e("태그","onResume돌아감")
+        //주로 앱 실행하고 처음 통계 액티비티 들어왔을때나 스피너로 가져올 날짜 일수 바꿀때 실행됨. 그 후엔 밑의 조건문들이 수행될 가능성 높음
+        if(entries.size<=0){
+            Handler().postDelayed({
+                Log.e("태그", " Handler().postDelayed 구문 들어옴-그래프 프래그먼트onResume에서")
+                if (entries.size>0) {
+                    //textView_clickorder2.visibility = View.INVISIBLE
+                    makerecyclerView()  //로그 리사이클러뷰 생성
+                    LinearLayout_title.visibility = View.VISIBLE
+                    chart.visibility = View.VISIBLE
+                    LinearLayout_record.visibility = View.VISIBLE
+                    loaderLayout.visibility = View.GONE
+                    makeChart()
+                    textView_clickorder.visibility = View.INVISIBLE
+                }
+            }, 3000)  //2초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
+        }
+
         //다른 프래그먼트 갔다가 여기 왔을때 동작완료되었다면 그래프띄워주기 위함
         if(entries.size>0){
             makerecyclerView()  //로그 리사이클러뷰 생성

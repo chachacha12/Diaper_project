@@ -57,12 +57,12 @@ class UserinfoActivity : BasicActivity() {
             // for(i in 1..10) {
             Handler().postDelayed({
                 Log.e("태그", " Handler().postDelayed 구문 들어옴")
-                if (com.example.diaper_project.jsonarray != null) {
+                if (jsonarray != null) {
                     //textView_clickorder2.visibility = View.INVISIBLE
                     loaderLayout.visibility = View.GONE
                     Log.e("태그", " (jsonarray != null)  구문 들어옴")
                 }
-            }, 4000)  //4초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
+            }, 2000)  //3초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
             // }
         }
 
@@ -99,6 +99,7 @@ class UserinfoActivity : BasicActivity() {
         var user_id:String
 
         if (currentuser != null) {
+            loaderLayout.visibility = View.VISIBLE  //로딩화면 보여줌
 
             //사용자user 관련 get기능-모두 조회
             server.getAllusers_Request("Bearer " + currentuser!!.access_token)
@@ -126,7 +127,6 @@ class UserinfoActivity : BasicActivity() {
                                 Userid_Array.add(user_id)  //사용자 도큐먼트의 id값을 저장(삭제로직때 필요함)
                                 i++
                             }
-
                         } else {
                             Log.e(
                                 "태그",
@@ -155,7 +155,12 @@ class UserinfoActivity : BasicActivity() {
                     }
                     override fun onResponse(call: Call<success>, response: Response<success>) {
                         if (response.isSuccessful) {
-                            Log.e("태그   사용자 삭제성공: ", response.body()?.succeed.toString())
+                            UserUpdate()  //다시 리사이클러뷰 어댑터 붙이는 작업 등을 통해 화면 갱신해줌
+                            Handler().postDelayed({
+                                if (jsonarray != null) {
+                                    loaderLayout.visibility = View.GONE
+                                }
+                            }, 2000)  //2초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
                             Toast.makeText(this@UserinfoActivity, "사용자를 삭제하였습니다.",Toast.LENGTH_SHORT).show()
                         } else {
                             Log.e("태그   사용자 삭제실패: ", response.body()?.succeed.toString())
