@@ -13,8 +13,7 @@ import com.example.diaper_project.Adapter.Userinfo_Adapter
 import com.example.diaper_project.Class.GetAll
 import com.example.diaper_project.Class.log
 import com.example.diaper_project.Class.success
-import com.example.diaper_project.databinding.ActivityMainBinding
-import com.example.diaper_project.databinding.ActivityUserinfoBinding
+
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_userinfo.*
 import kotlinx.android.synthetic.main.view_loader.*
@@ -24,8 +23,6 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class UserinfoActivity : BasicActivity() {
-
-
     //전역으로 해둔 이유는 여러함수 안에서 불러와서 쓰고 싶기에. 등등
     lateinit var userinfoAdapter: Userinfo_Adapter
     var jsonarray: JSONArray? = null //여기안엔 모든 사용자들(user)정보가 들어감
