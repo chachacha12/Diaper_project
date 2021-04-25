@@ -152,5 +152,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <include
+        layout="@layout/noexisit_log"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
 
 </RelativeLayout>

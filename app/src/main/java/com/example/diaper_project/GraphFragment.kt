@@ -30,6 +30,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import kotlinx.android.synthetic.main.fragment_graph.*
+import kotlinx.android.synthetic.main.noexisit_log.*
 import kotlinx.android.synthetic.main.view_loader.*
 import org.json.JSONArray
 import retrofit2.Call
@@ -106,7 +107,7 @@ class GraphFragment : Fragment() {
             }
         }
     }
-    
+
     //스피너를 다른거 선택하거나 해서 데이터값이 바뀌었거나 했을때 다시 갱신시켜줌
     fun uiUpdate(){
         fragUpdate()  //다시 새로 리사이클러뷰와 그래프를 만들거임, 즉 갱신해줄거임
@@ -260,78 +261,84 @@ class GraphFragment : Fragment() {
             override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
                 if (response.isSuccessful) {
 
-                    val jsonArray = JSONArray(response.body()?.result)
-                    Log.e(
-                        "태그",
-                        "이용자 기간 로그리스트 조회성공:" + jsonArray + "   jsonArray.length(): " + jsonArray.length()
-                    )
-                    //간단한 날짜로 변경해주려고
-                    var parser:SimpleDateFormat
-                    var formatter:SimpleDateFormat
-                    var output:String
-                    var i = 0
-                    //여기안에 순서대로 1. 겉기저귀 평균 보유량, 2. 속기저귀 평균 보유량 3. 겉 기저귀 재고 무보유 일수 4. 속기저귀 재고 무보유 일수 를 저장함
-                    var statistic_numbers = ArrayList<Double>()
-                    var outer_average_sum =0 //겉기저귀 평균 보유량 합
-                    var inner_average_sum=0  //속 기저귀 평균 보유량 합
-                    var outer_nohold_daysum=0  //겉 기저귀 재고 무보유 일수
-                    var inner_nohold_daysum=0 //속 기저귀 재고 무보유 일수
+                    var jsonArray = JSONArray(response.body()?.result)
 
-                    repeat(jsonArray.length()) {
-                        val iObject = jsonArray.getJSONObject(i)
-                        //받아온 각각의 로그값들을 로그객체로 만들어서 logArray안에 넣어줌. 어댑터 클래스 인자로 보내줄거임
-                        time = iObject.getString("time")
-                        inner_opened = iObject.getInt("inner_opened")
-                        inner_new = iObject.getInt("inner_new")
-                        outer_opened= iObject.getInt("outer_opened")
-                        outer_new= iObject.getInt("outer_new")
-                        created_by= iObject.getString("created_by")
-                        modified_by = iObject.getString("modified_by")
-                        log_id = iObject.get("id").toString()  //로그의 id값 가져옴. 이를 통해 로그삭제, 수정 해줄거임
-                        log = log(id,time,inner_opened, inner_new, outer_opened, outer_new,"코멘트없음", created_by, modified_by, log_id)
-                        logArray.add(log)
+                    if(jsonArray.length()==0){  //이용자를 처음 생성해서 LOG기록이 하나도 없을때
+                        noexist_log_layout.visibility=View.VISIBLE
+                    }else{  //log기록이 있을때
+                        if( noexist_log_layout.visibility==View.VISIBLE) //기록이 존재하지 않습니다. 띄워주는 layout을 가려줌
+                            noexist_log_layout.visibility=View.GONE
 
-                        //통계프래그먼트에 보내줘서 통계치 만들 값들 함께 생성
-                        outer_average_sum += outer_new.toInt()
-                        inner_average_sum += inner_new.toInt()
-                        if(outer_new.toInt()==0 && outer_opened.toInt()==0 ){
-                            outer_nohold_daysum++  //재고 무보유 일수를 1증가
-                        }
-                        if(inner_new.toInt()==0 && inner_opened.toInt()==0 ){
-                            inner_nohold_daysum++
-                        }
-
-                        //그래프를 만들어주는 데이터셋의 리스트요소에다가 겉기저귀, 속기저귀 로그값을 추가함.
-                        //인덱스 0번째에 값을 넣어줌. 이러면 앞에 값이 있었으면 그대로 한칸씩 밀림. 즉 이런식으로 거꾸로 저장할수있음
-                        entries?.add(0,
-                            BarEntry(
-                                (i + 1).toFloat(),
-                                iObject.getInt("outer_new").toFloat()
-                            )
+                        Log.e(
+                            "태그",
+                            "이용자 기간 로그리스트 조회성공:" + jsonArray + "   jsonArray.length(): " + jsonArray.length()
                         )
-                        entries2?.add(0,
-                            BarEntry(
-                                (i + 1).toFloat(),
-                                iObject.getInt("inner_new").toFloat()
+                        //간단한 날짜로 변경해주려고
+                        var parser:SimpleDateFormat
+                        var formatter:SimpleDateFormat
+                        var output:String
+                        var i = 0
+                        //여기안에 순서대로 1. 겉기저귀 평균 보유량, 2. 속기저귀 평균 보유량 3. 겉 기저귀 재고 무보유 일수 4. 속기저귀 재고 무보유 일수 를 저장함
+                        var statistic_numbers = ArrayList<Double>()
+                        var outer_average_sum =0 //겉기저귀 평균 보유량 합
+                        var inner_average_sum=0  //속 기저귀 평균 보유량 합
+                        var outer_nohold_daysum=0  //겉 기저귀 재고 무보유 일수
+                        var inner_nohold_daysum=0 //속 기저귀 재고 무보유 일수
+
+                        repeat(jsonArray.length()) {
+                            val iObject = jsonArray.getJSONObject(i)
+                            //받아온 각각의 로그값들을 로그객체로 만들어서 logArray안에 넣어줌. 어댑터 클래스 인자로 보내줄거임
+                            time = iObject.getString("time")
+                            inner_opened = iObject.getInt("inner_opened")
+                            inner_new = iObject.getInt("inner_new")
+                            outer_opened= iObject.getInt("outer_opened")
+                            outer_new= iObject.getInt("outer_new")
+                            created_by= iObject.getString("created_by")
+                            modified_by = iObject.getString("modified_by")
+                            log_id = iObject.get("id").toString()  //로그의 id값 가져옴. 이를 통해 로그삭제, 수정 해줄거임
+                            log = log(id,time,inner_opened, inner_new, outer_opened, outer_new,"코멘트없음", created_by, modified_by, log_id)
+                            logArray.add(log)
+
+                            //통계프래그먼트에 보내줘서 통계치 만들 값들 함께 생성
+                            outer_average_sum += outer_new.toInt()
+                            inner_average_sum += inner_new.toInt()
+                            if(outer_new.toInt()==0 && outer_opened.toInt()==0 ){
+                                outer_nohold_daysum++  //재고 무보유 일수를 1증가
+                            }
+                            if(inner_new.toInt()==0 && inner_opened.toInt()==0 ){
+                                inner_nohold_daysum++
+                            }
+
+                            //그래프를 만들어주는 데이터셋의 리스트요소에다가 겉기저귀, 속기저귀 로그값을 추가함.
+                            //인덱스 0번째에 값을 넣어줌. 이러면 앞에 값이 있었으면 그대로 한칸씩 밀림. 즉 이런식으로 거꾸로 저장할수있음
+                            entries?.add(0,
+                                BarEntry(
+                                    (i + 1).toFloat(),
+                                    iObject.getInt("outer_new").toFloat()
+                                )
                             )
-                        )
-                        //가져온 날짜값을 다른 패턴으로 변환해서 그래프의 x축에 띄워줄거임
-                        parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                        formatter = SimpleDateFormat("MM/dd")
-                        output = formatter.format(parser.parse(iObject.getString("time")  ))
-                        days.add(0, output)  //days 리스트안에 저장.
-                        i++
+                            entries2?.add(0,
+                                BarEntry(
+                                    (i + 1).toFloat(),
+                                    iObject.getInt("inner_new").toFloat()
+                                )
+                            )
+                            //가져온 날짜값을 다른 패턴으로 변환해서 그래프의 x축에 띄워줄거임
+                            parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                            formatter = SimpleDateFormat("MM/dd")
+                            output = formatter.format(parser.parse(iObject.getString("time")  ))
+                            days.add(0, output)  //days 리스트안에 저장.
+                            i++
+                        }
+                        outer_average_sum/i
+                        //arrayList안에 위에서 구한 값들을 넣어줌
+                        statistic_numbers.add((outer_average_sum/i).toDouble() )
+                        statistic_numbers.add((inner_average_sum/i).toDouble() )
+                        statistic_numbers.add(outer_nohold_daysum.toDouble())
+                        statistic_numbers.add(inner_nohold_daysum.toDouble())
+                        Log.e("태그", "그래프 액티비티에서fragmentListener?.onCommand실행 ")
+                        fragmentListener?.onCommand(statistic_numbers)  //어떻게 보면 액티비티 객체라고 할 수 있는 fragmentListener을 이용해서 액티비티에 있는 onCommand함수를 실행
                     }
-
-                    outer_average_sum/i
-
-                    //arrayList안에 위에서 구한 값들을 넣어줌
-                    statistic_numbers.add((outer_average_sum/i).toDouble() )
-                    statistic_numbers.add((inner_average_sum/i).toDouble() )
-                    statistic_numbers.add(outer_nohold_daysum.toDouble())
-                    statistic_numbers.add(inner_nohold_daysum.toDouble())
-                    Log.e("태그", "그래프 액티비티에서fragmentListener?.onCommand실행 ")
-                    fragmentListener?.onCommand(statistic_numbers)  //어떻게 보면 액티비티 객체라고 할 수 있는 fragmentListener을 이용해서 액티비티에 있는 onCommand함수를 실행
                 } else {
                     Log.e("태그", "기간 로그 조회실패" + response.body().toString())
                 }
