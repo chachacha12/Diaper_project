@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.example.diaper_project.Adapter.MyFragStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_statistic.*
+import kotlinx.android.synthetic.main.activity_userinfo.*
 import kotlin.collections.ArrayList
 
 
@@ -30,13 +31,12 @@ class StatisticActivity  :  BasicActivity(),
         Log.e("태그","통계 액티비티통해서 통계프래그먼트의 display함수 실행완료")
     }
 
-
     override fun onBackPressed() {
         super.onBackPressed()
         finish()
     }
 
-
+    lateinit var cnt_id:String
     //스피너의 항목 선택했을때 이벤트 처리를 위해서 내부 클래스에 OnItemSelectedListener를 상속받고 이 클래스의 객체를 스피너에 달아줄거임
     inner class CustomOnItemSelectedListener : AdapterView.OnItemSelectedListener{
 
@@ -45,10 +45,9 @@ class StatisticActivity  :  BasicActivity(),
 
         //특정 이용자 선택되었을때 발생할 이벤트 작업 - 해당 이용자에 맞는 log값들을 불러와서 그래프 그리기, 통계값 구하기
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            var name = parent?.getItemAtPosition(position).toString()  //이렇게 하면 선택된 항목의 문자열을 가져옴 (이용자들 이름)
 
+            var name = parent?.getItemAtPosition(position).toString()  //이렇게 하면 선택된 항목의 문자열을 가져옴 (이용자들 이름)
             var i=0
-            var cnt_id:String
             //여기서 그래프 프래그먼트를 한번 다시 만들어주지 않으면 그래프 ui가 에러났음..
             gfragment = null
             gfragment = GraphFragment()
@@ -63,12 +62,17 @@ class StatisticActivity  :  BasicActivity(),
                     gfragment!!.arguments = bundle
                     Log.e("태그"," 액티비티에서 있는 GraphFragment().arguments: "+ GraphFragment().arguments)
                 }
-                 i++
+                i++
             }
             //뷰페이저에 다시 프래그먼트들을 붙혀줌. 이때 어댑터에 인자를 하나 추가해서 내가 위에서 bundle넣어서 새로 만든 프래그먼트를 어댑터에 전달해줌
             viewpager2.adapter = MyFragStateAdapter(this@StatisticActivity, gfragment, afragment)
-        }
 
+            //뷰페이저2객체를 슬라이딩 할때마다 tab의 위치도 바뀌어야함. 그 둘을 동기화 해주는 클래스인 TabLayoutMediator을 이용해줌.
+            TabLayoutMediator(tabLayout, viewpager2){
+                    tab, position -> tab.text = textArray[position]
+            }.attach()
+            Log.e("태그","뷰페이저만들어짐")
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +80,6 @@ class StatisticActivity  :  BasicActivity(),
         setContentView(R.layout.activity_statistic)
         init()
     }
-
 
     fun init(){
         //프래그먼트들 여기서 초기화
@@ -111,17 +114,21 @@ class StatisticActivity  :  BasicActivity(),
         spinner.adapter = adapter  // 스피너 객체에 바로 위에서 만든 어댑터를 달아줌 - 스피너위젯에 항목들 나열됨
         spinner.onItemSelectedListener= CustomOnItemSelectedListener() //특정 항목 클릭되었을때 이벤트가 처리. 내부클래스 만들어서 함.
 
+        cnt_id =cnt_ids_list!![0]
+        //프래그먼트로 첫번째 이용자 id값을 보내기 (아무도 선택 안했을때를 위해서)
+        var bundle = Bundle()
+        bundle.putString("cnt_id", cnt_id )
+        gfragment!!.arguments = bundle
 
-        //뷰페이저에 내가 만든 어댑터(몇개의 프래그먼트를 붙일지와 어떤 프래그먼트를 어느 페이지에 붙일지를 정해둠)를 붙혀줌.
-        //스피너에서 아무도 첨에 선택안하면 그냥 bundle객체 안가지고있는 그래프 프래그먼트를 만들어줌
-        viewpager2.adapter =
-            MyFragStateAdapter(this@StatisticActivity, gfragment,afragment )
-
-
+        /*
+        //처음에 스피너로 아무도 선택안하면
+        viewpager2.adapter = MyFragStateAdapter(this@StatisticActivity, gfragment, afragment)
+        Log.e("태그","뷰페이저, 탭 레이아웃 만들어짐")
         //뷰페이저2객체를 슬라이딩 할때마다 tab의 위치도 바뀌어야함. 그 둘을 동기화 해주는 클래스인 TabLayoutMediator을 이용해줌.
         TabLayoutMediator(tabLayout, viewpager2){
                 tab, position -> tab.text = textArray[position]
         }.attach()
+         */
 
     } //init
 

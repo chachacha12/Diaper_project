@@ -89,7 +89,6 @@ class GraphFragment : Fragment() {
         override fun onNothingSelected(parent: AdapterView<*>?) {
             log_size = 7   //여기 안써주고 전역변수로 그냥 7로 초기화해두면 에러남..
         }
-
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
             when(parent?.getItemAtPosition(position).toString()){
                 "일주일"->{
@@ -107,8 +106,7 @@ class GraphFragment : Fragment() {
             }
         }
     }
-
-
+    
     //스피너를 다른거 선택하거나 해서 데이터값이 바뀌었거나 했을때 다시 갱신시켜줌
     fun uiUpdate(){
         fragUpdate()  //다시 새로 리사이클러뷰와 그래프를 만들거임, 즉 갱신해줄거임
@@ -136,7 +134,6 @@ class GraphFragment : Fragment() {
                 }
             }, 3000)  //3초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
         }
-
     }
 
     override fun onCreateView(
@@ -150,9 +147,6 @@ class GraphFragment : Fragment() {
             Log.e("태그","arguments: "+arguments)
             id = arguments!!.getString("cnt_id").toString()
             Log.e("태그","id: "+id)
-        }else{
-            Log.e("태그","arguments: "+arguments)
-            id = "2yIBG0kMlHBGngM6I02L"  //데이터를 못받아오면 김명규id로 초기화
         }
 
         if (savedInstanceState != null) {  //이 프래그먼트가 한번이상 실행되었으면 데이터 상태 유지를 위해..
