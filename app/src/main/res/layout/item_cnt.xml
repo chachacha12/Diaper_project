@@ -22,40 +22,56 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/nameTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="이름"
+                android:textColor="#090909"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="#939393"></RelativeLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/nametextView"
+                    android:id="@+id/description_textView"
                     android:layout_width="40dp"
-                    android:layout_height="match_parent"
-                    android:text="이름: "
+                    android:layout_height="wrap_content"
+                    android:text="설명:"
                     android:textColor="#090909"
                     android:textSize="14sp" />
 
                 <TextView
-                    android:id="@+id/username"
+                    android:id="@+id/cnt_description"
+                    android:layout_width="115dp"
+                    android:layout_height="match_parent"
+                    android:text="2층 a실 이용자"
+                    android:textColor="#090909"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/birth_textView"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="생년월일:"
+                    android:textColor="#090909"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/cnt_birth"
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
-                    android:text="홍길동"
-                    android:textColor="#090909"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/idtextView"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:text="아이디: "
-                    android:textColor="#090909"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/userid"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:text="아이디"
+                    android:text="1999-01-01"
                     android:textColor="#090909"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -66,34 +82,34 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/descriptiontextView"
-                    android:layout_width="40dp"
+                    android:id="@+id/outer_textView"
+                    android:layout_width="65dp"
                     android:layout_height="wrap_content"
-                    android:text="직급: "
+                    android:text="겉기저귀 종류:"
                     android:textColor="#090909"
                     android:textSize="14sp" />
 
                 <TextView
-                    android:id="@+id/userdescription"
-                    android:layout_width="120dp"
+                    android:id="@+id/cnt_outer"
+                    android:layout_width="90dp"
                     android:layout_height="wrap_content"
-                    android:text="직급"
+                    android:text="디팬드"
                     android:textColor="#090909"
                     android:textSize="14sp" />
 
                 <TextView
-                    android:id="@+id/leveltextView"
-                    android:layout_width="60dp"
+                    android:id="@+id/inner_textView"
+                    android:layout_width="65dp"
                     android:layout_height="wrap_content"
-                    android:text="보안레벨: "
+                    android:text="속기저귀 종류:"
                     android:textColor="#090909"
                     android:textSize="14sp" />
 
                 <TextView
-                    android:id="@+id/userlevel"
-                    android:layout_width="80dp"
+                    android:id="@+id/cnt_inner"
+                    android:layout_width="75dp"
                     android:layout_height="wrap_content"
-                    android:text="level"
+                    android:text="속 디팬드"
                     android:textColor="#090909"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -103,15 +119,16 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/menu"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
             android:layout_margin="5dp"
             android:layout_weight="9"
             app:cardCornerRadius="15dp">
 
             <ImageView
                 android:id="@+id/imageView2"
-                android:layout_width="30dp"
-                android:layout_height="60dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_margin="3dp"
                 app:srcCompat="@android:drawable/ic_menu_edit" />
         </androidx.cardview.widget.CardView>

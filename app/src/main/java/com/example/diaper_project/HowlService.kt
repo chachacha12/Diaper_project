@@ -27,10 +27,6 @@ interface HowlService {      //서버로 오고가는 api들을 관리해주는 
     fun logoutRequest(@Body currentUser: currentUser):Call<success>
 
 
-    //이용자 모두조회
-    @GET("api/cnts")
-    fun getAllRequest(@Header("Authorization")authorization:String): Call<GetAll>
-
 
     //logs추가
     @POST("api/logs")
@@ -65,6 +61,14 @@ interface HowlService {      //서버로 오고가는 api들을 관리해주는 
     //사용자 삭제
     @DELETE("api/users/{user_id}")
     fun deleteUserRequest(@Header("Authorization")authorization:String,@Path("user_id") user_id: String):Call<success>
+
+    //이용자 모두조회
+    @GET("api/cnts")
+    fun getAllRequest(@Header("Authorization")authorization:String): Call<GetAll>
+
+    //이용자 삭제
+    @DELETE("api/cnts/{cnt_id}")
+    fun deleteCntRequest(@Header("Authorization")authorization:String,@Path("cnt_id") cnt_id: String):Call<success>
 
 
 

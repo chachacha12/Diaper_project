@@ -22,7 +22,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
      //cnt_name을 인자를 통해 어댑터로 보내준 이유는 어댑터에서 cnt정보를 서버에 접근할때 이 리스트안에 이용자들 이름 넣으면 나중에 통계 액티비티에서 서버에 접근 또 안해도 되어서임.
-class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var server:HowlService, var cnt_name:ArrayList<String>)  //myDataset은 cnt정보, server는 어댑터에는 없으므로 여기서 받아와서 접근해줌
+class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var server:HowlService)  //myDataset은 cnt정보, server는 어댑터에는 없으므로 여기서 받아와서 접근해줌
  : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
 

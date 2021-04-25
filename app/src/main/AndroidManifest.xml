@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UserinfoActivity"></activity>
+        <activity android:name=".CntinfoActivity"></activity>
+        <activity android:name=".UserinfoActivity" />
         <activity android:name=".LogModifyActivity" />
         <activity android:name=".StatisticActivity" />
         <activity android:name=".CntAddActivity" />

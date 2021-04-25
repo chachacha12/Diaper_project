@@ -98,7 +98,7 @@
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="----------등록된 종사자 계정 정보----------"
+                android:text="-등록된 종사자 계정 정보-"
                 android:textColor="#070707"
                 android:textSize="18sp" />
         </LinearLayout>

@@ -103,15 +103,16 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/menu"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
             android:layout_margin="5dp"
             android:layout_weight="9"
             app:cardCornerRadius="15dp">
 
             <ImageView
                 android:id="@+id/imageView2"
-                android:layout_width="30dp"
-                android:layout_height="60dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_margin="3dp"
                 app:srcCompat="@android:drawable/ic_menu_edit" />
         </androidx.cardview.widget.CardView>

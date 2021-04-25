@@ -15,8 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.diaper_project.*
 import com.example.diaper_project.Class.GetAll
 import com.example.diaper_project.Class.log
-import com.example.diaper_project.databinding.ActivityUserinfoBinding
-import com.example.diaper_project.databinding.ItemUserBinding
+import com.example.diaper_project.databinding.ItemCntBinding
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.cnt_post.view.*
 import kotlinx.android.synthetic.main.item_log.view.*
@@ -29,11 +28,13 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 //activity는 getActivity()인거임. 즉 프래그먼트의 부모 액티비티를 가져와줌.(StatisticActivity)
-class Userinfo_Adapter(var activity: Activity, private var myDataset: JSONArray, var onUserListener: OnUserListener)    //인자로 OnUserListener 인터페이스 객체를 준 이유는 어댑터안에서도 인터페이스의 onDelete 함수를 쓰기위해.
-                                        : RecyclerView.Adapter<Userinfo_Adapter.MainViewHolder>() {
+class Cntinfo_Adapter(var activity: Activity, private var myDataset: JSONArray, var onUserListener: OnUserListener)    //인자로 OnUserListener 인터페이스 객체를 준 이유는 어댑터안에서도 인터페이스의 onDelete 함수를 쓰기위해.
+                                        : RecyclerView.Adapter<Cntinfo_Adapter.MainViewHolder>() {
+
+    val birthformat=ArrayList<String>()  //생년월일 형식을 포맷해서 써줄거임. 여러 함수들 안에서 쓰려고 전역으로 둠
 
     //뷰홀더에 텍스트뷰말고 카드뷰를 넣음
-    class MainViewHolder(val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root)
+    class MainViewHolder(val binding: ItemCntBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun getItemViewType(position: Int): Int {
         return position
@@ -45,8 +46,23 @@ class Userinfo_Adapter(var activity: Activity, private var myDataset: JSONArray,
     ): MainViewHolder {
 
         //뷰바인딩
-        val binding = ItemUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemCntBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val mainViewHolder = MainViewHolder(binding)  //밑의 setOnClickListener에서 사용자가 선택한 특정뷰의 위치값 알아야해서 여기서 뷰홀더객체생성
+
+        //간단한 날짜로 변경해주려고
+        var parser:SimpleDateFormat
+        var formatter:SimpleDateFormat
+        var output:String
+        var i=0
+        repeat(myDataset!!.length()){
+            val iObject = myDataset.getJSONObject(i)
+
+            //가져온 날짜값을 다른 패턴으로 변환
+            parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+            formatter = SimpleDateFormat("yyyy년 MM월 dd일")
+            output = formatter.format(parser.parse(iObject.getString("birth")))
+            birthformat.add(output)
+        }
 
 
         //게시글의 toolbar(점3개)버튼을 클릭했을때 효과
@@ -54,8 +70,7 @@ class Userinfo_Adapter(var activity: Activity, private var myDataset: JSONArray,
             showPopup(it, mainViewHolder.adapterPosition)      //post.xml을 띄워줌. 밑에 있음. 구글에 android menu검색하고 developers사이트들어가서 코드 가져옴
         }
 
-
-                                                         //mainViewHolder.adapterPosition을 넣어주는 이유는 사용자가 선택한 특정위치의 게시글을 삭제or수정해야 하기에.
+        //mainViewHolder.adapterPosition을 넣어주는 이유는 사용자가 선택한 특정위치의 게시글을 삭제or수정해야 하기에.
         Log.e("태그", "onCreateViewHolder 돌아감")
         return mainViewHolder
     }
@@ -65,16 +80,16 @@ class Userinfo_Adapter(var activity: Activity, private var myDataset: JSONArray,
      //액티비티에서 게시글 업데이트 해주려고 mainAdapter.notifyDataSetChanged() 하면 이 함수만 작동함.
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         Log.e("태그","onBindViewHolder돌아감")
-
-
-
         with(holder){
-            val iObject = myDataset.getJSONObject(position)  //사용자 객체(user) 하나씩 순서대로 가져옴
-            binding.username.text = iObject?.getString("realname")      //사용자 이름을 가져옴
-            binding.userid.text = iObject?.getString("username")
-            binding.userdescription.text = iObject?.getString("description")
-            binding.userlevel.text = iObject?.getString("level")
+            val iObject = myDataset.getJSONObject(position)  //이용자 객체(cnt) 하나씩 순서대로 가져옴
+            binding.nameTextView.text = iObject?.getString("name")
+            binding.cntDescription.text = iObject?.getString("description")
+            binding.cntBirth.text = birthformat.get(position)
+            binding.cntOuter.text = iObject?.getString("outer_product")
+            binding.cntInner.text = iObject?.getString("inner_product")
         }
+
+
 
     }
 
@@ -95,7 +110,7 @@ class Userinfo_Adapter(var activity: Activity, private var myDataset: JSONArray,
            }
        }
        val inflater: MenuInflater = popup.menuInflater
-       inflater.inflate(R.menu.user, popup.menu)
+       inflater.inflate(R.menu.user, popup.menu)  //사용자 삭제 ui와 똑같으므로 걍 menu에서 user 똑같이 사용
        popup.show()
    }
 
