@@ -55,7 +55,6 @@ class MainActivity : BasicActivity() {
         actionBar.setDisplayShowTitleEnabled(false)  //기본 제목을 없애줍니다.
         //actionBar.setDisplayHomeAsUpEnabled(true) // 자동으로 뒤로가기 버튼을 툴바에 만들어줌
 
-
         currentuser =
             intent.getSerializableExtra("current") as currentUser?  //로그인창에서 로그인해서 여기로 왔을때, 유저정보를 여기서 받음.
         //자동로그인으로 메인 왔을땐 밑에서 currentuser정보 받을거임.

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.example.diaper_project.Class.IDcheck_Response
 import com.example.diaper_project.Class.Users
 import com.example.diaper_project.Class.currentUser
 import com.example.diaper_project.Class.success
@@ -55,27 +56,52 @@ class SignUpActivity :  BasicActivity() {
 
         if(username.length > 0 && password.length >0 && realname.length > 0 && description.length >0) {
             loaderLayout.visibility = View.VISIBLE    //로딩화면 보여줌.
-            var users = Users(username, password , realname, description)
 
-            //사용자 auth 관련 post기능-등록
-            server.postResquest(users).enqueue(object : Callback<success> {
-                override fun onFailure(call: Call<success>, t: Throwable) {
-                    loaderLayout.visibility = View.GONE         //로딩화면끔
-                    Toast.makeText(this@SignUpActivity, "서버와 통신 실패하였습니다.", Toast.LENGTH_SHORT).show()
+            //아이디중복체크
+            server.ID_check_Resquest(username)
+                .enqueue(object : Callback<IDcheck_Response> {
+                    override fun onFailure(call: Call<IDcheck_Response>, t: Throwable) {
+                        Toast.makeText(this@SignUpActivity, "서버와 통신 실패하였습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                    override fun onResponse(call: Call<IDcheck_Response>, response: Response<IDcheck_Response>) {
+                        if (response.isSuccessful) {
+                            if(response.body()?.exists==true){  //아이디중복일때
+                                Toast.makeText(this@SignUpActivity, "이미 존재하는 아이디 입니다.", Toast.LENGTH_SHORT).show()
+                                Log.e("태그",   "아이디 중복에 걸림:" + response.body()?.msg)
+                                loaderLayout.visibility = View.GONE    //로딩화면 가려줌
+                            }else{
+                                Log.e("태그",   "아이디 중복에 안걸림:" + response.body()?.msg)
+                                loaderLayout.visibility = View.GONE
 
-                }
-                override fun onResponse(call: Call<success>, response: Response<success>) {
-                    Log.e("성공",response.body().toString())
-                    Toast.makeText(this@SignUpActivity, "회원가입에 성공하였습니다. 로그인 해주세요.", Toast.LENGTH_SHORT).show()
+                                var users = Users(username, password , realname, description)
+                                //사용자 auth 관련 post기능-등록
+                                server.postResquest(users).enqueue(object : Callback<success> {
+                                    override fun onFailure(call: Call<success>, t: Throwable) {
+                                        loaderLayout.visibility = View.GONE         //로딩화면끔
+                                        Toast.makeText(this@SignUpActivity, "서버와 통신 실패하였습니다.", Toast.LENGTH_SHORT).show()
+                                    }
+                                    override fun onResponse(call: Call<success>, response: Response<success>) {
+                                        Log.e("성공",response.body().toString())
+                                        Toast.makeText(this@SignUpActivity, "회원가입에 성공하였습니다. 로그인 해주세요.", Toast.LENGTH_SHORT).show()
 
-                    var i = Intent(this@SignUpActivity, LoginActivity::class.java)    //회원가입 성공하면 바로 메인액티비티로 이동
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    startActivity(i)
-                }
-            })
+                                        var i = Intent(this@SignUpActivity, LoginActivity::class.java)    //회원가입 성공하면 바로 로그인액티비티로 이동
+                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                        startActivity(i)
+                                    }
+                                })
+                            }
+                        }
+                    }
+                })
+
         }else{   //아무것도 안친경우..
             Toast.makeText(this, "빈칸없이 입력해주세요.", Toast.LENGTH_SHORT).show()
         }
+
+
+
+
+
     }  //signup 함수
 
 

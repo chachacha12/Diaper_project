@@ -70,6 +70,10 @@ interface HowlService {      //서버로 오고가는 api들을 관리해주는 
     @DELETE("api/cnts/{cnt_id}")
     fun deleteCntRequest(@Header("Authorization")authorization:String,@Path("cnt_id") cnt_id: String):Call<success>
 
+    //아이디 중복검사
+    @GET("api/auth/exist/{username}")
+    fun ID_check_Resquest(@Path("username") username:String):Call<IDcheck_Response>
+
 
 
 }
