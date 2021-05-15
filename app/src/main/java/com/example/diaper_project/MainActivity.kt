@@ -170,6 +170,14 @@ class MainActivity : BasicActivity() {
                     ).show()
                 }
             }
+            R.id.etc -> {                    //기타
+                var i = Intent(this, EtcActivity::class.java)
+                startActivity(i)
+            }
+            R.id.manager_menu -> {                    //관리자메뉴
+                var i = Intent(this, ManagerActivity::class.java)
+                startActivity(i)
+            }
         }
         return super.onOptionsItemSelected(item)
     }

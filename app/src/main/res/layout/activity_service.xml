@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ServiceActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar11"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="false"
+        android:background="#009688"
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitleTextColor="#090000"
+        app:titleTextColor="#000000">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="민간 복지 프로그램 정보"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <WebView
+        android:id="@+id/webView_service"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar11" />
+</RelativeLayout>

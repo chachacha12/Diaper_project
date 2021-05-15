@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ManagerActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar12"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="false"
+        android:background="#009688"
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitleTextColor="#090000"
+        app:titleTextColor="#000000">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="관리자 메뉴"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <WebView
+        android:id="@+id/webView_manager"
+        android:layout_width="409dp"
+        android:layout_height="729dp"
+        android:layout_below="@id/toolbar12"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp" />
+</RelativeLayout>

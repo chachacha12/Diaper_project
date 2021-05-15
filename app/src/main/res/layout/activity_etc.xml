@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EtcActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar9"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="false"
+        android:background="#009688"
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitleTextColor="#090000"
+        app:titleTextColor="#000000">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="기타 장애인 복지 관련 정보"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar9"
+        android:layout_marginTop="2dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="-보건복지부가 운영중인 '복지로' 포털사이트에 올라오는 최신 복지 관련 이슈, 뉴스를 조회해 줍니다."
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/button_news"
+                android:layout_width="200dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="#F87373"
+                android:gravity="center"
+                android:text="복지 뉴스 조회" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="-보건복지부가 운영중인 '복지로' 포털사이트에 올라오는 민간 복지 프로그램 서비스를 조회해 줍니다. "
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/button_service"
+                android:layout_width="200dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="#F87373"
+                android:gravity="center"
+                android:text="민간 복지 프로그램 조회" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="000"
+                android:textColor="#000000" />
+
+            <Button
+                android:layout_width="200dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="#F87373"
+                android:gravity="center"
+                android:text="버튼" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
