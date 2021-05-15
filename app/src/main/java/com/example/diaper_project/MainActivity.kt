@@ -178,6 +178,10 @@ class MainActivity : BasicActivity() {
                 var i = Intent(this, ManagerActivity::class.java)
                 startActivity(i)
             }
+            R.id.introduce -> {                    //프로그램 소개하기
+                var i = Intent(this, IntroduceActivity::class.java)
+                startActivity(i)
+            }
         }
         return super.onOptionsItemSelected(item)
     }

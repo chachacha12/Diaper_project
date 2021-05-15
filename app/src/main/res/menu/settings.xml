@@ -14,6 +14,10 @@
         android:title="관리자 메뉴" />
 
     <item
+        android:id="@+id/introduce"
+        android:title="프로그램 소개" />
+
+    <item
         android:id="@+id/etc"
         android:title="기타" />
 
