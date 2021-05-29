@@ -22,7 +22,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="한벗둥지 기저귀 관리 시스템 - Diapers"
+            android:text="한벗둥지 기저귀 관리 시스템 - DIAPERS"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold|italic" />

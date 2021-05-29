@@ -15,7 +15,7 @@
 
     <item
         android:id="@+id/introduce"
-        android:title="프로그램 소개" />
+        android:title="DIAPERS 소개" />
 
     <item
         android:id="@+id/etc"
