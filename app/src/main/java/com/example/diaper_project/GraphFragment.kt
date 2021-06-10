@@ -63,19 +63,16 @@ class GraphFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-
         if(context is FragmentListener){  //액티비티가 FragmentListener 타입이라면, (즉, 상속받았다면)
             fragmentListener = context   //액티비티를 가져옴. (액티비티가 인터페이스를 상속받아서 가져와서 이 객체에 대입가능), 이제 액티비티에 있는 onCommand함수를 이 객체 통해 여기서도 쓸 수 있음
         }
     }
-
 
     override fun onDetach() {
         super.onDetach()
         if(fragmentListener !=null)
             fragmentListener = null
     }
-
 
     //아래에서 언급한 valueFormatter를 inner class로 등록해줌
     inner class MyXAxisFormatter : ValueFormatter(){
@@ -133,16 +130,14 @@ class GraphFragment : Fragment() {
                     makeChart()
                     textView_clickorder.visibility = View.INVISIBLE
                 }
-            }, 3000)  //3초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
+            }, 2000)  //3초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
         }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-
     ): View? {
-
         //액티비티에서 보낸 cnt id값을 여기서 받기
         if (arguments != null){
             Log.e("태그","arguments: "+arguments)
@@ -241,6 +236,7 @@ class GraphFragment : Fragment() {
         var log_id:String
         var log: log
 
+
         //서버로부터 특정기간 이용자별 로그를 페이지네이션해서 특정개수만 가져옴.size값으로 가져올 개수 조절.
         server.getLog_period_Request(
             "Bearer " + currentuser?.access_token,
@@ -248,13 +244,14 @@ class GraphFragment : Fragment() {
             0,
             log_size,
             fewdaysAgo,
-            createdAt
+            createdAt,
+            true
         ).enqueue(object : Callback<GetAll> {
             override fun onFailure(
                 call: Call<GetAll>,
                 t: Throwable
             ) {  //object로 받아옴. 서버에서 받은 object모델과 맞지 않으면 실패함수로 빠짐
-                Log.e("태그", "통신 아예 실패")
+                Log.e("태그", "특정기간 이용자별 로그 페이지네이션해주는 통신 아예 실패")
             }
 
             @RequiresApi(Build.VERSION_CODES.O)
@@ -310,14 +307,14 @@ class GraphFragment : Fragment() {
                             }
 
                             //그래프를 만들어주는 데이터셋의 리스트요소에다가 겉기저귀, 속기저귀 로그값을 추가함.
-                            //인덱스 0번째에 값을 넣어줌. 이러면 앞에 값이 있었으면 그대로 한칸씩 밀림. 즉 이런식으로 거꾸로 저장할수있음
-                            entries?.add(0,
+                            //그래프에서 데이터보여주는 순서 바꾸는법: 인덱스 0번째에 값을 넣어줌. 이러면 앞에 값이 있었으면 그대로 한칸씩 밀림. 즉 이런식으로 거꾸로 저장할수있음
+                            entries?.add(
                                 BarEntry(
                                     (i + 1).toFloat(),
                                     iObject.getInt("outer_new").toFloat()
                                 )
                             )
-                            entries2?.add(0,
+                            entries2?.add(
                                 BarEntry(
                                     (i + 1).toFloat(),
                                     iObject.getInt("inner_new").toFloat()
@@ -327,7 +324,7 @@ class GraphFragment : Fragment() {
                             parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                             formatter = SimpleDateFormat("MM/dd")
                             output = formatter.format(parser.parse(iObject.getString("time")  ))
-                            days.add(0, output)  //days 리스트안에 저장.
+                            days.add( output)  //days 리스트안에 저장.
                             i++
                         }
                         outer_average_sum/i
@@ -389,7 +386,7 @@ class GraphFragment : Fragment() {
                     makeChart()
                     textView_clickorder.visibility = View.INVISIBLE
                 }
-            }, 3000)  //2초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
+            }, 2000)  //4초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
         }
 
         //다른 프래그먼트 갔다가 여기 왔을때 동작완료되었다면 그래프띄워주기 위함
@@ -457,6 +454,8 @@ class GraphFragment : Fragment() {
                 valueFormatter = MyXAxisFormatter() // 축 라벨 값 바꿔주기 위함         //GraphFragment.MyXAxisFormatter()원랜 이거엿음
                 textSize = 10f // 텍스트 크기
                 labelCount = entries!!.size
+                spaceMin = 0.5f
+                spaceMax =0.5f
             }
         }
 

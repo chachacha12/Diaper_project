@@ -44,7 +44,9 @@ interface HowlService {      //서버로 오고가는 api들을 관리해주는 
 
     //특정기간 이용자별 로그리스트 조회 (페이지네이션)
     @GET("api/logs/cnt/{cnt_id}")
-    fun getLog_period_Request(@Header("Authorization")authorization:String, @Path("cnt_id") cnt_id: String, @Query("page") page: Number, @Query("size") size: Number, @Query("start") start: String, @Query("end") end: String): Call<GetAll>
+    fun getLog_period_Request(@Header("Authorization")authorization:String, @Path("cnt_id") cnt_id: String,  @Query("page") page: Number, @Query("size") size: Number, @Query("start") start: String, @Query("end") end: String, @Query("oneperday") oneperday: Boolean): Call<GetAll>
+
+
 
     //특정로그 삭제
     @DELETE("api/logs/{log_id}")

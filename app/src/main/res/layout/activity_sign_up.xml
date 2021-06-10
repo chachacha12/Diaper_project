@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="false"
-        android:background="#009688"
+        android:background="#1CC7F3"
         app:layout_constraintTop_toTopOf="parent"
         app:subtitleTextColor="#090000"
         app:titleTextColor="#000000">
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:text="한벗둥지 기저귀 관리 시스템 - DIAPERS"
             android:textColor="#000000"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
 
@@ -39,7 +39,7 @@
             android:layout_height="200dp"
             android:gravity="center"
             android:text="회원가입"
-            android:textColor="#040403"
+            android:textColor="#6A6A69"
             android:textSize="24sp"
             android:textStyle="bold" />
 

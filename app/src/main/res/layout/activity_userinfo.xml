@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="false"
-        android:background="#009688"
+        android:background="#1CC7F3"
         app:layout_constraintTop_toTopOf="parent"
         app:subtitleTextColor="#090000"
         app:titleTextColor="#000000">
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:text="한벗둥지 기저귀 관리 시스템 - DIAPERS"
             android:textColor="#000000"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
 
@@ -33,20 +33,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar7"
-        android:background="#A5A5A5">
+        android:background="#F4F0F0">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView_userinfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="40dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginBottom="30dp"
-            app:cardBackgroundColor="#F8D6A3"
+            android:layout_marginStart="40dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginBottom="40dp"
+            app:cardBackgroundColor="#B9C5C4"
             app:cardCornerRadius="10dp">
 
 
@@ -62,13 +61,13 @@
                     android:layout_height="match_parent"
                     android:text="현재 접속 아이디:"
                     android:textColor="#090909"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/name"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
                     android:textColor="#0B0B0A"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -102,7 +101,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/LinearLatout_textView"
-            android:background="#A5A5A5" />
+            android:background="#F4F0F0" />
 
     </RelativeLayout>
 

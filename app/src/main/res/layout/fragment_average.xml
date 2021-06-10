@@ -12,16 +12,20 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="40dp"
+        android:layout_marginTop="40dp"
         android:gravity="center"
         android:text="통계치"
+        android:textColor="#171717"
         android:textSize="24sp"
         android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="30dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -35,6 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="겉 기저귀 평균 보유량(팩):"
+                android:textColor="#050505"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -42,9 +47,11 @@
                 android:id="@+id/Outer_hold_average"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:layout_weight="1"
                 android:gravity="left"
                 android:text="100"
+                android:textColor="#009688"
                 android:textSize="18sp" />
         </LinearLayout>
 
@@ -59,6 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="속 기저귀 평균 보유량(팩):"
+                android:textColor="#050505"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -66,9 +74,11 @@
                 android:id="@+id/Inner_hold_average"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:layout_weight="1"
                 android:gravity="left"
                 android:text="0"
+                android:textColor="#009688"
                 android:textSize="18sp" />
         </LinearLayout>
 
@@ -83,6 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="겉 기저귀 재고 무보유 일수:"
+                android:textColor="#050505"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -90,9 +101,11 @@
                 android:id="@+id/Outer_nohold_daycount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:layout_weight="1"
                 android:gravity="left"
                 android:text="0"
+                android:textColor="#009688"
                 android:textSize="18sp" />
         </LinearLayout>
 
@@ -106,6 +119,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="속 기저귀 재고 무보유 일수:"
+                android:textColor="#050505"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -113,9 +127,11 @@
                 android:id="@+id/Inner_nohold_daycount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:layout_weight="1"
                 android:gravity="left"
                 android:text="0"
+                android:textColor="#009688"
                 android:textSize="18sp" />
         </LinearLayout>
     </LinearLayout>
