@@ -3,6 +3,7 @@ package com.example.diaper_project
 
 import android.util.Log
 import com.example.diaper_project.Class.*
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -44,8 +45,8 @@ interface HowlService {      //서버로 오고가는 api들을 관리해주는 
 
     //특정기간 이용자별 로그리스트 조회 (페이지네이션)
     @GET("api/logs/cnt/{cnt_id}")
-    fun getLog_period_Request(@Header("Authorization")authorization:String, @Path("cnt_id") cnt_id: String,  @Query("page") page: Number, @Query("size") size: Number, @Query("start") start: String, @Query("end") end: String, @Query("oneperday") oneperday: Boolean): Call<GetAll>
-
+    fun getLog_period_Request(@Header("Authorization")authorization:String, @Path("cnt_id") cnt_id: String,  @Query("start") start: String, @Query("end") end: String, @Query("oneperday") oneperday: Boolean): Call<GetAll>
+// @Query("page") page: Number, @Query("size") size: Number,
 
 
     //특정로그 삭제
@@ -75,6 +76,11 @@ interface HowlService {      //서버로 오고가는 api들을 관리해주는 
     //아이디 중복검사
     @GET("api/auth/exist/{username}")
     fun ID_check_Resquest(@Path("username") username:String):Call<IDcheck_Response>
+
+    //기관정보조회
+    @GET("api/org")
+    fun get_Organization_Request(@Header("Authorization")authorization:String):Call<GetOne>
+
 
 
 

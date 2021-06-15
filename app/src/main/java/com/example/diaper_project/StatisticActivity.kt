@@ -41,6 +41,7 @@ class StatisticActivity  :  BasicActivity(),
     inner class CustomOnItemSelectedListener : AdapterView.OnItemSelectedListener{
 
         override fun onNothingSelected(parent: AdapterView<*>?) {
+
         }
 
         //특정 이용자 선택되었을때 발생할 이벤트 작업 - 해당 이용자에 맞는 log값들을 불러와서 그래프 그리기, 통계값 구하기
@@ -51,6 +52,7 @@ class StatisticActivity  :  BasicActivity(),
             //여기서 그래프 프래그먼트를 한번 다시 만들어주지 않으면 그래프 ui가 에러났음..
             gfragment = null
             gfragment = GraphFragment()
+            Log.e("태그"," 이용자 변경함. 새로운 GraphFragment()객체 생성.-액티비티코드임-  ")
 
             repeat(cnt_name_list!!.size){
                 if(name== cnt_name_list!![i]){
@@ -60,7 +62,6 @@ class StatisticActivity  :  BasicActivity(),
                     var bundle = Bundle()
                     bundle.putString("cnt_id", cnt_id )
                     gfragment!!.arguments = bundle
-                    Log.e("태그"," 액티비티에서 있는 GraphFragment().arguments: "+ GraphFragment().arguments)
                 }
                 i++
             }
@@ -71,7 +72,7 @@ class StatisticActivity  :  BasicActivity(),
             TabLayoutMediator(tabLayout, viewpager2){
                     tab, position -> tab.text = textArray[position]
             }.attach()
-            Log.e("태그","뷰페이저만들어짐")
+            Log.e("태그","뷰페이저만들어짐. 다른 이용자 선택되었다는 뜻")
         }
     }
 
@@ -85,7 +86,6 @@ class StatisticActivity  :  BasicActivity(),
         //프래그먼트들 여기서 초기화
         gfragment = GraphFragment()
         afragment = averageFragment()
-
 
         var intent = intent         //이 액티비티로 넘어온 인텐트를 받음 (메인에서 이 액티비티로 올때 cnt_name, cnt_ids 리스트 넘겨줌)
 

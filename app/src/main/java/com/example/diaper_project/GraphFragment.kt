@@ -91,14 +91,20 @@ class GraphFragment : Fragment() {
             when(parent?.getItemAtPosition(position).toString()){
                 "일주일"->{
                     log_size = 7
+                    Log.e("태그","스피너로 인해 일주일 선택됨, log_size: "+log_size)
+                    Log.e("태그"," uiUpdate() 실행")
                     uiUpdate()  //ui를 다시 업데이트 시킴
                 }
                 "1개월"->{
                     log_size = 30
+                    Log.e("태그","스피너로 인해 한달 선택됨, log_size: "+log_size)
+                    Log.e("태그"," uiUpdate() 실행")
                     uiUpdate()
                 }
                 "3개월"->{
                     log_size = 90
+                    Log.e("태그","스피너로 인해 세달 선택됨, log_size: "+log_size)
+                    Log.e("태그"," uiUpdate() 실행")
                     uiUpdate()
                 }
             }
@@ -130,7 +136,7 @@ class GraphFragment : Fragment() {
                     makeChart()
                     textView_clickorder.visibility = View.INVISIBLE
                 }
-            }, 2000)  //3초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
+            }, 1000)  //3초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
         }
     }
 
@@ -152,7 +158,7 @@ class GraphFragment : Fragment() {
                 savedInstanceState?.getParcelableArrayList<BarEntry>("entries2") as java.util.ArrayList<BarEntry>
             Log.e("태그", "savedInstanceState에 값 있는거확인: " + entries)
         } else {  //처음 앱 실행했을때
-            fragUpdate() //서버로부터 로그값들 가져오고, 그래프와 리사이클러뷰 만드는 재료 리스트들 초기화해줌
+            Log.e("태그","@@onCreateView에서 fragUpdate()함수실행")
         }
         return  inflater.inflate(R.layout.fragment_graph, container, false)
     }
@@ -163,7 +169,9 @@ class GraphFragment : Fragment() {
 
         //스피너에 내가만든 리스너 클래스 객체를 달아줌 (이제 이벤트처리 가능해짐)
         spinner_period.onItemSelectedListener = CustomOnItemSelectedListener()
+        Log.e("태그","onViewCreated통해 리사이클러뷰 만드는 로직수행")
        makerecyclerView()  //로그 리사이클러뷰 생성
+
     }
 
     //사용자가 실시간으로 게시글 삭제, 수정할때에 맞춰서 리스트 업데이트 해줄거임
@@ -241,8 +249,6 @@ class GraphFragment : Fragment() {
         server.getLog_period_Request(
             "Bearer " + currentuser?.access_token,
             id,
-            0,
-            log_size,
             fewdaysAgo,
             createdAt,
             true
@@ -251,7 +257,7 @@ class GraphFragment : Fragment() {
                 call: Call<GetAll>,
                 t: Throwable
             ) {  //object로 받아옴. 서버에서 받은 object모델과 맞지 않으면 실패함수로 빠짐
-                Log.e("태그", "특정기간 이용자별 로그 페이지네이션해주는 통신 아예 실패")
+                Log.e("태그", "fragUpdate()함수안에서 특정기간 이용자별 로그 페이지네이션해주는 통신 아예 실패")
             }
 
             @RequiresApi(Build.VERSION_CODES.O)
@@ -268,7 +274,7 @@ class GraphFragment : Fragment() {
 
                         Log.e(
                             "태그",
-                            "이용자 기간 로그리스트 조회성공:" + jsonArray + "   jsonArray.length(): " + jsonArray.length()
+                            "fragUpdate()함수안에서 이용자 기간 로그리스트 조회성공:" + jsonArray + "   jsonArray.length(): " + jsonArray.length()
                         )
                         //간단한 날짜로 변경해주려고
                         var parser:SimpleDateFormat
@@ -308,13 +314,15 @@ class GraphFragment : Fragment() {
 
                             //그래프를 만들어주는 데이터셋의 리스트요소에다가 겉기저귀, 속기저귀 로그값을 추가함.
                             //그래프에서 데이터보여주는 순서 바꾸는법: 인덱스 0번째에 값을 넣어줌. 이러면 앞에 값이 있었으면 그대로 한칸씩 밀림. 즉 이런식으로 거꾸로 저장할수있음
-                            entries?.add(
+                            entries?.add(0,
                                 BarEntry(
                                     (i + 1).toFloat(),
                                     iObject.getInt("outer_new").toFloat()
                                 )
                             )
-                            entries2?.add(
+                            Log.e("태그","entries순서: "+entries)
+
+                            entries2?.add(0,
                                 BarEntry(
                                     (i + 1).toFloat(),
                                     iObject.getInt("inner_new").toFloat()
@@ -324,7 +332,7 @@ class GraphFragment : Fragment() {
                             parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                             formatter = SimpleDateFormat("MM/dd")
                             output = formatter.format(parser.parse(iObject.getString("time")  ))
-                            days.add( output)  //days 리스트안에 저장.
+                            days.add(0,output)  //days 리스트안에 저장.
                             i++
                         }
                         outer_average_sum/i
@@ -333,8 +341,9 @@ class GraphFragment : Fragment() {
                         statistic_numbers.add((inner_average_sum/i).toDouble() )
                         statistic_numbers.add(outer_nohold_daysum.toDouble())
                         statistic_numbers.add(inner_nohold_daysum.toDouble())
-                        Log.e("태그", "그래프 액티비티에서fragmentListener?.onCommand실행 ")
+                        Log.e("태그", "fragUpdate()함수안에서 fragmentListener?.onCommand실행 ")
                         fragmentListener?.onCommand(statistic_numbers)  //어떻게 보면 액티비티 객체라고 할 수 있는 fragmentListener을 이용해서 액티비티에 있는 onCommand함수를 실행
+
                     }
                 } else {
                     Log.e("태그", "기간 로그 조회실패" + response.body().toString())
@@ -372,6 +381,19 @@ class GraphFragment : Fragment() {
         super.onResume()
 
         Log.e("태그","onResume돌아감")
+
+        //다른 프래그먼트 갔다가 여기 왔을때 동작완료되었다면 그래프띄워주기 위함
+        if(entries.size>0){
+            makerecyclerView()  //로그 리사이클러뷰 생성
+            chart.visibility = View.VISIBLE
+            LinearLayout_title.visibility = View.VISIBLE
+            LinearLayout_record.visibility = View.VISIBLE
+            loaderLayout.visibility = View.GONE
+            makeChart()
+            textView_clickorder.visibility = View.INVISIBLE
+        }
+
+
         //주로 앱 실행하고 처음 통계 액티비티 들어왔을때나 스피너로 가져올 날짜 일수 바꿀때 실행됨. 그 후엔 밑의 조건문들이 수행될 가능성 높음
         if(entries.size<=0){
             Handler().postDelayed({
@@ -389,16 +411,6 @@ class GraphFragment : Fragment() {
             }, 2000)  //4초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
         }
 
-        //다른 프래그먼트 갔다가 여기 왔을때 동작완료되었다면 그래프띄워주기 위함
-        if(entries.size>0){
-            makerecyclerView()  //로그 리사이클러뷰 생성
-            chart.visibility = View.VISIBLE
-            LinearLayout_title.visibility = View.VISIBLE
-            LinearLayout_record.visibility = View.VISIBLE
-            loaderLayout.visibility = View.GONE
-            makeChart()
-            textView_clickorder.visibility = View.INVISIBLE
-        }
 
         //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
         loaderLayout.setOnClickListener {

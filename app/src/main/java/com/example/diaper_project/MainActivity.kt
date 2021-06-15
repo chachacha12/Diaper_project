@@ -182,6 +182,10 @@ class MainActivity : BasicActivity() {
                 var i = Intent(this, IntroduceActivity::class.java)
                 startActivity(i)
             }
+            R.id.org_info-> {                    //기관정보
+                var i = Intent(this, OrgInfoActivity::class.java)
+                startActivity(i)
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -201,6 +205,13 @@ class MainActivity : BasicActivity() {
     override fun onResume() {
         super.onResume()
 
+        //다른 화면 갔다가 여기 왔을때 데이터작업 완료되었으면 로딩화면 없애줌
+        if (jsonarray != null) {
+            //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
+            loaderLayout.visibility = View.GONE
+            textView_clickorder2.visibility = View.INVISIBLE
+        }
+
         // 데이터가 서버로부터 왔는지 감시해줌. 데이터 들어왔으면  만들어줌
         if (jsonarray == null) {
             // for(i in 1..10) {
@@ -211,16 +222,8 @@ class MainActivity : BasicActivity() {
                     loaderLayout.visibility = View.GONE
                     Log.e("태그", " (jsonarray != null)  구문 들어옴")
                 }
-            }, 4000)  //5초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
+            }, 3000)  //5초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
             // }
-        }
-
-
-        //다른 화면 갔다가 여기 왔을때 데이터작업 완료되었으면 로딩화면 없애줌
-        if (jsonarray != null) {
-            //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
-            loaderLayout.visibility = View.GONE
-            textView_clickorder2.visibility = View.INVISIBLE
         }
 
         //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
@@ -263,7 +266,7 @@ class MainActivity : BasicActivity() {
                         if (response.isSuccessful) {
                             server_access_success = true
                             jsonarray = JSONArray(response.body()?.result)  //어댑터에 넘겨줄 값임
-
+                            Log.e("태그","@@@@@@@response.body()?.result:"+response.body()?.result)
                             //리사이클러뷰를 여기서 제대로 만들어줌.
                             mainAdapter = MainAdapter(
                                 this@MainActivity,

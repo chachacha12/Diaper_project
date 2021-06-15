@@ -12,7 +12,9 @@
     <item
         android:id="@+id/manager_menu"
         android:title="관리자 메뉴" />
-
+    <item
+        android:id="@+id/org_info"
+        android:title="기관 정보" />
     <item
         android:id="@+id/introduce"
         android:title="DIAPERS 소개" />

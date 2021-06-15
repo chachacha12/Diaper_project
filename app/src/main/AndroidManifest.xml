@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".IntroduceActivity"></activity>
+        <activity android:name=".OrgInfoActivity"></activity>
+        <activity android:name=".IntroduceActivity" />
         <activity android:name=".ManagerActivity" />
         <activity android:name=".ServiceActivity" />
         <activity android:name=".NewsActivity" />
