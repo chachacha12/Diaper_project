@@ -83,7 +83,7 @@
                     android:textSize="16sp" />
 
                 <TextView
-                    android:id="@+id/lacation"
+                    android:id="@+id/location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
@@ -96,7 +96,7 @@
                     android:textSize="16sp" />
 
                 <TextView
-                    android:id="@+id/name"
+                    android:id="@+id/naming"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"

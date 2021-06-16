@@ -22,7 +22,8 @@ import retrofit2.Response
 
 class OrgInfoActivity :  BasicActivity() {
 
-    var jsonObject: JSONObject? = null //기관정보를 받아올거임 여기에
+    // var jsonObject: JSONObject? = null //기관정보를 받아올거임 여기에
+    var check: Boolean = false  //서버로부터 데이터 가져왔는지 판별하는 변수
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,20 +47,13 @@ class OrgInfoActivity :  BasicActivity() {
 
                         Log.e("태그", "response.body()?.result: "+response.body()!!.result)
 
-                       // var a = response!!.body()!!.result
-                        //jsonObject = JSONObject(response.body()!!.result.toString())
-
-                       // chief.text = jsonObject!!.getString("chief")
-
-
-
-                       // Log.e("태그", "jsonObject: "+jsonObject)
-
-                        //Log.e("태그", "response : "+ response.body()!!.result.getString("fax"))
-                        //jsonObject = JSONObject(response.body()!!.result)
-                        //chief.text = response.body()!!.result.getString("chief")  //로그의 id값 가져옴. 이를 통해 로그삭제, 수정 해줄거임
-
-
+                        chief.text = "chief: "+response.body()!!.result.chief
+                        fax.text = "fax: "+response.body()!!.result.fax
+                        location.text = "location: "+response.body()!!.result.location
+                        naming.text = "name: "+response.body()!!.result.name
+                        phone.text = "phone: "+response.body()!!.result.phone
+                        check = true
+                        loaderLayout.visibility = View.GONE
                     } else {
                         Log.e(
                             "태그",
@@ -73,7 +67,7 @@ class OrgInfoActivity :  BasicActivity() {
     override fun onStart() {
         super.onStart()
         //아직 서버로부터 데이터를 못받아왔을때는 로딩화면을 보여줌
-        if(jsonObject ==null ) {
+        if(!check) {
             loaderLayout.visibility = View.VISIBLE
         }
     }
@@ -83,11 +77,11 @@ class OrgInfoActivity :  BasicActivity() {
         super.onResume()
 
         // 데이터가 서버로부터 왔는지 감시해줌. 데이터 들어왔으면  만들어줌
-        if(jsonObject ==null){
+        if(!check){
             // for(i in 1..10) {
             Handler().postDelayed({
                 Log.e("태그", " Handler().postDelayed 구문 들어옴")
-                if (jsonObject != null) {
+                if (check) {
                     loaderLayout.visibility = View.GONE
                     Log.e("태그", " (jsonObject != null)  구문 들어옴")
                 }
@@ -96,13 +90,13 @@ class OrgInfoActivity :  BasicActivity() {
         }
 
         //다른 화면 갔다가 여기 왔을때 데이터작업 완료되었으면 로딩화면 없애줌
-        if(jsonObject !=null ){
+        if(check){
            loaderLayout.visibility = View.GONE
         }
 
         //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
         loaderLayout.setOnClickListener {
-            if(jsonObject !=null ){
+            if(check){
                 loaderLayout.visibility = View.GONE
             }
         }
