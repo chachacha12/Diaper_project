@@ -47,11 +47,11 @@ class OrgInfoActivity :  BasicActivity() {
 
                         Log.e("태그", "response.body()?.result: "+response.body()!!.result)
 
-                        chief.text = "chief: "+response.body()!!.result.chief
-                        fax.text = "fax: "+response.body()!!.result.fax
-                        location.text = "location: "+response.body()!!.result.location
-                        naming.text = "name: "+response.body()!!.result.name
-                        phone.text = "phone: "+response.body()!!.result.phone
+                        chief.text = "chief:  "+response.body()!!.result.chief
+                        fax.text = "fax:  "+response.body()!!.result.fax
+                        location.text = "location:  "+response.body()!!.result.location
+                        naming.text = "name:  "+response.body()!!.result.name
+                        phone.text = "phone:  "+response.body()!!.result.phone
                         check = true
                         loaderLayout.visibility = View.GONE
                     } else {

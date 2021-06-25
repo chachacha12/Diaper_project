@@ -28,7 +28,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 //activity는 getActivity()인거임. 즉 프래그먼트의 부모 액티비티를 가져와줌.(StatisticActivity)
-class Cntinfo_Adapter(var activity: Activity, private var myDataset: JSONArray, var onUserListener: OnUserListener)    //인자로 OnUserListener 인터페이스 객체를 준 이유는 어댑터안에서도 인터페이스의 onDelete 함수를 쓰기위해.
+class Cntinfo_Adapter(var activity: Activity, private var myDataset: JSONArray)    //인자로 OnUserListener 인터페이스 객체를 준 이유는 어댑터안에서도 인터페이스의 onDelete 함수를 쓰기위해.
                                         : RecyclerView.Adapter<Cntinfo_Adapter.MainViewHolder>() {
 
     val birthformat=ArrayList<String>()  //생년월일 형식을 포맷해서 써줄거임. 여러 함수들 안에서 쓰려고 전역으로 둠
@@ -65,10 +65,12 @@ class Cntinfo_Adapter(var activity: Activity, private var myDataset: JSONArray, 
         }
 
 
+        /*
         //게시글의 toolbar(점3개)버튼을 클릭했을때 효과
         binding.cardView.menu.setOnClickListener {
             showPopup(it, mainViewHolder.adapterPosition)      //post.xml을 띄워줌. 밑에 있음. 구글에 android menu검색하고 developers사이트들어가서 코드 가져옴
         }
+         */
 
         //mainViewHolder.adapterPosition을 넣어주는 이유는 사용자가 선택한 특정위치의 게시글을 삭제or수정해야 하기에.
         Log.e("태그", "onCreateViewHolder 돌아감")
@@ -96,6 +98,7 @@ class Cntinfo_Adapter(var activity: Activity, private var myDataset: JSONArray, 
 
     override fun getItemCount() = myDataset!!.length()
 
+    /*
    //res안에 menu디렉토리 만든거에서, 그 안의 menu파일을 불러와서 toolbar보여주고, 클릭했을때 이벤트처리해줌  //developers사이트에서 가져온 함수.
     private fun showPopup(v: View, position: Int) {
        val popup = PopupMenu(activity, v)
@@ -113,6 +116,7 @@ class Cntinfo_Adapter(var activity: Activity, private var myDataset: JSONArray, 
        inflater.inflate(R.menu.user, popup.menu)  //사용자 삭제 ui와 똑같으므로 걍 menu에서 user 똑같이 사용
        popup.show()
    }
+     */
 
 
 

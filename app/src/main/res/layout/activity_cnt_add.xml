@@ -34,11 +34,24 @@
         android:id="@+id/textView8"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="50dp"
         android:gravity="center|center_horizontal"
         android:text="추가할 이용자 정보 입력"
         android:textColor="#050000"
         android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="40dp"
+        android:text="※ 계정 권한이 1이하라면 이용자 삭제가 불가하오니 신중해 주세요."
+        android:textSize="11sp" />
 
     <LinearLayout
         android:layout_width="match_parent"

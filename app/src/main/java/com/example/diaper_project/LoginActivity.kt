@@ -7,12 +7,20 @@ package com.example.diaper_project
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.example.diaper_project.Adapter.Userinfo_Adapter
+import com.example.diaper_project.Class.GetAll
 import com.example.diaper_project.Class.Users
 import com.example.diaper_project.Class.currentUser
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_sign_up.*
+import kotlinx.android.synthetic.main.activity_userinfo.*
+import kotlinx.android.synthetic.main.item_user.*
 import kotlinx.android.synthetic.main.view_loader.*
+import org.json.JSONArray
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -21,6 +29,7 @@ import retrofit2.Response
 class LoginActivity :  BasicActivity() {
 
     lateinit var currentuser: currentUser
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +43,6 @@ class LoginActivity :  BasicActivity() {
             login()
         }
     }
-
 
     fun login()   // 회원가입하려는 신규 사용자가 입력한 닉네임과 비밀번호를 가져와서 신규 가입되는지 확인하고 가입시키는 메소드?
     {
@@ -53,8 +61,8 @@ class LoginActivity :  BasicActivity() {
                 }
                 override fun onResponse(call: Call<currentUser>, response: Response<currentUser>) {
                     if(response.isSuccessful){
+
                         currentuser = currentUser(response.body()?.username.toString(),response.body()?.access_token!!)
-                        Toast.makeText(this@LoginActivity, currentuser.username+"님이 로그인 하셨습니다.", Toast.LENGTH_SHORT).show()
 
                         //앱껏다가 켜도 로그아웃한거 아니면 자동 로그인 기능 줄것임
                         val sp = getSharedPreferences("UserTokenKey", Context.MODE_PRIVATE)
@@ -63,11 +71,12 @@ class LoginActivity :  BasicActivity() {
                         editor.putString("name", currentuser.username) // 이 부분이 실질적인 값을 저장하는 부분이다.
                         editor.commit() // 여기서 커밋을 안해주면 저장이 안된다.
 
-
-                          var i = Intent(this@LoginActivity, MainActivity::class.java)    //회원가입 성공하면 바로 메인액티비티로 이동
+                        var i = Intent(this@LoginActivity, MainActivity::class.java)    //회원가입 성공하면 바로 메인액티비티로 이동
                         i.putExtra("current", currentuser)  //현재로그인한 유저정보를 다른 액티비티에 넘김. name은 키값.
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         startActivity(i)
+                        Toast.makeText(this@LoginActivity,currentuser.username +"님이 로그인 하셨습니다.", Toast.LENGTH_SHORT).show()
+
                     }else{
                         loaderLayout.visibility = View.GONE         //로딩화면끔
                         Toast.makeText(this@LoginActivity, "로그인 정보가 일치하지 않습니다.", Toast.LENGTH_SHORT).show()
@@ -79,4 +88,5 @@ class LoginActivity :  BasicActivity() {
             Toast.makeText(this, "빈칸없이 입력해주세요.", Toast.LENGTH_SHORT).show()
         }
     }  //login 함수
+
 }

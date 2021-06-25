@@ -79,7 +79,6 @@ class MainActivity : BasicActivity() {
             recyclerView.setHasFixedSize(true)
             recyclerView.layoutManager = LinearLayoutManager(this)
         }
-
         //새 게시글 만들기위해 floatingActionButton눌렀을때
         floatingActionButton.setOnClickListener {
             var i = Intent(this, CntAddActivity::class.java)

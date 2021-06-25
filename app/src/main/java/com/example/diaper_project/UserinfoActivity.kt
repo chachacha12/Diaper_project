@@ -27,7 +27,7 @@ class UserinfoActivity : BasicActivity() {
     lateinit var userinfoAdapter: Userinfo_Adapter
     var jsonarray: JSONArray? = null //여기안엔 모든 사용자들(user)정보가 들어감
     var Userid_Array = ArrayList<String>()  //사용자 도큐먼트의 id값들을 저장하는 리스트 (사용자 삭제로직때 필요해서)
-
+    var level:Double =0.0 //사용자계정들을 삭제할 수 있는지 권한레벨을 확인해줄때를 위해
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,7 +81,6 @@ class UserinfoActivity : BasicActivity() {
 
     }
 
-
     fun init(){
         //recyclerView = recyclerView_user  //화면에 보일 리사이클러뷰객체
         recyclerView_user.setHasFixedSize(true)
@@ -89,7 +88,6 @@ class UserinfoActivity : BasicActivity() {
 
         name.text = currentuser?.username.toString()  //현재 접속한 계정의 아이디 값을 적어줌
     }
-
 
     // 삭제하거나 수정하거나 만들거나 등등 했을때 다 지웠다가 다시 바뀐 jsonarray를 서버로부터 받아와서 화면에 업데이트 시켜줄거임
     private fun  UserUpdate() {
@@ -111,19 +109,23 @@ class UserinfoActivity : BasicActivity() {
                         if (response.isSuccessful) {
                             jsonarray = JSONArray(response.body()?.result)
 
-                            //리사이클러뷰를 여기서 제대로 만들어줌.
-                            userinfoAdapter = Userinfo_Adapter(
-                                this@UserinfoActivity, jsonarray!!, onUserListener
-                            )   //cnt_name리스트도 어댑터에 보내줘서 이용자 이름을 채워주도록 할거임. 그 후 Statistic액티비티에서 spinner만들때 쓸거.
-                            recyclerView_user.adapter = userinfoAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
-
                             var i=0
                             repeat(jsonarray!!.length()) {
                                 val iObject = jsonarray!!.getJSONObject(i)
-                                user_id = iObject.get("id").toString()  //로그의 id값 가져옴. 이를 통해 로그삭제, 수정 해줄거임
+                                user_id = iObject.get("id").toString()  //사용자의 id값 가져옴. 이를 통해 로그삭제, 수정 해줄거임
                                 Userid_Array.add(user_id)  //사용자 도큐먼트의 id값을 저장(삭제로직때 필요함)
+                                if(currentuser!!.username == iObject.get("username").toString()){
+                                    level =  iObject.get("level") as Double     //현재 계정의 레벨값 알아냄(계정들 삭제때 필요함함)
+                               }
                                 i++
                             }
+
+                            //리사이클러뷰를 여기서 제대로 만들어줌.
+                            userinfoAdapter = Userinfo_Adapter(
+                                this@UserinfoActivity, jsonarray!!, onUserListener, level
+                            )   //cnt_name리스트도 어댑터에 보내줘서 이용자 이름을 채워주도록 할거임. 그 후 Statistic액티비티에서 spinner만들때 쓸거.
+                            recyclerView_user.adapter = userinfoAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
+
                         } else {
                             Log.e(
                                 "태그",

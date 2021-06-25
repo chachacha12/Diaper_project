@@ -245,7 +245,7 @@ class GraphFragment : Fragment() {
         var log: log
 
 
-        //서버로부터 특정기간 이용자별 로그를 페이지네이션해서 특정개수만 가져옴.size값으로 가져올 개수 조절.
+        //서버로부터 특정기간 이용자별 로그를 가져옴.
         server.getLog_period_Request(
             "Bearer " + currentuser?.access_token,
             id,
@@ -343,7 +343,6 @@ class GraphFragment : Fragment() {
                         statistic_numbers.add(inner_nohold_daysum.toDouble())
                         Log.e("태그", "fragUpdate()함수안에서 fragmentListener?.onCommand실행 ")
                         fragmentListener?.onCommand(statistic_numbers)  //어떻게 보면 액티비티 객체라고 할 수 있는 fragmentListener을 이용해서 액티비티에 있는 onCommand함수를 실행
-
                     }
                 } else {
                     Log.e("태그", "기간 로그 조회실패" + response.body().toString())
@@ -476,10 +475,10 @@ class GraphFragment : Fragment() {
 
             var graphArr = ArrayList<IBarDataSet>()
 
-            var set = BarDataSet(entries, "겉기저귀 개수")//데이터셋 만들기, (겉기저귀 수량)
+            var set = BarDataSet(entries, "겉기저귀 개수(미개봉팩)")//데이터셋 만들기, (겉기저귀 수량)
             set.color = ContextCompat.getColor(context!!, R.color.colorPrimaryDark)
 
-            var set2 = BarDataSet(entries2, "속기저귀 개수")//데이터셋 만들기, (속기저귀 수량)
+            var set2 = BarDataSet(entries2, "속기저귀 개수(미개봉팩)")//데이터셋 만들기, (속기저귀 수량)
             set2.color =
                 ContextCompat.getColor(context!!, R.color.design_default_color_on_secondary)
 

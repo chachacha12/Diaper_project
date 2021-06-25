@@ -29,8 +29,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 //activity는 getActivity()인거임. 즉 프래그먼트의 부모 액티비티를 가져와줌.(StatisticActivity)
-class Userinfo_Adapter(var activity: Activity, private var myDataset: JSONArray, var onUserListener: OnUserListener)    //인자로 OnUserListener 인터페이스 객체를 준 이유는 어댑터안에서도 인터페이스의 onDelete 함수를 쓰기위해.
-                                        : RecyclerView.Adapter<Userinfo_Adapter.MainViewHolder>() {
+class Userinfo_Adapter(var activity: Activity, private var myDataset: JSONArray, var onUserListener: OnUserListener, var level:Double)    //인자로 OnUserListener 인터페이스 객체를 준 이유는 어댑터안에서도 인터페이스의 onDelete 함수를 쓰기위해.
+                                        : RecyclerView.Adapter<Userinfo_Adapter.MainViewHolder>() {                    //인자로 준 level은, 사용자가 특정계정 삭제버튼 눌렀을때 로직이 이 어댑터에서 일어나기에 이 level값으로 권한있는지 없는지 판별해줌
 
     //뷰홀더에 텍스트뷰말고 카드뷰를 넣음
     class MainViewHolder(val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root)
@@ -66,8 +66,6 @@ class Userinfo_Adapter(var activity: Activity, private var myDataset: JSONArray,
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         Log.e("태그","onBindViewHolder돌아감")
 
-
-
         with(holder){
             val iObject = myDataset.getJSONObject(position)  //사용자 객체(user) 하나씩 순서대로 가져옴
             binding.username.text = iObject?.getString("realname")      //사용자 이름을 가져옴
@@ -88,7 +86,11 @@ class Userinfo_Adapter(var activity: Activity, private var myDataset: JSONArray,
 
            return@setOnMenuItemClickListener when (it.itemId) {
                R.id.delete -> {                  //삭제하기 눌렀을때
-                   onUserListener.onDelete(position)
+                   if(level>=2) {  //2이상일때
+                       onUserListener.onDelete(position)
+                   }else{        //권한레벨이 2이상인 사용자만 다른 계정 삭제가 가능함
+                       Toast.makeText(activity, "접근 권한이 없습니다.", Toast.LENGTH_SHORT).show()
+                   }
                    true
                }
                else -> false
