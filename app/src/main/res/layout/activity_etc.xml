@@ -30,10 +30,11 @@
 
     <ImageView
         android:id="@+id/imageView3"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="83dp"
+        android:layout_height="99dp"
         android:layout_below="@id/toolbar9"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
         app:srcCompat="@drawable/diaper" />
 
     <LinearLayout

@@ -107,6 +107,12 @@ class GraphFragment : Fragment() {
                     Log.e("태그"," uiUpdate() 실행")
                     uiUpdate()
                 }
+                "6개월"->{
+                    log_size = 180
+                    Log.e("태그","스피너로 인해 세달 선택됨, log_size: "+log_size)
+                    Log.e("태그"," uiUpdate() 실행")
+                    uiUpdate()
+                }
             }
         }
     }

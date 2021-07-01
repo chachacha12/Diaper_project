@@ -85,7 +85,7 @@
                     android:id="@+id/leveltextView"
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
-                    android:text="보안단계: "
+                    android:text="접근권한: "
                     android:textColor="#090909"
                     android:textSize="14sp" />
 
