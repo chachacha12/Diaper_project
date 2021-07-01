@@ -38,8 +38,8 @@ var currentuser: currentUser? = null //현재 로그인되어있는 회원정보
 lateinit var sp:SharedPreferences
 var server_access_success:Boolean = true  //처음에 앱 킬때 서버에서 값가져오기 실패했을때 다시 postUpdate()를 실행해주기 위한 변수
 
-class MainActivity : BasicActivity() {
 
+class MainActivity : BasicActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

@@ -50,7 +50,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginRight="40dp"
         android:layout_marginBottom="40dp"
-        android:text="※ 계정 권한이 1이하라면 이용자 삭제가 불가하오니 신중해 주세요."
+        android:text="※ 계정 권한이 1이하라면 이용자 삭제가 불가하오니 추가에 있어서 유의해 주세요."
         android:textSize="11sp" />
 
     <LinearLayout
