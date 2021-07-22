@@ -52,18 +52,6 @@
         android:clickable="true"
         app:srcCompat="@drawable/ic_add_black_24dp" />
 
-    <TextView
-        android:id="@+id/textView_clickorder2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar"
-        android:layout_margin="20dp"
-        android:gravity="center"
-        android:text="로딩화면 클릭시 데이터를 불러옵니다.                                                          (데이터를 받아오는데 시간이 걸릴 수 있습니다)"
-        android:textColor="#DF4747"
-        android:textStyle="bold"
-        android:visibility="invisible" />
-
     <include
         layout="@layout/view_loader"
         android:layout_width="match_parent"

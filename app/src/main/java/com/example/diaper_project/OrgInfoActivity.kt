@@ -85,7 +85,7 @@ class OrgInfoActivity :  BasicActivity() {
                     loaderLayout.visibility = View.GONE
                     Log.e("태그", " (jsonObject != null)  구문 들어옴")
                 }
-            }, 2000)  //2초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
+            }, 1000)  //2초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
             // }
         }
 

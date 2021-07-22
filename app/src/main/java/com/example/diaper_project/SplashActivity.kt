@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import androidx.core.app.ActivityCompat
 
 class SplashActivity : AppCompatActivity() {
 
@@ -17,7 +18,12 @@ class SplashActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         },1500)
-    }
+
+   }
+
+
+
+
 
     override fun onBackPressed() {
         super.onBackPressed()

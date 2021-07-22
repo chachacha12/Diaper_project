@@ -1,4 +1,5 @@
-package com.example.diaper_project  //etc액티비티에서 사용자가 복지 프로그램 서비스 조회버튼 클릭시 보여줄 화면
+package com.example.diaper_project
+//etc액티비티에서 사용자가 복지 프로그램 서비스 조회버튼 클릭시 보여줄 화면
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

@@ -142,7 +142,7 @@ class GraphFragment : Fragment() {
                     makeChart()
                     textView_clickorder.visibility = View.INVISIBLE
                 }
-            }, 1000)  //3초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
+            }, 2000)  //3초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
         }
     }
 

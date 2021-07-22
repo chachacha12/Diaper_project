@@ -194,7 +194,7 @@ class MainActivity : BasicActivity() {
 
         //아직 서버로부터 데이터를 못받아왔을때는 로딩화면을 보여줌
         if (jsonarray == null) {
-            textView_clickorder2.visibility = View.VISIBLE
+            //textView_clickorder2.visibility = View.VISIBLE
             loaderLayout.visibility = View.VISIBLE
         }
     }
@@ -208,7 +208,7 @@ class MainActivity : BasicActivity() {
         if (jsonarray != null) {
             //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
             loaderLayout.visibility = View.GONE
-            textView_clickorder2.visibility = View.INVISIBLE
+            //textView_clickorder2.visibility = View.INVISIBLE
         }
 
         // 데이터가 서버로부터 왔는지 감시해줌. 데이터 들어왔으면  만들어줌
@@ -217,7 +217,7 @@ class MainActivity : BasicActivity() {
             Handler().postDelayed({
                 Log.e("태그", " Handler().postDelayed 구문 들어옴")
                 if (jsonarray != null) {
-                    textView_clickorder2.visibility = View.INVISIBLE
+                    //textView_clickorder2.visibility = View.INVISIBLE
                     loaderLayout.visibility = View.GONE
                     Log.e("태그", " (jsonarray != null)  구문 들어옴")
                 }
@@ -230,7 +230,7 @@ class MainActivity : BasicActivity() {
             if (jsonarray != null) {
                 //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
                 loaderLayout.visibility = View.GONE
-                textView_clickorder2.visibility = View.INVISIBLE
+                //textView_clickorder2.visibility = View.INVISIBLE
             }
             if (server_access_success == false) {  //처음 앱켰을때 서버접근 실패했을때를 대비해서 다시한번 서버에 요청해줄 작업
                 postUpdate()
