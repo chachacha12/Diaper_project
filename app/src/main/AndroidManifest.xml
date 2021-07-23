@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.diaper_project">
+    package="com.DIAPERS.diaper_project">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -12,28 +12,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SplashActivity">
+        <activity android:name="com.DIAPERS.diaper_project.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".OrgInfoActivity" />
-        <activity android:name=".IntroduceActivity" />
-        <activity android:name=".ManagerActivity" />
-        <activity android:name=".ServiceActivity" />
-        <activity android:name=".NewsActivity" />
-        <activity android:name=".EtcActivity" />
-        <activity android:name=".CntinfoActivity" />
-        <activity android:name=".UserinfoActivity" />
-        <activity android:name=".LogModifyActivity" />
-        <activity android:name=".StatisticActivity" />
-        <activity android:name=".CntAddActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name="com.DIAPERS.diaper_project.OrgInfoActivity" />
+        <activity android:name="com.DIAPERS.diaper_project.IntroduceActivity" />
+        <activity android:name="com.DIAPERS.diaper_project.ManagerActivity" />
+        <activity android:name="com.DIAPERS.diaper_project.ServiceActivity" />
+        <activity android:name="com.DIAPERS.diaper_project.NewsActivity" />
+        <activity android:name="com.DIAPERS.diaper_project.EtcActivity" />
+        <activity android:name="com.DIAPERS.diaper_project.CntinfoActivity" />
+        <activity android:name="com.DIAPERS.diaper_project.UserinfoActivity" />
+        <activity android:name="com.DIAPERS.diaper_project.LogModifyActivity" />
+        <activity android:name="com.DIAPERS.diaper_project.StatisticActivity" />
+        <activity android:name="com.DIAPERS.diaper_project.CntAddActivity" />
+        <activity android:name="com.DIAPERS.diaper_project.MainActivity">
         </activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".SignUpActivity" />
+        <activity android:name="com.DIAPERS.diaper_project.LoginActivity" />
+        <activity android:name="com.DIAPERS.diaper_project.SignUpActivity" />
     </application>
 
 </manifest>

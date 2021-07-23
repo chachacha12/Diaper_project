@@ -4,18 +4,18 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-
     // Android Studio 3.6 버전대
     viewBinding {
         enabled = true
     }
+
 
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
-        applicationId "com.example.diaper_project"
+        applicationId "com.DIAPERS.diaper_project"
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
