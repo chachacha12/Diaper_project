@@ -34,6 +34,10 @@ android {
 }
 
 dependencies {
+
+    //jwt토큰 디코딩하고 만료일 확인하기 위한 라이브러리
+    implementation 'com.auth0.android:jwtdecode:2.0.0'
+
     kapt "com.android.databinding:compiler:3.6.1"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])

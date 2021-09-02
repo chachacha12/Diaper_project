@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -13,10 +14,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.DIAPERS.diaper_project.Adapter.MainAdapter
 import com.DIAPERS.diaper_project.Class.GetAll
 import com.DIAPERS.diaper_project.Class.currentUser
+import com.auth0.android.jwt.JWT
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_loader.*
 import org.json.JSONArray
@@ -24,6 +27,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
+
 
 //mainActivity에 있는 전역변수들은 다른 액티비티에서도 접근가능!!
 var cnt_name =  ArrayList<String>()  //모든 이용자 이름을 저장해둔 리스트. StatisticActivity에서 spinner만들어줄때 쓰려고.
@@ -38,6 +42,9 @@ var server_access_success:Boolean = true  //처음에 앱 킬때 서버에서 �
 
 
 class MainActivity : BasicActivity() {
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -45,6 +52,9 @@ class MainActivity : BasicActivity() {
         postUpdate()
     }
 
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun init() {
         //툴바 만들기
         setSupportActionBar(toolbar)
@@ -62,15 +72,29 @@ class MainActivity : BasicActivity() {
         val token = sp.getString("TokenCode", "")!! // TokenCode키값에 해당하는 value값을 불러온다. 없다면 ""로 처리한다.
         val name = sp.getString("name", "")!!  //name키값에 해당하는 value값을 가져옴
 
-        if (token == "")   //만약 SharedPreferences에 저장된 값이 없다면, 즉 로그인 안되어있을때.
+
+        if(token == "")   //만약 SharedPreferences에 저장된 값이 없다면, 즉 로그인 안되어있을때.
         {
             var i = Intent(this, SignUpActivity::class.java)   //회원가입창 화면으로 이동
             startActivity(i)
+            Log.e("태그","로그인 안되어있음")
             //이렇게 하는 이유는 이 앱의 첫 실행화면을 메인액티비티로 해두어서임. 그 이유는 나중에 자동로그인이 되어서 바로 메인부터 나오면, 메인액티비티에서 뒤로가기 했을때 로그인창 같은게 나오지 않기 때문에. 바로 앱이 꺼질수 있게 하기위함
-        } else {          //회원가입or로그인 했을시or 자동로그인 되었을시
+        } else {          //회원가입or로그인 했을시or 자동로그인 되었을시  //유저의 access_token이 만료되었을때
 
             if (currentuser == null) {           //자동로그인기능으로 들어온 경우
-                currentuser = currentUser(name, token)
+                //유저의 access_token이 만료되었을경우 처리  (sharedpreference엔 저장된 token값이 있는데 그 token이 만료된 경우)
+                var jwt = JWT(token)  //implement한 jwt 디코딩 라이브러리 이용함. 디코딩함
+                var exp= jwt.expiresAt  // jwt의 만료일을 나타내는 exp값을 디코딩한 값으로부터 가져옴.
+                val isExpired = jwt.isExpired(10)  //토큰이 만료되었는지 확인해서 만료되었으면 true를 반환. 아니면 false인듯.
+                Log.e("태그","토큰파싱완료: "+jwt+"           exp: "+ exp+ "    isExpired: "+isExpired )
+                if(isExpired){
+                    var i = Intent(this, SignUpActivity::class.java)   //회원가입창 화면으로 이동
+                    startActivity(i)
+                    Log.e("태그","jwt 토큰 만료됨")
+                }else{
+                    Log.e("태그","자동로그인 이용")
+                    currentuser = currentUser(name, token)
+                }
             }
 
             //var recyclerView = findViewById<RecyclerView>(R.id.recyclerView)  //화면에 보일 리사이클러뷰객체
@@ -83,6 +107,13 @@ class MainActivity : BasicActivity() {
             startActivityForResult(i, 100)
         }
     }  //init
+
+
+
+
+
+
+
 
     //이용자 추가하기 액티비티(cntAddactivity)에 갔다오면서 받은 데이터에 따른 동작처리
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
