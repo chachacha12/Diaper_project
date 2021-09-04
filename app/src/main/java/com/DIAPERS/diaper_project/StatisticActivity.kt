@@ -24,7 +24,6 @@ class StatisticActivity  :  BasicActivity(),
 
     //FragmentListener 인터페이스 상속받아서 이 함수 꼭 오버라이드 해줘야함. 프래그먼트들 통신에 사용됨
     override fun onCommand(message: ArrayList<Double>) {
-        Log.e("태그","통계 액티비티통해서 통계프래그먼트의 display함수 실행시작은 함")
         afragment?.display(message)
         Log.e("태그","통계 액티비티통해서 통계프래그먼트의 display함수 실행완료")
     }
@@ -39,7 +38,6 @@ class StatisticActivity  :  BasicActivity(),
     inner class CustomOnItemSelectedListener : AdapterView.OnItemSelectedListener{
 
         override fun onNothingSelected(parent: AdapterView<*>?) {
-
         }
 
         //특정 이용자 선택되었을때 발생할 이벤트 작업 - 해당 이용자에 맞는 log값들을 불러와서 그래프 그리기, 통계값 구하기
@@ -118,15 +116,6 @@ class StatisticActivity  :  BasicActivity(),
         bundle.putString("cnt_id", cnt_id )
         gfragment!!.arguments = bundle
 
-        /*
-        //처음에 스피너로 아무도 선택안하면
-        viewpager2.adapter = MyFragStateAdapter(this@StatisticActivity, gfragment, afragment)
-        Log.e("태그","뷰페이저, 탭 레이아웃 만들어짐")
-        //뷰페이저2객체를 슬라이딩 할때마다 tab의 위치도 바뀌어야함. 그 둘을 동기화 해주는 클래스인 TabLayoutMediator을 이용해줌.
-        TabLayoutMediator(tabLayout, viewpager2){
-                tab, position -> tab.text = textArray[position]
-        }.attach()
-         */
 
     } //init
 

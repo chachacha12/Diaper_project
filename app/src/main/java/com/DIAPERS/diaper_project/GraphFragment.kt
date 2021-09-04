@@ -107,7 +107,7 @@ class GraphFragment : Fragment() {
                 }
                 "6개월"->{
                     log_size = 180
-                    Log.e("태그","스피너로 인해 세달 선택됨, log_size: "+log_size)
+                    Log.e("태그","스피너로 인해 6개월 선택됨, log_size: "+log_size)
                     Log.e("태그"," uiUpdate() 실행")
                     uiUpdate()
                 }
@@ -119,7 +119,7 @@ class GraphFragment : Fragment() {
     fun uiUpdate(){
         fragUpdate()  //다시 새로 리사이클러뷰와 그래프를 만들거임, 즉 갱신해줄거임
         //onStart()함수와 같은 작업(서버로부터 데이터 다 안가져왔으면 로딩화면 보여줌)
-        if(entries.size<=0) {
+        if(entries.size<=0) {   //데이터 안들어왔으면 로딩화면만 보여줌
             LinearLayout_record.visibility = View.INVISIBLE //로그들 보여주는 리사이클러뷰를 가려줌
             LinearLayout_title.visibility = View.INVISIBLE  // "한달간 기저귀 수량변화" 등의 화면 가려줌
             chart.visibility = View.GONE
@@ -383,7 +383,9 @@ class GraphFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        Log.e("태그","onResume돌아감")
+
+
+         Log.e("태그","onResume돌아감")
 
         //다른 프래그먼트 갔다가 여기 왔을때 동작완료되었다면 그래프띄워주기 위함
         if(entries.size>0){
@@ -413,7 +415,6 @@ class GraphFragment : Fragment() {
                 }
             }, 2000)  //4초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
         }
-
 
         //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
         loaderLayout.setOnClickListener {

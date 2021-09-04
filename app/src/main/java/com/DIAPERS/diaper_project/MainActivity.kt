@@ -6,15 +6,14 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
+import android.os.*
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.DIAPERS.diaper_project.Adapter.MainAdapter
 import com.DIAPERS.diaper_project.Class.GetAll
@@ -38,21 +37,19 @@ lateinit var mainAdapter: MainAdapter
 var jsonarray: JSONArray? = null //여기안엔 모든 이용자들(cnt)정보가 들어감
 var currentuser: currentUser? = null //현재 로그인되어있는 회원정보.
 lateinit var sp:SharedPreferences
-var server_access_success:Boolean = true  //처음에 앱 킬때 서버에서 값가져오기 실패했을때 다시 postUpdate()를 실행해주기 위한 변수
+//var server_access_success:Boolean = true  //처음에 앱 킬때 서버에서 값가져오기 실패했을때 다시 postUpdate()를 실행해주기 위한 변수
 
 
 class MainActivity : BasicActivity() {
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         init()
-        postUpdate()
+        thread_start()
+       // postUpdate()
     }
-
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun init() {
@@ -109,7 +106,39 @@ class MainActivity : BasicActivity() {
     }  //init
 
 
+    private fun thread_start(){
+        loaderLayout.visibility = View.VISIBLE  //로딩화면보여줌
+        Log.e("로딩태그","로딩화면보여줌")
+        var thread = Thread(null, getData()) //스레드 생성후 스레드에서 작업할 함수 지정(getDATA)
+        thread.start()
+        Log.e("로딩태그","thread_start시작됨.")
+    }
 
+    fun getData() = Runnable {
+        kotlin.run {
+            try {
+                //원하는 자료처리(데이터 로딩 등)
+                postUpdate()
+                Log.e("로딩태그","getData성공. 데이터 가져옴")
+                //자료처리 완료후 핸들러의 post 사용해서 이벤트 던짐
+
+                handler()
+                Log.e("로딩태그","핸들러 통해서 메인ui의 로딩화면 Gone함")
+            }catch (e:Exception){
+                Log.e("로딩태그","getData실패")
+            }
+        }
+    }
+
+    //데이터 가져오는 postUpdate작업 다 끝나면 로딩화면 제거하는 작업해주는 핸들러 함수
+    private fun handler(){
+        var handler = object:Handler(Looper.getMainLooper()){
+            override fun handleMessage(msg: Message) {
+                //loaderLayout.visibility = View.GONE  //로딩화면 끔끔
+            }
+        }
+        handler.obtainMessage().sendToTarget()
+    }
 
 
 
@@ -221,23 +250,26 @@ class MainActivity : BasicActivity() {
     override fun onStart() {
         super.onStart()
 
+        /*
         //아직 서버로부터 데이터를 못받아왔을때는 로딩화면을 보여줌
         if (jsonarray == null) {
             //textView_clickorder2.visibility = View.VISIBLE
             loaderLayout.visibility = View.VISIBLE
         }
+         */
     }
+
 
     //액티비티가 재실행되거나 홈버튼 눌러서 나갔다왔을때 등의 경우에 onCreate말고 이 함수가 실행됨. (이때마다 게시글들 새로고침 해주면될듯)
     //앱 처음 실행시엔 onCreate와 onResume함수가 둘다 실행되므로 중복되는 코드는 쓰지 않기
     override fun onResume() {
         super.onResume()
 
+        /*
         //다른 화면 갔다가 여기 왔을때 데이터작업 완료되었으면 로딩화면 없애줌
         if (jsonarray != null) {
             //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
             loaderLayout.visibility = View.GONE
-            //textView_clickorder2.visibility = View.INVISIBLE
         }
 
         // 데이터가 서버로부터 왔는지 감시해줌. 데이터 들어왔으면  만들어줌
@@ -265,9 +297,13 @@ class MainActivity : BasicActivity() {
                 postUpdate()
             }
         }
+
+         */
     } //onResume
 
-    // 삭제하거나 수정하거나 만들거나 등등 했을때 다 지웠다가 다시 바뀐 jsonarray를 서버로부터 받아와서 화면에 업데이트 시켜줄거임
+
+
+   // 삭제하거나 수정하거나 만들거나 등등 했을때 다 지웠다가 다시 바뀐 jsonarray를 서버로부터 받아와서 화면에 업데이트 시켜줄거임
     private fun postUpdate() {
         if (currentuser != null) {
 
@@ -281,7 +317,7 @@ class MainActivity : BasicActivity() {
                         call: Call<GetAll>,
                         t: Throwable
                     ) {
-                        server_access_success = false  //이 전역변수를 변경해줌으로 다시한번 요청해줄거임
+                        //server_access_success = false  //이 전역변수를 변경해줌으로 다시한번 요청해줄거임
                         Log.e("태그", "통신 아예 실패")
                         Toast.makeText(
                             this@MainActivity,
@@ -292,7 +328,7 @@ class MainActivity : BasicActivity() {
 
                     override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
                         if (response.isSuccessful) {
-                            server_access_success = true
+                            //server_access_success = true
                             jsonarray = JSONArray(response.body()?.result)  //어댑터에 넘겨줄 값임
                             Log.e("태그","@@@@@@@response.body()?.result:"+response.body()?.result)
                             //리사이클러뷰를 여기서 제대로 만들어줌.
@@ -312,10 +348,9 @@ class MainActivity : BasicActivity() {
                                 cnt_ids.add(iObject.get("id").toString())
                                 i++
                             }
-                            Log.e("태그", " cnt name:" + cnt_name + ",  id:" + cnt_ids)
-                            //}
+                            loaderLayout.visibility = View.GONE  //로딩화면 끔끔
                         } else {
-                            server_access_success = false  //이 전역변수를 변경해줌으로 다시한번 요청해줄거임
+                            //server_access_success = false  //이 전역변수를 변경해줌으로 다시한번 요청해줄거임
                             Toast.makeText(
                                 this@MainActivity,
                                 "서버에 접근했지만 올바르지 않은 데이터를 받았습니다.",
@@ -323,10 +358,11 @@ class MainActivity : BasicActivity() {
                             ).show()
                         }
                     }
+
                 })
         } else {
             Log.e("태그", "현재유저값이null임")
         }
-    }
+    }  //postupdate
 
 }

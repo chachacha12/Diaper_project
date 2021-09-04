@@ -2,6 +2,8 @@ package com.DIAPERS.diaper_project
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -28,22 +30,61 @@ class UserinfoActivity : BasicActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_userinfo)
         init()
-        UserUpdate()
+        thread_start()
     }
+
+    private fun thread_start(){
+        loaderLayout.visibility = View.VISIBLE  //로딩화면보여줌
+        Log.e("로딩태그","로딩화면보여줌")
+        var thread = Thread(null, getData()) //스레드 생성후 스레드에서 작업할 함수 지정(getDATA)
+        thread.start()
+        Log.e("로딩태그","thread_start시작됨.")
+    }
+
+    fun getData() = Runnable {
+        kotlin.run {
+            try {
+                //원하는 자료처리(데이터 로딩 등)
+                UserUpdate()
+                Log.e("로딩태그","getData성공. 데이터 가져옴")
+                //자료처리 완료후 핸들러의 post 사용해서 이벤트 던짐
+                handler()
+                Log.e("로딩태그","핸들러 통해서 메인ui의 로딩화면 Gone함")
+            }catch (e:Exception){
+                Log.e("로딩태그","getData실패")
+            }
+        }
+    }
+
+    //데이터 가져오는 postUpdate작업 다 끝나면 로딩화면 제거하는 작업해주는 핸들러 함수
+    private fun handler(){
+        var handler = object:Handler(Looper.getMainLooper()){
+            override fun handleMessage(msg: Message) {
+                //loaderLayout.visibility = View.GONE  //로딩화면 끔끔
+            }
+        }
+        handler.obtainMessage().sendToTarget()
+    }
+
+
 
     override fun onStart() {
         super.onStart()
 
+        /*
         //아직 서버로부터 데이터를 못받아왔을때는 로딩화면을 보여줌
         if(jsonarray ==null ) {
             //textView_clickorder2.visibility = View.VISIBLE
             loaderLayout.visibility = View.VISIBLE
         }
+
+         */
     }
 
     override fun onResume() {
         super.onResume()
 
+        /*
         // 데이터가 서버로부터 왔는지 감시해줌. 데이터 들어왔으면  만들어줌
         if(jsonarray ==null){
             // for(i in 1..10) {
@@ -74,13 +115,14 @@ class UserinfoActivity : BasicActivity() {
             }
         }
 
+         */
+
     }
 
     fun init(){
         //recyclerView = recyclerView_user  //화면에 보일 리사이클러뷰객체
         recyclerView_user.setHasFixedSize(true)
         recyclerView_user.layoutManager = LinearLayoutManager(this)
-
         name.text = currentuser?.username.toString()  //현재 접속한 계정의 아이디 값을 적어줌
     }
 
@@ -90,6 +132,7 @@ class UserinfoActivity : BasicActivity() {
 
         if (currentuser != null) {
             loaderLayout.visibility = View.VISIBLE  //로딩화면 보여줌
+
 
             //사용자user 관련 get기능-모두 조회
             server.getAllusers_Request("Bearer " + currentuser!!.access_token)
@@ -120,7 +163,7 @@ class UserinfoActivity : BasicActivity() {
                                 this@UserinfoActivity, jsonarray!!, onUserListener, level
                             )   //cnt_name리스트도 어댑터에 보내줘서 이용자 이름을 채워주도록 할거임. 그 후 Statistic액티비티에서 spinner만들때 쓸거.
                             recyclerView_user.adapter = userinfoAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
-
+                            loaderLayout.visibility = View.GONE  //로딩화면 끔끔
                         } else {
                             Log.e(
                                 "태그",
@@ -149,12 +192,16 @@ class UserinfoActivity : BasicActivity() {
                     }
                     override fun onResponse(call: Call<success>, response: Response<success>) {
                         if (response.isSuccessful) {
+                            //thread_start()
+
                             UserUpdate()  //다시 리사이클러뷰 어댑터 붙이는 작업 등을 통해 화면 갱신해줌
+
                             Handler().postDelayed({
                                 if (jsonarray != null) {
                                     loaderLayout.visibility = View.GONE
                                 }
                             }, 2000)  //2초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
+
                             Toast.makeText(this@UserinfoActivity, "사용자를 삭제하였습니다.",Toast.LENGTH_SHORT).show()
                         } else {
                             Log.e("태그   사용자 삭제실패: ", response.body()?.succeed.toString())

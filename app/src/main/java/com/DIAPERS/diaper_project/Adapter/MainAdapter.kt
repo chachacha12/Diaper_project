@@ -65,12 +65,6 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
         val iObject = myDataset.getJSONObject(position)  //이용자 객체(cnt) 하나씩 순서대로 가져옴
         name.text = iObject?.getString("name")      //이용자 이름을 가져옴
 
-        /*
-        if(cnt_name.size <= position){
-            cnt_name.add(name.text.toString())                   //StatisticActivity에서 spinner만들어줄때 쓰려고.
-        }
-         */
-
         //UI상에 이용자들 각각 기저귀 수량 log값과 최신 생성일을 서버로부터 받아와서 띄워줄거임.
         var cnt_id = iObject.get("id").toString()  //cnt도큐먼트의 id값을 가져옴
 
