@@ -25,8 +25,6 @@ interface HowlService {      //서버로 오고가는 api들을 관리해주는 
     @POST("api/auth/logoutc")
     fun logoutRequest(@Body currentUser: currentUser):Call<success>
 
-
-
     //logs추가
     @POST("api/logs")
     fun addlogResquest(@Header("Authorization")authorization:String, @Body log: log):Call<success>

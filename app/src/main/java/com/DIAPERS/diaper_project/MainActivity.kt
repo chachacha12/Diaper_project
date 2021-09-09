@@ -37,7 +37,7 @@ lateinit var mainAdapter: MainAdapter
 var jsonarray: JSONArray? = null //여기안엔 모든 이용자들(cnt)정보가 들어감
 var currentuser: currentUser? = null //현재 로그인되어있는 회원정보.
 lateinit var sp:SharedPreferences
-//var server_access_success:Boolean = true  //처음에 앱 킬때 서버에서 값가져오기 실패했을때 다시 postUpdate()를 실행해주기 위한 변수
+var server_access_success:Boolean = true  //처음에 앱 킬때 서버에서 값가져오기 실패했을때 다시 postUpdate()를 실행해주기 위한 변수
 
 
 class MainActivity : BasicActivity() {
@@ -139,9 +139,6 @@ class MainActivity : BasicActivity() {
         }
         handler.obtainMessage().sendToTarget()
     }
-
-
-
 
 
     //이용자 추가하기 액티비티(cntAddactivity)에 갔다오면서 받은 데이터에 따른 동작처리
@@ -249,7 +246,6 @@ class MainActivity : BasicActivity() {
 
     override fun onStart() {
         super.onStart()
-
         /*
         //아직 서버로부터 데이터를 못받아왔을때는 로딩화면을 보여줌
         if (jsonarray == null) {
@@ -266,12 +262,30 @@ class MainActivity : BasicActivity() {
         super.onResume()
 
         /*
+        //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
+        loaderLayout.setOnClickListener {
+
+            if (jsonarray != null ) {
+                //postUpdate()
+                loaderLayout.visibility = View.GONE
+            }
+
+            if (server_access_success == false) {  //처음 앱켰을때 서버접근 실패했을때를 대비해서 다시한번 서버에 요청해줄 작업
+                postUpdate()
+            }
+        }
+         */
+
+
+        /*
         //다른 화면 갔다가 여기 왔을때 데이터작업 완료되었으면 로딩화면 없애줌
         if (jsonarray != null) {
             //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
             loaderLayout.visibility = View.GONE
         }
+          */
 
+        /*
         // 데이터가 서버로부터 왔는지 감시해줌. 데이터 들어왔으면  만들어줌
         if (jsonarray == null) {
             // for(i in 1..10) {
@@ -282,22 +296,9 @@ class MainActivity : BasicActivity() {
                     loaderLayout.visibility = View.GONE
                     Log.e("태그", " (jsonarray != null)  구문 들어옴")
                 }
-            }, 3000)  //5초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
+            }, 4000)  //5초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
             // }
         }
-
-        //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
-        loaderLayout.setOnClickListener {
-            if (jsonarray != null) {
-                //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
-                loaderLayout.visibility = View.GONE
-                //textView_clickorder2.visibility = View.INVISIBLE
-            }
-            if (server_access_success == false) {  //처음 앱켰을때 서버접근 실패했을때를 대비해서 다시한번 서버에 요청해줄 작업
-                postUpdate()
-            }
-        }
-
          */
     } //onResume
 
@@ -317,18 +318,22 @@ class MainActivity : BasicActivity() {
                         call: Call<GetAll>,
                         t: Throwable
                     ) {
+                        move_activity(SignUpActivity())  //회원가입창으로 다시이동.
+
                         //server_access_success = false  //이 전역변수를 변경해줌으로 다시한번 요청해줄거임
                         Log.e("태그", "통신 아예 실패")
                         Toast.makeText(
                             this@MainActivity,
-                            "서버와 통신 실패하였습니다. 화면을 터치해서 데이터를 다시 가져와주세요.",
+                            "로그인 해주세요.",
                             Toast.LENGTH_LONG
                         ).show()
+
+
                     }
 
                     override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
                         if (response.isSuccessful) {
-                            //server_access_success = true
+                            server_access_success = true
                             jsonarray = JSONArray(response.body()?.result)  //어댑터에 넘겨줄 값임
                             Log.e("태그","@@@@@@@response.body()?.result:"+response.body()?.result)
                             //리사이클러뷰를 여기서 제대로 만들어줌.
@@ -350,11 +355,14 @@ class MainActivity : BasicActivity() {
                             }
                             loaderLayout.visibility = View.GONE  //로딩화면 끔끔
                         } else {
+                            //헤로쿠 무료서버라 30분후에 서버 꺼짐.. 그럼 다시 켰을때 이 response가 200이 아닌 다른 값으로 에러response옴.. 그래서 다시 로그인 하라고 하기
+                            move_activity(SignUpActivity())  //회원가입창으로 다시이동.
                             //server_access_success = false  //이 전역변수를 변경해줌으로 다시한번 요청해줄거임
+                            Log.e("태그", "통신 아예 실패")
                             Toast.makeText(
                                 this@MainActivity,
-                                "서버에 접근했지만 올바르지 않은 데이터를 받았습니다.",
-                                Toast.LENGTH_SHORT
+                                "로그인 해주세요.",
+                                Toast.LENGTH_LONG
                             ).show()
                         }
                     }
@@ -364,5 +372,11 @@ class MainActivity : BasicActivity() {
             Log.e("태그", "현재유저값이null임")
         }
     }  //postupdate
+
+    fun move_activity(activity:Activity){
+        var i = Intent(this, activity::class.java)      //회원정보 입력하라는 액티비티 띄움
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(i)
+    }
 
 }
