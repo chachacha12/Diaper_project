@@ -1,12 +1,15 @@
 package com.DIAPERS.diaper_project.Adapter
 
-//GalleryAdapter클래스를 복사해서 좀 바꿔서 써준 어댑터임
-
 import android.app.Activity
 import android.util.Log
 import android.view.*
+import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.DIAPERS.diaper_project.R
+import com.DIAPERS.diaper_project.currentuser
 import com.DIAPERS.diaper_project.databinding.ItemCntBinding
+import kotlinx.android.synthetic.main.item_cnt.view.*
 import org.json.JSONArray
 import java.text.SimpleDateFormat
 import kotlin.collections.ArrayList
@@ -29,6 +32,8 @@ class Cntinfo_Adapter(var activity: Activity, private var myDataset: JSONArray) 
         viewType: Int
     ): MainViewHolder {
 
+
+
         //뷰바인딩
         val binding = ItemCntBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val mainViewHolder = MainViewHolder(binding)  //밑의 setOnClickListener에서 사용자가 선택한 특정뷰의 위치값 알아야해서 여기서 뷰홀더객체생성
@@ -48,11 +53,10 @@ class Cntinfo_Adapter(var activity: Activity, private var myDataset: JSONArray) 
             birthformat.add(output)
         }
 
-
         /*
         //게시글의 toolbar(점3개)버튼을 클릭했을때 효과
         binding.cardView.menu.setOnClickListener {
-            showPopup(it, mainViewHolder.adapterPosition)      //post.xml을 띄워줌. 밑에 있음. 구글에 android menu검색하고 developers사이트들어가서 코드 가져옴
+            showPopup(it, mainViewHolder.adapterPosition)
         }
          */
 
@@ -74,13 +78,10 @@ class Cntinfo_Adapter(var activity: Activity, private var myDataset: JSONArray) 
             binding.cntOuter.text = iObject?.getString("outer_product")
             binding.cntInner.text = iObject?.getString("inner_product")
         }
-
-
-
     }
 
-
     override fun getItemCount() = myDataset!!.length()
+
 
     /*
    //res안에 menu디렉토리 만든거에서, 그 안의 menu파일을 불러와서 toolbar보여주고, 클릭했을때 이벤트처리해줌  //developers사이트에서 가져온 함수.
@@ -90,7 +91,11 @@ class Cntinfo_Adapter(var activity: Activity, private var myDataset: JSONArray) 
 
            return@setOnMenuItemClickListener when (it.itemId) {
                R.id.delete -> {                  //삭제하기 눌렀을때
-                   onUserListener.onDelete(position)
+                   if(level>=2) {  //2이상일때
+                       onUserListener.onDelete(position)
+                   }else{        //권한레벨이 2이상인 사용자만 다른 계정 삭제가 가능함
+                       Toast.makeText(activity, "접근 권한이 없습니다.", Toast.LENGTH_SHORT).show()
+                   }
                    true
                }
                else -> false
@@ -101,8 +106,6 @@ class Cntinfo_Adapter(var activity: Activity, private var myDataset: JSONArray) 
        popup.show()
    }
      */
-
-
 
 
 }

@@ -163,7 +163,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/button_round"
                 android:text="취소하기"
-                android:textColor="#00aded" />
+                android:textColor="#222222" />
 
             <Button
                 android:id="@+id/button_Add"
@@ -173,7 +173,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/button_round"
                 android:text="추가하기"
-                android:textColor="#00aded" />
+                android:textColor="#222222" />
         </LinearLayout>
 
     </LinearLayout>

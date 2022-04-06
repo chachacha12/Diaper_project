@@ -99,7 +99,7 @@ class UserinfoActivity : BasicActivity() {
                                 user_id = iObject.get("id").toString()  //사용자의 id값 가져옴. 이를 통해 로그삭제, 수정 해줄거임
                                 Userid_Array.add(user_id)  //사용자 도큐먼트의 id값을 저장(삭제로직때 필요함)
                                 if(currentuser!!.username == iObject.get("username").toString()){
-                                    level =  iObject.get("level") as Double     //현재 계정의 레벨값 알아냄(계정들 삭제때 필요함함)
+                                    level =  iObject.get("level") as Double     //현재 계정의 레벨값 알아냄(계정들 삭제때 필요함)
                                }
                                 i++
                             }
