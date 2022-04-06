@@ -206,6 +206,7 @@ class GraphFragment : Fragment() {
         }
     }
 
+
     //데이터를 실어서 특정 액티비티에 보내주는 인텐트를 함수로 만들어둠  //로그 수정작업에 씀
     fun myStartActivity(c: Class<*>, log: log) {
         var i = Intent(activity, c)
@@ -382,8 +383,6 @@ class GraphFragment : Fragment() {
     //다른 프래그먼트로 갔다가 다시 이 프래그먼트로 돌아오거나, 뭔가를 사용자가 클릭해서 상호작용할때마다 작동되는 함수인듯?
     override fun onResume() {
         super.onResume()
-
-
 
          Log.e("태그","onResume돌아감")
 

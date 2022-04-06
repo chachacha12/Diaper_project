@@ -3,10 +3,12 @@ package com.DIAPERS.diaper_project
 //신규회원 가입 화면임.
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.DIAPERS.diaper_project.Class.IDcheck_Response
 import com.DIAPERS.diaper_project.Class.Users
 import com.DIAPERS.diaper_project.Class.currentUser
@@ -22,6 +24,7 @@ class SignUpActivity :  BasicActivity() {
 
     lateinit var currentuser: currentUser
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)

@@ -28,7 +28,7 @@ import retrofit2.Response
 import java.util.*
 
 
-//mainActivity에 있는 전역변수들은 다른 액티비티에서도 접근가능!!
+//mainActivity에 있는 전역변수들은 다른 액티비티에서도 접근가능?
 var cnt_name =  ArrayList<String>()  //모든 이용자 이름을 저장해둔 리스트. StatisticActivity에서 spinner만들어줄때 쓰려고.
 var cnt_ids =  ArrayList<String>()  //모든 이용자 id를 저장해둔 리스트. StatisticActivity에서 spinner만들어줄때 쓰려고.
 
@@ -105,7 +105,6 @@ class MainActivity : BasicActivity() {
         }
     }  //init
 
-
     private fun thread_start(){
         loaderLayout.visibility = View.VISIBLE  //로딩화면보여줌
         Log.e("로딩태그","로딩화면보여줌")
@@ -123,7 +122,7 @@ class MainActivity : BasicActivity() {
                 //자료처리 완료후 핸들러의 post 사용해서 이벤트 던짐
 
                 handler()
-                Log.e("로딩태그","핸들러 통해서 메인ui의 로딩화면 Gone함")
+                //Log.e("로딩태그","핸들러 통해서 메인ui의 로딩화면 Gone함")
             }catch (e:Exception){
                 Log.e("로딩태그","getData실패")
             }
@@ -261,7 +260,7 @@ class MainActivity : BasicActivity() {
     override fun onResume() {
         super.onResume()
 
-        /*
+
         //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
         loaderLayout.setOnClickListener {
 
@@ -274,8 +273,6 @@ class MainActivity : BasicActivity() {
                 postUpdate()
             }
         }
-         */
-
 
         /*
         //다른 화면 갔다가 여기 왔을때 데이터작업 완료되었으면 로딩화면 없애줌
@@ -285,7 +282,6 @@ class MainActivity : BasicActivity() {
         }
           */
 
-        /*
         // 데이터가 서버로부터 왔는지 감시해줌. 데이터 들어왔으면  만들어줌
         if (jsonarray == null) {
             // for(i in 1..10) {
@@ -294,14 +290,13 @@ class MainActivity : BasicActivity() {
                 if (jsonarray != null) {
                     //textView_clickorder2.visibility = View.INVISIBLE
                     loaderLayout.visibility = View.GONE
-                    Log.e("태그", " (jsonarray != null)  구문 들어옴")
+                    Log.e("태그", " Handler.postDelayed 통해서 MainAct 에서 로딩화면 제거")
                 }
             }, 4000)  //5초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
             // }
         }
-         */
-    } //onResume
 
+    } //onResume
 
 
    // 삭제하거나 수정하거나 만들거나 등등 했을때 다 지웠다가 다시 바뀐 jsonarray를 서버로부터 받아와서 화면에 업데이트 시켜줄거임
@@ -319,23 +314,19 @@ class MainActivity : BasicActivity() {
                         t: Throwable
                     ) {
                         move_activity(SignUpActivity())  //회원가입창으로 다시이동.
-
-                        //server_access_success = false  //이 전역변수를 변경해줌으로 다시한번 요청해줄거임
-                        Log.e("태그", "통신 아예 실패")
+                        server_access_success = false  //이 전역변수를 변경해줌으로 다시한번 요청해줄거임
+                        Log.e("태그", "MainACT 이용자 모두조회 통신 아예 실패")
                         Toast.makeText(
                             this@MainActivity,
                             "로그인 해주세요.",
                             Toast.LENGTH_LONG
                         ).show()
-
-
                     }
-
                     override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
                         if (response.isSuccessful) {
                             server_access_success = true
                             jsonarray = JSONArray(response.body()?.result)  //어댑터에 넘겨줄 값임
-                            Log.e("태그","@@@@@@@response.body()?.result:"+response.body()?.result)
+                            Log.e("태그", "MainACT 이용자 모두조회 통신 성공")
                             //리사이클러뷰를 여기서 제대로 만들어줌.
                             mainAdapter = MainAdapter(
                                 this@MainActivity,
@@ -355,10 +346,10 @@ class MainActivity : BasicActivity() {
                             }
                             loaderLayout.visibility = View.GONE  //로딩화면 끔끔
                         } else {
+                            Log.e("태그", "MainACT 이용자 모두조회 실패")
                             //헤로쿠 무료서버라 30분후에 서버 꺼짐.. 그럼 다시 켰을때 이 response가 200이 아닌 다른 값으로 에러response옴.. 그래서 다시 로그인 하라고 하기
                             move_activity(SignUpActivity())  //회원가입창으로 다시이동.
-                            //server_access_success = false  //이 전역변수를 변경해줌으로 다시한번 요청해줄거임
-                            Log.e("태그", "통신 아예 실패")
+                            server_access_success = false  //이 전역변수를 변경해줌으로 다시한번 요청해줄거임
                             Toast.makeText(
                                 this@MainActivity,
                                 "로그인 해주세요.",

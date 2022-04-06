@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".IntroduceActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -12,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="false"
-        android:background="#1CC7F3"
+        android:background="#FFFFFF"
         app:layout_constraintTop_toTopOf="parent"
         app:subtitleTextColor="#090000"
         app:titleTextColor="#000000">
@@ -35,12 +36,14 @@
         android:layout_height="100dp"
         android:layout_below="@id/toolbar_intro"
         android:layout_centerHorizontal="true"
+        android:background="#FFFFFF"
         app:srcCompat="@drawable/diaper" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/imageView4">
+        android:layout_below="@id/imageView4"
+        android:background="#FFFFFF">
 
         <TextView
             android:id="@+id/textView_intro"

@@ -24,7 +24,6 @@ import java.util.*
 class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var server:HowlService)  //myDataset은 cnt정보, server는 어댑터에는 없으므로 여기서 받아와서 접근해줌
  : RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
 
-
     //뷰홀더에 텍스트뷰말고 카드뷰를 넣음
     class MainViewHolder(val cardView: CardView) : RecyclerView.ViewHolder(cardView)
 
@@ -76,10 +75,11 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
                     call: Call<GetAll>,
                     t: Throwable
                 ) {  //object로 받아옴. 서버에서 받은 object모델과 맞지 않으면 실패함수로 빠짐
-                    Log.e("태그", "통신 아예 실패")
+                    Log.e("태그", "mainadapter에서 log값 가져오기 통신 아예 실패")
                 }
                 override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
                     if (response.isSuccessful) {
+                        Log.e("태그", "mainadapter에서 log값 가져오기 통신 성공")
                         var parser:SimpleDateFormat
                         var formatter:SimpleDateFormat
                         var output:String
@@ -116,7 +116,7 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
 
                         }
                     } else {
-                        Log.e("태그", "전체 로그 조회실패" + response.body().toString())
+                        Log.e("태그", "mainadapter에서 log값 가져오기 조회실패")
                     }
                 }
             })

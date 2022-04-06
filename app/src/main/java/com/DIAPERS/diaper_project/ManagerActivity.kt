@@ -1,12 +1,15 @@
 package com.DIAPERS.diaper_project  //관리자 메뉴 - 여기서 권한이 높은 사용자는 특정 사용자를 추가해주거나 삭제하거나 등등이 가능함
 
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.WebViewClient
+import androidx.annotation.RequiresApi
 import kotlinx.android.synthetic.main.activity_manager.*
 
-class ManagerActivity : AppCompatActivity() {
+class ManagerActivity : BasicActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_manager)

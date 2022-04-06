@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/account"
-        android:title="계정 정보" />
+        android:title="종사자 정보" />
     <item
         android:id="@+id/cnt_info"
         android:title="이용자 정보" />
@@ -21,7 +21,7 @@
 
     <item
         android:id="@+id/etc"
-        android:title="장애인복지 최신 정보" />
+        android:title="한벗둥지 SNS" />
 
     <item
         android:id="@+id/logout"

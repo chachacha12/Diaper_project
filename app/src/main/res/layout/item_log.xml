@@ -4,11 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    app:cardCornerRadius="10dp">
+    android:background="#FFFFFF"
+    app:cardCornerRadius="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/border"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="5dp">
@@ -67,6 +69,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_margin="5dp"
+            app:cardBackgroundColor="#4300ADED"
             app:cardCornerRadius="15dp">
 
             <ImageView
@@ -74,6 +77,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="3dp"
+                android:background="@android:color/transparent"
                 app:srcCompat="@android:drawable/ic_menu_edit" />
         </androidx.cardview.widget.CardView>
 

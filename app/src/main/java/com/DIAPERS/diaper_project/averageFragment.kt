@@ -41,7 +41,6 @@ class averageFragment : Fragment() {
         binding?.InnerHoldAverage?.text = b
         binding?.OuterNoholdDaycount?.text = c
         binding?.InnerNoholdDaycount?.text = d
-
     }
 
     override fun onDestroyView() {

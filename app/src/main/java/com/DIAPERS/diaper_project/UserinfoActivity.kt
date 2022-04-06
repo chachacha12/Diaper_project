@@ -1,12 +1,10 @@
 package com.DIAPERS.diaper_project
 
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.Message
+import android.os.*
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.DIAPERS.diaper_project.Adapter.Userinfo_Adapter
 import com.DIAPERS.diaper_project.Class.GetAll
@@ -26,6 +24,7 @@ class UserinfoActivity : BasicActivity() {
     var Userid_Array = ArrayList<String>()  //사용자 도큐먼트의 id값들을 저장하는 리스트 (사용자 삭제로직때 필요해서)
     var level:Double =0.0 //사용자계정들을 삭제할 수 있는지 권한레벨을 확인해줄때를 위해
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_userinfo)
@@ -64,59 +63,6 @@ class UserinfoActivity : BasicActivity() {
             }
         }
         handler.obtainMessage().sendToTarget()
-    }
-
-
-
-    override fun onStart() {
-        super.onStart()
-
-        /*
-        //아직 서버로부터 데이터를 못받아왔을때는 로딩화면을 보여줌
-        if(jsonarray ==null ) {
-            //textView_clickorder2.visibility = View.VISIBLE
-            loaderLayout.visibility = View.VISIBLE
-        }
-
-         */
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        /*
-        // 데이터가 서버로부터 왔는지 감시해줌. 데이터 들어왔으면  만들어줌
-        if(jsonarray ==null){
-            // for(i in 1..10) {
-            Handler().postDelayed({
-                Log.e("태그", " Handler().postDelayed 구문 들어옴")
-                if (jsonarray != null) {
-                    //textView_clickorder2.visibility = View.INVISIBLE
-                    loaderLayout.visibility = View.GONE
-                    Log.e("태그", " (jsonarray != null)  구문 들어옴")
-                }
-            }, 2000)  //3초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
-            // }
-        }
-
-        //다른 화면 갔다가 여기 왔을때 데이터작업 완료되었으면 로딩화면 없애줌
-        if(jsonarray !=null ){
-            //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
-            loaderLayout.visibility = View.GONE
-            //textView_clickorder2.visibility = View.INVISIBLE
-        }
-
-        //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
-        loaderLayout.setOnClickListener {
-            if(jsonarray !=null ){
-                //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
-                loaderLayout.visibility = View.GONE
-               // textView_clickorder2.visibility = View.INVISIBLE
-            }
-        }
-
-         */
-
     }
 
     fun init(){

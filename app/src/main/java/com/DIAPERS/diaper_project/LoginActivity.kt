@@ -6,9 +6,11 @@ package com.DIAPERS.diaper_project
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.DIAPERS.diaper_project.Class.Users
 import com.DIAPERS.diaper_project.Class.currentUser
 import kotlinx.android.synthetic.main.activity_sign_up.*
@@ -22,7 +24,7 @@ class LoginActivity :  BasicActivity() {
 
     lateinit var currentuser: currentUser
 
-
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)

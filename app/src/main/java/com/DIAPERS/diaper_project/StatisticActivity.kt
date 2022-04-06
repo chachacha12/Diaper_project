@@ -33,6 +33,7 @@ class StatisticActivity  :  BasicActivity(),
         finish()
     }
 
+
     lateinit var cnt_id:String
     //스피너의 항목 선택했을때 이벤트 처리를 위해서 내부 클래스에 OnItemSelectedListener를 상속받고 이 클래스의 객체를 스피너에 달아줄거임
     inner class CustomOnItemSelectedListener : AdapterView.OnItemSelectedListener{

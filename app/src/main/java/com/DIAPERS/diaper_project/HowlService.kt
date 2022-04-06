@@ -5,6 +5,9 @@ import com.DIAPERS.diaper_project.Class.*
 import retrofit2.Call
 import retrofit2.http.*
 
+//서버의 url주소가 : 다음의 값은 {}로 묶어주고, ? 다음의 값들은 지워주고 @Query로 보내주면 됨!!!
+//포스트맨에서 api호출 연습시엔 {}이렇게 묶여있는 Query에선 괄호없애고 거기안에 맞는 value값 넣어주면 됨.
+
 //우리가 무슨 데이터를 서버에 요구했을때, 서버에서는 result라는 키값에 value를 넣어서 반환해줌.
 //이때 안드스튜디오에서 그 result값을 받을수있는 모델이 있어야함. 그래서 지금 이 data class가 그 모델역할.
 //data class ResponseDTO(var result:String?=null)
@@ -42,8 +45,7 @@ interface HowlService {      //서버로 오고가는 api들을 관리해주는 
     //특정기간 이용자별 로그리스트 조회 (페이지네이션)
     @GET("api/logs/cnt/{cnt_id}")
     fun getLog_period_Request(@Header("Authorization")authorization:String, @Path("cnt_id") cnt_id: String,  @Query("start") start: String, @Query("end") end: String, @Query("oneperday") oneperday: Boolean): Call<GetAll>
-// @Query("page") page: Number, @Query("size") size: Number,
-
+    // @Query("page") page: Number, @Query("size") size: Number,
 
     //특정로그 삭제
     @DELETE("api/logs/{log_id}")

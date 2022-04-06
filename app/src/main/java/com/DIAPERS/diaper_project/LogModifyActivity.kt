@@ -1,10 +1,12 @@
 package com.DIAPERS.diaper_project
 
 import android.app.Activity
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.DIAPERS.diaper_project.Class.log
 import com.DIAPERS.diaper_project.Class.success
 import kotlinx.android.synthetic.main.activity_log_modify.*
@@ -16,6 +18,7 @@ import java.text.SimpleDateFormat
 
 class LogModifyActivity :  BasicActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_log_modify)

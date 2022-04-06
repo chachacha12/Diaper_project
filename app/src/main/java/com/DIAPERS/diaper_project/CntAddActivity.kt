@@ -1,9 +1,11 @@
 package com.DIAPERS.diaper_project
 
 import android.app.Activity
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.DIAPERS.diaper_project.Class.Cnt
 import com.DIAPERS.diaper_project.Class.success
 import kotlinx.android.synthetic.main.activity_cnt_add.*
@@ -13,6 +15,7 @@ import retrofit2.Response
 
 class CntAddActivity  :  BasicActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cnt_add)

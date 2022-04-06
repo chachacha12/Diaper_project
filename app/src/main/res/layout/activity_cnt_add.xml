@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     android:orientation="vertical"
     tools:context=".CntAddActivity">
 
@@ -14,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="false"
-        android:background="#1CC7F3"
+        android:background="#FFFFFF"
         app:layout_constraintTop_toTopOf="parent"
         app:subtitleTextColor="#090000"
         app:titleTextColor="#000000">
@@ -22,7 +23,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="한벗둥지 기저귀 관리 시스템 - DIAPERS"
+            android:text="한벗둥지 기저귀 관리 - DIAPERS"
             android:textColor="#000000"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -47,7 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="40dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="40dp"
         android:layout_marginBottom="40dp"
         android:text="※ 계정 권한이 1이하라면 이용자 삭제가 불가하오니 추가에 있어서 유의해 주세요."
@@ -120,8 +121,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="(생년월일)"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textSize="18sp" />
 
         </LinearLayout>
 
@@ -146,27 +146,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="설명 (ex. 2층 A실 이용자)"
+            android:hint="설명 (ex. 2층 00호 이용자)"
             android:inputType="textPersonName" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/button_Cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
                 android:layout_weight="1"
-                android:text="취소하기" />
+                android:background="@drawable/button_round"
+                android:text="취소하기"
+                android:textColor="#00aded" />
 
             <Button
                 android:id="@+id/button_Add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:layout_weight="1"
-                android:text="추가하기" />
+                android:background="@drawable/button_round"
+                android:text="추가하기"
+                android:textColor="#00aded" />
         </LinearLayout>
 
     </LinearLayout>

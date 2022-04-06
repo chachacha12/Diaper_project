@@ -16,6 +16,7 @@ class OrgInfoActivity :  BasicActivity() {
     // var jsonObject: JSONObject? = null //기관정보를 받아올거임 여기에
     //var check: Boolean = false  //서버로부터 데이터 가져왔는지 판별하는 변수
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_org_info)

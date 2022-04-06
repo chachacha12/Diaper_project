@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     android:orientation="vertical"
     tools:context=".GraphFragment">
 
@@ -11,6 +12,7 @@
         android:id="@+id/LinearLayout_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#FFFFFF"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -18,10 +20,10 @@
             android:id="@+id/spinner_period"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#FAFAFA"
+            android:background="@drawable/button_round"
             android:entries="@array/period_arrays"
             android:fadeScrollbars="false"
-            android:gravity="right"
+            android:gravity="center"
             android:hapticFeedbackEnabled="false"
             android:prompt="@string/period_prompt" />
 
@@ -63,11 +65,13 @@
 
     </com.github.mikephil.charting.charts.BarChart>
 
+
     <LinearLayout
         android:id="@+id/LinearLayout_record"
         android:layout_width="match_parent"
-        android:layout_height="240dp"
+        android:layout_height="match_parent"
         android:layout_below="@id/chart"
+        android:background="#FFFFFF"
         android:orientation="vertical">
 
         <TextView
@@ -78,7 +82,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="#FAFAFA"
+            android:background="#FFFFFF"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="5dp">
@@ -142,22 +146,22 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_log"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_marginBottom="15dp"
+            android:background="#FFFFFF" />
     </LinearLayout>
-
 
     <include
         layout="@layout/view_loader"
-        android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
     <include
         layout="@layout/noexisit_log"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
-
 
 
 </RelativeLayout>

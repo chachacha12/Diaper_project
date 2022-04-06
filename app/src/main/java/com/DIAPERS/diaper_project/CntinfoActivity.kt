@@ -1,9 +1,11 @@
 package com.DIAPERS.diaper_project
 
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.DIAPERS.diaper_project.Adapter.Cntinfo_Adapter
 import kotlinx.android.synthetic.main.activity_cntinfo.*
@@ -17,6 +19,7 @@ class CntinfoActivity : BasicActivity() {
     var jsonarray: JSONArray? = null //여기안엔 모든 이용자들(cnt)정보가 들어감
     var Cntid_Array = ArrayList<String>()  //이용자 도큐먼트의 id값들을 저장하는 리스트 (삭제로직때 필요해서)
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cntinfo)

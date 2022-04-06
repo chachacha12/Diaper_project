@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginBottom="10dp"
     app:cardCornerRadius="10dp">
 
     <LinearLayout
@@ -16,6 +18,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#FFFFFF"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="5dp">
@@ -24,6 +27,7 @@
                 android:id="@+id/nametextView"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
+                android:background="#FFFFFF"
                 android:text="@string/app_name"
                 android:textColor="#000000"
                 android:textColorLink="#000000"
@@ -40,9 +44,10 @@
                     android:id="@+id/button_save"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="#CFCECE"
-                    android:shadowRadius="100"
+                    android:background="@drawable/button_round"
+                    android:shadowColor="#FFFFFF"
                     android:text="저장"
+                    android:textColor="#222222"
                     android:textSize="14sp"
                     android:textStyle="bold" />
             </androidx.cardview.widget.CardView>
@@ -78,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="3"
                     android:text="겉기저귀"
-                    android:textColor="#037C03"
+                    android:textColor="#0145CD"
                     android:textFontWeight="6"
                     android:textStyle="bold" />
 
@@ -88,6 +93,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text=" 개봉: 0"
+                    android:textColor="#222222"
                     android:textFontWeight="1"
                     android:textStyle="bold" />
 
@@ -96,20 +102,25 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:orientation="vertical"
-                    android:padding="5dp"
                     android:textFontWeight="1">
 
                     <Button
                         android:id="@+id/button_plus_outer_open"
-                        android:layout_width="50dp"
+                        android:layout_width="45dp"
                         android:layout_height="wrap_content"
-                        android:text="+" />
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/button_round"
+                        android:text="+"
+                        android:textColor="#222222" />
 
                     <Button
                         android:id="@+id/button_minus_outer_open"
-                        android:layout_width="50dp"
+                        android:layout_width="45dp"
                         android:layout_height="wrap_content"
-                        android:text="-" />
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/button_round"
+                        android:text="-"
+                        android:textColor="#222222" />
 
                 </LinearLayout>
 
@@ -117,8 +128,10 @@
                     android:id="@+id/textView_outer_new"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
                     android:layout_weight="1"
                     android:text="미개봉: 0"
+                    android:textColor="#222222"
                     android:textFontWeight="1"
                     android:textStyle="bold" />
 
@@ -127,20 +140,25 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:orientation="vertical"
-                    android:padding="5dp"
                     android:textFontWeight="1">
 
                     <Button
                         android:id="@+id/button_plus_outer_new"
-                        android:layout_width="50dp"
+                        android:layout_width="45dp"
                         android:layout_height="wrap_content"
-                        android:text="+" />
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/button_round"
+                        android:text="+"
+                        android:textColor="#222222" />
 
                     <Button
                         android:id="@+id/button_minus_outer_new"
-                        android:layout_width="50dp"
+                        android:layout_width="45dp"
                         android:layout_height="wrap_content"
-                        android:text="-" />
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/button_round"
+                        android:text="-"
+                        android:textColor="#222222" />
 
                 </LinearLayout>
 
@@ -160,7 +178,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="3"
                     android:text="속기저귀"
-                    android:textColor="#0145CD"
+                    android:textColor="#00BCD4"
                     android:textFontWeight="6"
                     android:textStyle="bold" />
 
@@ -170,6 +188,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text=" 개봉: 0"
+                    android:textColor="#222222"
                     android:textFontWeight="1"
                     android:textStyle="bold" />
 
@@ -178,20 +197,25 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:orientation="vertical"
-                    android:padding="5dp"
                     android:textFontWeight="1">
 
                     <Button
                         android:id="@+id/button_plus_inner_open"
-                        android:layout_width="50dp"
+                        android:layout_width="45dp"
                         android:layout_height="wrap_content"
-                        android:text="+" />
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/button_round"
+                        android:text="+"
+                        android:textColor="#222222" />
 
                     <Button
                         android:id="@+id/button_minu_inner_open"
-                        android:layout_width="50dp"
+                        android:layout_width="45dp"
                         android:layout_height="wrap_content"
-                        android:text="-" />
+                        android:background="@drawable/button_round"
+                        android:text="-"
+                        android:textColor="#222222" />
 
                 </LinearLayout>
 
@@ -199,8 +223,10 @@
                     android:id="@+id/textView_inner_new"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
                     android:layout_weight="1"
                     android:text="미개봉: 0"
+                    android:textColor="#222222"
                     android:textFontWeight="1"
                     android:textStyle="bold" />
 
@@ -209,20 +235,25 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:orientation="vertical"
-                    android:padding="5dp"
                     android:textFontWeight="1">
 
                     <Button
                         android:id="@+id/button_plus_inner_new"
-                        android:layout_width="50dp"
+                        android:layout_width="45dp"
                         android:layout_height="wrap_content"
-                        android:text="+" />
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/button_round"
+                        android:text="+"
+                        android:textColor="#222222" />
 
                     <Button
                         android:id="@+id/button_minus_inner_new"
-                        android:layout_width="50dp"
+                        android:layout_width="45dp"
                         android:layout_height="wrap_content"
-                        android:text="-" />
+                        android:background="@drawable/button_round"
+                        android:text="-"
+                        android:textColor="#222222" />
 
                 </LinearLayout>
 
@@ -239,8 +270,6 @@
             android:text="마지막 저장일: 2020-01-01" />
 
     </LinearLayout>
-
-
 
 
 </androidx.cardview.widget.CardView>

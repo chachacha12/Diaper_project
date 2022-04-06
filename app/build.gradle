@@ -10,16 +10,16 @@ android {
     }
 
 
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
         applicationId "com.DIAPERS.diaper_project"
         minSdkVersion 16
-        targetSdkVersion 29
-        versionCode 3
-        versionName "3.0"
+        targetSdkVersion 30
+        versionCode 5
+        versionName "5.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -30,7 +30,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
 }
 
 dependencies {

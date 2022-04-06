@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar6"
@@ -10,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="false"
-        android:background="#1CC7F3"
+        android:background="#FFFFFF"
         app:layout_constraintTop_toTopOf="parent"
         app:subtitleTextColor="#090000"
         app:titleTextColor="#000000">
@@ -18,7 +19,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="한벗둥지 기저귀 관리 시스템 - DIAPERS"
+            android:text="한벗둥지 기저귀 관리 - DIAPERS"
             android:textColor="#000000"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -39,7 +40,7 @@
             android:layout_height="160dp"
             android:gravity="center"
             android:text="회원가입"
-            android:textColor="#6A6A69"
+            android:textColor="#222222"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -97,13 +98,18 @@
                 android:id="@+id/checkbutton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="회원가입" />
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/button_round"
+                android:text="회원가입"
+                android:textColor="#222222" />
 
             <Button
                 android:id="@+id/gotoLoginButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="로그인" />
+                android:background="@drawable/button_round"
+                android:text="로그인"
+                android:textColor="#222222" />
         </LinearLayout>
 
     </LinearLayout>
@@ -113,7 +119,7 @@
         layout="@layout/view_loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 
 </RelativeLayout>
