@@ -27,49 +27,11 @@ class CntinfoActivity : BasicActivity() {
         CntUpdate()
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        //아직 서버로부터 데이터를 못받아왔을때는 로딩화면을 보여줌
-        if(jsonarray ==null ) {
-            loaderLayout.visibility = View.VISIBLE
-        }
-    }
 
     override fun onResume() {
         super.onResume()
 
-        // 데이터가 서버로부터 왔는지 감시해줌. 데이터 들어왔으면  만들어줌
-        if(jsonarray ==null){
-            // for(i in 1..10) {
-            Handler().postDelayed({
-                Log.e("태그", " Handler().postDelayed 구문 들어옴")
-                if (jsonarray != null) {
-                    //textView_clickorder2.visibility = View.INVISIBLE
-                    loaderLayout.visibility = View.GONE
-                    Log.e("태그", " (jsonarray != null)  구문 들어옴")
-                }
-            }, 2000)  //3초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
-            // }
-        }
-
-        //다른 화면 갔다가 여기 왔을때 데이터작업 완료되었으면 로딩화면 없애줌
-        if(jsonarray !=null ){
-            //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
-            loaderLayout.visibility = View.GONE
-            //textView_clickorder2.visibility = View.INVISIBLE
-        }
-
-        //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
-        loaderLayout.setOnClickListener {
-            if(jsonarray !=null ){
-                //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
-                loaderLayout.visibility = View.GONE
-                // textView_clickorder2.visibility = View.INVISIBLE
-            }
-        }
     }
-
 
     fun init(){
         recyclerView_cntinfo.setHasFixedSize(true)
@@ -93,13 +55,16 @@ class CntinfoActivity : BasicActivity() {
             )   //cnt_name리스트도 어댑터에 보내줘서 이용자 이름을 채워주도록 할거임. 그 후 Statistic액티비티에서 spinner만들때 쓸거.
             recyclerView_cntinfo.adapter = cntinfoAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
 
+            loaderLayout.visibility = View.GONE  //로딩화면 보여줌
+            /*
             var i=0
             repeat(jsonarray!!.length()) {
                 val iObject = jsonarray!!.getJSONObject(i)
-                cnt_id = iObject.get("id").toString()  //로그의 id값 가져옴. 이를 통해 로그삭제, 수정 해줄거임
+                cnt_id = iObject.get("id").toString()  //로그의 id값 가져옴. 이를 통해 이용자삭제, 수정 해줄거임
                 Cntid_Array.add(cnt_id)  //사용자 도큐먼트의 id값을 저장(삭제로직때 필요함)
                 i++
             }
+             */
         }
     }
 

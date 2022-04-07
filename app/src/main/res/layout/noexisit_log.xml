@@ -3,36 +3,38 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/noexist_log_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#DADADA"
+        android:background="#FFFFFF"
         android:orientation="vertical"
         android:weightSum="2">
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="164dp"
-            android:layout_height="160dp"
+            android:layout_width="130dp"
+            android:layout_height="125dp"
             android:layout_gravity="center"
-            android:background="#DADADA"
+            android:layout_marginTop="100dp"
+            android:background="#FFFFFF"
             android:foregroundGravity="center"
             app:srcCompat="@android:drawable/ic_menu_info_details" />
 
         <TextView
             android:id="@+id/textView12"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="#DADADA"
+            android:background="#FFFFFF"
             android:foregroundGravity="center"
             android:gravity="center"
-            android:text="저장된 기록이 없습니다."
+            android:text="일주일 내에 저장된 기록이 없습니다. \n기저귀 수량을 등록해주세요."
             android:textColor="#E60808"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textSize="20sp"
+            android:textStyle="normal" />
     </LinearLayout>
 
 </RelativeLayout>

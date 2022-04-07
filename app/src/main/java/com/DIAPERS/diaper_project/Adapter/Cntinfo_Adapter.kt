@@ -3,13 +3,8 @@ package com.DIAPERS.diaper_project.Adapter
 import android.app.Activity
 import android.util.Log
 import android.view.*
-import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.DIAPERS.diaper_project.R
-import com.DIAPERS.diaper_project.currentuser
 import com.DIAPERS.diaper_project.databinding.ItemCntBinding
-import kotlinx.android.synthetic.main.item_cnt.view.*
 import org.json.JSONArray
 import java.text.SimpleDateFormat
 import kotlin.collections.ArrayList
@@ -32,8 +27,6 @@ class Cntinfo_Adapter(var activity: Activity, private var myDataset: JSONArray) 
         viewType: Int
     ): MainViewHolder {
 
-
-
         //뷰바인딩
         val binding = ItemCntBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val mainViewHolder = MainViewHolder(binding)  //밑의 setOnClickListener에서 사용자가 선택한 특정뷰의 위치값 알아야해서 여기서 뷰홀더객체생성
@@ -43,6 +36,7 @@ class Cntinfo_Adapter(var activity: Activity, private var myDataset: JSONArray) 
         var formatter:SimpleDateFormat
         var output:String
         var i=0
+
         repeat(myDataset!!.length()){
             val iObject = myDataset.getJSONObject(i)
 
@@ -51,6 +45,7 @@ class Cntinfo_Adapter(var activity: Activity, private var myDataset: JSONArray) 
             formatter = SimpleDateFormat("yyyy년 MM월 dd일")
             output = formatter.format(parser.parse(iObject.getString("birth")))
             birthformat.add(output)
+            i++
         }
 
         /*
@@ -81,7 +76,6 @@ class Cntinfo_Adapter(var activity: Activity, private var myDataset: JSONArray) 
     }
 
     override fun getItemCount() = myDataset!!.length()
-
 
     /*
    //res안에 menu디렉토리 만든거에서, 그 안의 menu파일을 불러와서 toolbar보여주고, 클릭했을때 이벤트처리해줌  //developers사이트에서 가져온 함수.

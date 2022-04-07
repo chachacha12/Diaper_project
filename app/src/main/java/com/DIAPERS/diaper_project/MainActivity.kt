@@ -146,9 +146,8 @@ class MainActivity : BasicActivity() {
             100 -> {
                 when (resultCode) {
                     Activity.RESULT_OK -> {
-                        jsonarray =
-                            null  //다시 초기화 시켜줌. 이렇게 해야 onStart와 onResume함수 통해 값 갱신(이용자 추가)되어서 보여짐
-                        postUpdate()
+
+                        thread_start()
                     }
                     Activity.RESULT_CANCELED -> {
                     }
