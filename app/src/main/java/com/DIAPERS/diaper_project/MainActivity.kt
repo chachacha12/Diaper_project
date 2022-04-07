@@ -243,27 +243,14 @@ class MainActivity : BasicActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onStart() {
-        super.onStart()
-        /*
-        //아직 서버로부터 데이터를 못받아왔을때는 로딩화면을 보여줌
-        if (jsonarray == null) {
-            //textView_clickorder2.visibility = View.VISIBLE
-            loaderLayout.visibility = View.VISIBLE
-        }
-         */
-    }
-
 
     //액티비티가 재실행되거나 홈버튼 눌러서 나갔다왔을때 등의 경우에 onCreate말고 이 함수가 실행됨. (이때마다 게시글들 새로고침 해주면될듯)
     //앱 처음 실행시엔 onCreate와 onResume함수가 둘다 실행되므로 중복되는 코드는 쓰지 않기
     override fun onResume() {
         super.onResume()
 
-
         //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
         loaderLayout.setOnClickListener {
-
             if (jsonarray != null ) {
                 //postUpdate()
                 loaderLayout.visibility = View.GONE
@@ -273,14 +260,6 @@ class MainActivity : BasicActivity() {
                 postUpdate()
             }
         }
-
-        /*
-        //다른 화면 갔다가 여기 왔을때 데이터작업 완료되었으면 로딩화면 없애줌
-        if (jsonarray != null) {
-            //recyclerView.adapter = mainAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
-            loaderLayout.visibility = View.GONE
-        }
-          */
 
         // 데이터가 서버로부터 왔는지 감시해줌. 데이터 들어왔으면  만들어줌
         if (jsonarray == null) {
@@ -292,7 +271,7 @@ class MainActivity : BasicActivity() {
                     loaderLayout.visibility = View.GONE
                     Log.e("태그", " Handler.postDelayed 통해서 MainAct 에서 로딩화면 제거")
                 }
-            }, 4000)  //5초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
+            }, 4000)  //4초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
             // }
         }
 

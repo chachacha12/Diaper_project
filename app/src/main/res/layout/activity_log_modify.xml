@@ -115,30 +115,6 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/outer_new_textView"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:text="겉기저귀(미개봉):"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/outer_new_editText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:gravity="left"
-                    android:hint="0"
-                    android:inputType="number" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
                     android:id="@+id/inner_open_TextView"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
@@ -163,7 +139,31 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/inner_new_TextView"
+                    android:id="@+id/outer_new_textView"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:text="겉기저귀(미개봉):"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/outer_new_editText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:gravity="left"
+                    android:hint="0"
+                    android:inputType="number" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/extView"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:text="속기저귀(미개봉):"
@@ -179,6 +179,27 @@
                     android:gravity="left"
                     android:hint="0"
                     android:inputType="number" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="비고:      "
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/commentModify_editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:maxLines="7" />
+
             </LinearLayout>
 
         </LinearLayout>

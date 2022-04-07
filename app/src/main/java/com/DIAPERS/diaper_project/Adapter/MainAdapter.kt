@@ -57,6 +57,8 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
          var outer_new_number=0
          var inner_open_number=0
          var inner_new_number =0
+         //코맨트내용 저장할 변수
+         var comment = ""
 
         var cardView = holder.cardView
         var name = cardView.nametextView
@@ -100,11 +102,15 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
                             outer_new_number=Object.getInt("outer_new")
                             inner_open_number=Object.getInt("inner_opened")
                             inner_new_number= Object.getInt("inner_new")
+                            comment = Object.getString("comment")
+
+
                             //화면상의 뷰들에 log조회로 받아온 값들 넣어줌(기저귀 수량, 생성일)
                             cardView.textView_outer_open.text = "개봉: " + outer_open_number
                             cardView.textView_outer_new.text ="미개봉: " + outer_new_number
                             cardView.textView_inner_open.text ="개봉: " + inner_open_number
                             cardView.textView_inner_new.text ="미개봉: " +  inner_new_number
+                            cardView.comment_editText.hint = comment
 
                             //가져온 날짜값을 다른 패턴으로 변환해서 그래프의 x축에 띄워줄거임
                             parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -112,7 +118,6 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
                             output = formatter.format(parser.parse(Object.getString("time")))
 
                             cardView.timeTextView.text ="마지막 저장일: "+output
-
 
                         }
                     } else {
@@ -155,8 +160,10 @@ class MainAdapter(var activity: Activity, private var myDataset: JSONArray, var 
             val createdAt: String = simpleDateFormat.format(date)
             cardView.timeTextView.text = "마지막 저장일: " + createdAt
 
+            val comments = cardView.comment_editText.text.toString()
+
             //서버통해 파베에 log값 저장하기
-            var log =log(cnt_id,createdAt, inner_open_number, inner_new_number, outer_open_number, outer_new_number,"코멘트없음")
+            var log =log(cnt_id,createdAt, inner_open_number, inner_new_number, outer_open_number, outer_new_number,comments)
             server.addlogResquest("Bearer " + currentuser?.access_token, log)
                 .enqueue(object : Callback<success> {
                     override fun onFailure(call: Call<success>, t: Throwable) {

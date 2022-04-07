@@ -41,6 +41,7 @@ class LogModifyActivity :  BasicActivity() {
         outer_new_editText.hint = data.outer_new.toString()
         inner_open_editTextView.hint = data.inner_opened.toString()
         inner_new_editTextView.hint = data.inner_new.toString()
+        commentModify_editText.hint = data.comment
 
         //취소버튼 클릭
         button_cancel.setOnClickListener {
@@ -54,11 +55,12 @@ class LogModifyActivity :  BasicActivity() {
             var outer_new = outer_new_editText.text.toString()
             var inner_open = inner_open_editTextView.text.toString()
             var inner_new = inner_new_editTextView.text.toString()
+            var modifyComment = commentModify_editText.text.toString()
 
             if(outer_open.length >0 && outer_new.length >0 && inner_open.length >0 && inner_new.length >0){
                 loaderLayout.visibility = View.VISIBLE    //로딩화면 보여줌.  (view_loader 액티비티를 보여주어서)
                 //이용자log 정보수정 PATCH기능-log수정
-                var log = log(data.cnt, create_time, inner_open.toInt(), inner_new.toInt(), outer_open.toInt(),outer_new.toInt(), "수정완료")
+                var log = log(data.cnt, create_time, inner_open.toInt(), inner_new.toInt(), outer_open.toInt(),outer_new.toInt(), modifyComment)
                 server.modifiy_log("Bearer " + currentuser?.access_token, data.id!!, log)
                     .enqueue(object : Callback<success> {
                         override fun onFailure(call: Call<success>, t: Throwable) {

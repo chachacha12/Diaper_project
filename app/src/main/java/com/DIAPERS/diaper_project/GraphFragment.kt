@@ -248,6 +248,7 @@ class GraphFragment : Fragment() {
         var modified_by:String
         var log_id:String
         var log: log
+        var comments:String
 
 
         //서버로부터 특정기간 이용자별 로그를 가져옴.
@@ -303,8 +304,11 @@ class GraphFragment : Fragment() {
                             outer_new= iObject.getInt("outer_new")
                             created_by= iObject.getString("created_by")
                             modified_by = iObject.getString("modified_by")
+                            comments = iObject.getString("comment")
+
+
                             log_id = iObject.get("id").toString()  //로그의 id값 가져옴. 이를 통해 로그삭제, 수정 해줄거임
-                            log = log(id,time,inner_opened, inner_new, outer_opened, outer_new,"코멘트없음", created_by, modified_by, log_id)
+                            log = log(id,time,inner_opened, inner_new, outer_opened, outer_new,comments, created_by, modified_by, log_id)
                             logArray.add(log)
 
                             //통계프래그먼트에 보내줘서 통계치 만들 값들 함께 생성

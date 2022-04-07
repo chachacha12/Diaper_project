@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.DIAPERS.diaper_project.Class.log
 import com.DIAPERS.diaper_project.OnLogListener
 import com.DIAPERS.diaper_project.R
+import kotlinx.android.synthetic.main.fragment_graph.view.*
 import kotlinx.android.synthetic.main.item_log.view.*
 import java.text.SimpleDateFormat
 import kotlin.collections.ArrayList
@@ -65,23 +66,27 @@ class Statistic_LogAdapter(var activity: Activity, private var myDataset: ArrayL
         var time_textView = cardView.time_textView
         time_textView!!.text =output
         //겉(개봉)
-        var outer_textView = cardView.outer_textView
+        var outer_textView = cardView.outer_textView3
         outer_textView.text = myDataset.get(position).outer_opened.toString()
         //겉(미개봉)
-        var outer_new_textView = cardView.outer_new_textView
+        var outer_new_textView = cardView.outer_new_textView3
         outer_new_textView.text = myDataset.get(position).outer_new.toString()
         //속(개봉)
-        var inner_textView = cardView.inner_textView
+        var inner_textView = cardView.inner_textView3
         inner_textView.text = myDataset.get(position).inner_opened.toString()
         //속(미개봉)
-        var inner_new_textView = cardView.inner_new_textView
+        var inner_new_textView = cardView.inner_new_textView3
         inner_new_textView.text = myDataset.get(position).inner_new.toString()
         //작성자
-        var created_by_textView = cardView.created_by_textView
+        var created_by_textView = cardView.created_by_textView3
         created_by_textView.text = myDataset.get(position).created_by
         //수정자
-        var modified_by_textView = cardView.modified_by_textView
+        var modified_by_textView = cardView.modified_by_textView3
         modified_by_textView.text = myDataset.get(position).modified_by
+
+        var comment_textView = cardView.comment_textView
+        comment_textView.text = myDataset.get(position).comment
+
     }
 
 
