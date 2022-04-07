@@ -47,8 +47,7 @@ class MainActivity : BasicActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         init()
-        thread_start()
-       // postUpdate()
+        //thread_start()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -94,7 +93,6 @@ class MainActivity : BasicActivity() {
                 }
             }
 
-            //var recyclerView = findViewById<RecyclerView>(R.id.recyclerView)  //화면에 보일 리사이클러뷰객체
             recyclerView.setHasFixedSize(true)
             recyclerView.layoutManager = LinearLayoutManager(this)
         }
@@ -249,31 +247,7 @@ class MainActivity : BasicActivity() {
     override fun onResume() {
         super.onResume()
 
-        //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
-        loaderLayout.setOnClickListener {
-            if (jsonarray != null ) {
-                //postUpdate()
-                loaderLayout.visibility = View.GONE
-            }
-
-            if (server_access_success == false) {  //처음 앱켰을때 서버접근 실패했을때를 대비해서 다시한번 서버에 요청해줄 작업
-                postUpdate()
-            }
-        }
-
-        // 데이터가 서버로부터 왔는지 감시해줌. 데이터 들어왔으면  만들어줌
-        if (jsonarray == null) {
-            // for(i in 1..10) {
-            Handler().postDelayed({
-                Log.e("태그", " Handler().postDelayed 구문 들어옴")
-                if (jsonarray != null) {
-                    //textView_clickorder2.visibility = View.INVISIBLE
-                    loaderLayout.visibility = View.GONE
-                    Log.e("태그", " Handler.postDelayed 통해서 MainAct 에서 로딩화면 제거")
-                }
-            }, 4000)  //4초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
-            // }
-        }
+        thread_start()
 
     } //onResume
 
@@ -285,6 +259,7 @@ class MainActivity : BasicActivity() {
             //통계액티비티로 이동할때 보내주는 리스트들을 다시 초기화 해주고 밑에서 새로 값 채워줌. 그래야 통계 액티비티가서도(스피너 등) 수정된 내용들이 들어가니까.
             cnt_name.clear()
             cnt_ids.clear()
+
             //cnt값(이용자) 모두 조회
             server.getAllRequest("Bearer " + currentuser?.access_token)
                 .enqueue(object : Callback<GetAll> {

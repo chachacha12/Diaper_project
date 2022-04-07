@@ -265,7 +265,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="3dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginBottom="3dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
@@ -273,19 +277,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="참고사항:" />
+                android:text="참고사항"
+                android:textColor="#222222" />
 
             <EditText
                 android:id="@+id/comment_editText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
+                android:background="@drawable/border"
                 android:ems="10"
                 android:inputType="textMultiLine"
                 android:maxWidth="180dp"
                 android:maxLines="5"
+                android:padding="3dp"
                 android:scrollbars="vertical"
-                android:scrollHorizontally="false" />
+                android:scrollHorizontally="false"
+                android:textSize="16sp" />
         </LinearLayout>
 
         <TextView

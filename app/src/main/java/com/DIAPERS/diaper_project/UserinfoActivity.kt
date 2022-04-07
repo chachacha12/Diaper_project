@@ -1,5 +1,6 @@
 package com.DIAPERS.diaper_project
 
+import android.app.AlertDialog
 import android.os.*
 import android.util.Log
 import android.view.View
@@ -22,6 +23,7 @@ class UserinfoActivity : BasicActivity() {
     lateinit var userinfoAdapter: Userinfo_Adapter
     var jsonarray: JSONArray? = null //여기안엔 모든 사용자들(user)정보가 들어감
     var Userid_Array = ArrayList<String>()  //사용자 도큐먼트의 id값들을 저장하는 리스트 (사용자 삭제로직때 필요해서)
+    var UserName_Array = ArrayList<String>()
     var level:Double =0.0 //사용자계정들을 삭제할 수 있는지 권한레벨을 확인해줄때를 위해
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -75,10 +77,13 @@ class UserinfoActivity : BasicActivity() {
     // 삭제하거나 수정하거나 만들거나 등등 했을때 다 지웠다가 다시 바뀐 jsonarray를 서버로부터 받아와서 화면에 업데이트 시켜줄거임
     private fun  UserUpdate() {
         var user_id:String
+        var user_name:String
+
+        Userid_Array.clear()
+        UserName_Array.clear()
 
         if (currentuser != null) {
             loaderLayout.visibility = View.VISIBLE  //로딩화면 보여줌
-
 
             //사용자user 관련 get기능-모두 조회
             server.getAllusers_Request("Bearer " + currentuser!!.access_token)
@@ -97,13 +102,16 @@ class UserinfoActivity : BasicActivity() {
                             repeat(jsonarray!!.length()) {
                                 val iObject = jsonarray!!.getJSONObject(i)
                                 user_id = iObject.get("id").toString()  //사용자의 id값 가져옴. 이를 통해 로그삭제, 수정 해줄거임
+                                user_name = iObject.get("realname").toString()  //사용자의 이름 가져옴
+
                                 Userid_Array.add(user_id)  //사용자 도큐먼트의 id값을 저장(삭제로직때 필요함)
+                                UserName_Array.add(user_name)
+
                                 if(currentuser!!.username == iObject.get("username").toString()){
                                     level =  iObject.get("level") as Double     //현재 계정의 레벨값 알아냄(계정들 삭제때 필요함)
                                }
                                 i++
                             }
-
                             //리사이클러뷰를 여기서 제대로 만들어줌.
                             userinfoAdapter = Userinfo_Adapter(
                                 this@UserinfoActivity, jsonarray!!, onUserListener, level
@@ -122,41 +130,53 @@ class UserinfoActivity : BasicActivity() {
         }
     }
 
+    //삭제할 특정 사용자 id값 저장할 변수
+    var user_id:String=""
+
     //사용자가 실시간으로 게시글 삭제, 수정할때에 맞춰서 리스트 업데이트 해줄거임
     //인터페이스 객체를 어댑터말고 액티비티에 구현해둬야하는 이유는 onResume함수 등이 있어서 게시글 업데이트를 해줄수 있어서?
     //인터페이스를 구현한 익명객체를 생성해서 사용할거임. 그리고 이걸 어댑터에 인자로 넣어주면 어댑터에서도 사용가능.
     val onUserListener = object : OnUserListener {
         override fun onDelete(position: Int) {
-            var id = Userid_Array.get(position)  //특정위치의 사용자 id값
+             user_id = Userid_Array.get(position)  //특정위치의 사용자 id값
+            var username = UserName_Array.get(position)
 
-            //사용자삭제 로직
-            server.deleteUserRequest("Bearer " + currentuser?.access_token, id)
-                .enqueue(object : Callback<success> {
-                    override fun onFailure(call: Call<success>, t: Throwable) {
-                        Log.e("태그: ", "서버 통신 아예 실패")
-                        Toast.makeText(this@UserinfoActivity, "서버 통신실패",Toast.LENGTH_SHORT).show()
-                    }
-                    override fun onResponse(call: Call<success>, response: Response<success>) {
-                        if (response.isSuccessful) {
-                            //thread_start()
+            var builder = AlertDialog.Builder(this@UserinfoActivity)
+            builder.setMessage(username+ " 종사자를 삭제하시겠습니까?")
+            builder.setCancelable(false) // 다이얼로그 화면 밖 터치 방지
 
-                            UserUpdate()  //다시 리사이클러뷰 어댑터 붙이는 작업 등을 통해 화면 갱신해줌
+            builder.setPositiveButton(
+                "예"
+            ) { dialog, which ->   deleteUser()  }
+            builder.setNegativeButton(
+                "아니요"
+            ) { dialog, which -> }
 
-                            Handler().postDelayed({
-                                if (jsonarray != null) {
-                                    loaderLayout.visibility = View.GONE
-                                }
-                            }, 2000)  //2초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
-
-                            Toast.makeText(this@UserinfoActivity, "사용자를 삭제하였습니다.",Toast.LENGTH_SHORT).show()
-                        } else {
-                            Log.e("태그   사용자 삭제실패: ", response.body()?.succeed.toString())
-                            Toast.makeText(this@UserinfoActivity, "사용자를 삭제하지 못하였습니다.",Toast.LENGTH_SHORT).show()
-
-                        }
-                    }
-                })
+            builder.show() // 다이얼로그 보이기
         }
+    }
+
+    fun deleteUser(){
+        //사용자삭제 로직
+        server.deleteUserRequest("Bearer " + currentuser?.access_token, user_id)
+            .enqueue(object : Callback<success> {
+                override fun onFailure(call: Call<success>, t: Throwable) {
+                    Log.e("태그: ", "서버 통신 아예 실패")
+                    Toast.makeText(this@UserinfoActivity, "서버 통신실패",Toast.LENGTH_SHORT).show()
+                }
+                override fun onResponse(call: Call<success>, response: Response<success>) {
+                    if (response.isSuccessful) {
+                        //thread_start()
+                        thread_start() //다시 리사이클러뷰 어댑터 붙이는 작업 등을 통해 화면 갱신해줌
+
+                        Toast.makeText(this@UserinfoActivity, "사용자를 삭제하였습니다.",Toast.LENGTH_SHORT).show()
+                    } else {
+                        Log.e("태그   사용자 삭제실패: ", response.body()?.succeed.toString())
+                        Toast.makeText(this@UserinfoActivity, "사용자를 삭제하지 못하였습니다.",Toast.LENGTH_SHORT).show()
+
+                    }
+                }
+            })
     }
 
 

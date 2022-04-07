@@ -40,17 +40,6 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView_clickorder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/TextView_tilte"
-        android:gravity="center"
-        android:text="로딩화면 클릭시 그래프가 나타납니다                                                          (데이터를 받아오는데 시간이 걸릴 수 있습니다)"
-        android:textColor="#DF4747"
-        android:textStyle="bold"
-        android:visibility="invisible" />
-
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/chart"
         android:layout_width="match_parent"

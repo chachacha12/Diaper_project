@@ -3,9 +3,7 @@ package com.DIAPERS.diaper_project
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
+import android.os.*
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -58,6 +56,24 @@ class GraphFragment : Fragment() {
     var logArray = ArrayList<log>() //StatisticAdapter에 인자로 보내줄 값임. 그리고 어댑터에서 이걸로 로그 리사이클러뷰 만듬
     var log_size:Int = 0  //스피너를 통해 특정기간이 정해지면 그에 맞춰서 이 변수를 초기화 해줄거임. 일주일은 7로, 1개월을 30 등..
     var fragmentListener: FragmentListener? = null  //통계 프래그먼트와 통신을 위해 인터페이스 객체 선언
+
+    //Statistic_LogAdapter에 로그 객체로 만들어 보내줄 값들. 로그 리사이클러뷰를 만들기위해
+    lateinit var time:String
+    lateinit var inner_opened:Number
+    lateinit var inner_new:Number
+    lateinit var outer_opened:Number
+    lateinit var outer_new:Number
+    lateinit var created_by:String
+    lateinit var modified_by:String
+    lateinit var log_id:String
+    lateinit  var log: log
+    lateinit var comments:String
+
+    //로그의 생성시각 등을 만들기 위한 변수
+    lateinit var createdAt: String
+    lateinit var fewdaysAgo:String  //현재시각으로부터 특정기간 전의 시각
+
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -117,31 +133,12 @@ class GraphFragment : Fragment() {
 
     //스피너를 다른거 선택하거나 해서 데이터값이 바뀌었거나 했을때 다시 갱신시켜줌
     fun uiUpdate(){
+
+        LinearLayout_record.visibility = View.INVISIBLE //로그들 보여주는 리사이클러뷰를 가려줌
+        LinearLayout_title.visibility = View.INVISIBLE  // "한달간 기저귀 수량변화" 등의 화면 가려줌
+        chart.visibility = View.GONE
+        loaderLayout.visibility = View.VISIBLE  //로딩화면 보임
         fragUpdate()  //다시 새로 리사이클러뷰와 그래프를 만들거임, 즉 갱신해줄거임
-        //onStart()함수와 같은 작업(서버로부터 데이터 다 안가져왔으면 로딩화면 보여줌)
-        if(entries.size<=0) {   //데이터 안들어왔으면 로딩화면만 보여줌
-            LinearLayout_record.visibility = View.INVISIBLE //로그들 보여주는 리사이클러뷰를 가려줌
-            LinearLayout_title.visibility = View.INVISIBLE  // "한달간 기저귀 수량변화" 등의 화면 가려줌
-            chart.visibility = View.GONE
-            loaderLayout.visibility = View.VISIBLE
-            textView_clickorder.visibility = View.VISIBLE
-        }
-        //주로 앱 실행하고 처음 통계 액티비티 들어왔을때나 스피너로 가져올 날짜 일수 바꿀때 실행됨. 그 후엔 밑의 조건문들이 수행될 가능성 높음
-        if(entries.size<=0){
-            Handler().postDelayed({
-                Log.e("태그", " Handler().postDelayed 구문 들어옴-그래프 프래그먼트onResume에서")
-                if (entries.size>0) {
-                    //textView_clickorder2.visibility = View.INVISIBLE
-                    makerecyclerView()  //로그 리사이클러뷰 생성
-                    LinearLayout_title.visibility = View.VISIBLE
-                    chart.visibility = View.VISIBLE
-                    LinearLayout_record.visibility = View.VISIBLE
-                    loaderLayout.visibility = View.GONE
-                    makeChart()
-                    textView_clickorder.visibility = View.INVISIBLE
-                }
-            }, 2000)  //3초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
-        }
     }
 
     override fun onCreateView(
@@ -214,6 +211,7 @@ class GraphFragment : Fragment() {
         startActivityForResult(i, 100)  //다른 액티비티 갔다가 그 결과값을 다시 이 액티비티로 가져올것이다.
     }
 
+
     //앱 처음 시작했을때나 로그를 수정, 삭제 해서 화면상에서 업데이트 해줄때 씀
     fun fragUpdate(){
         logArray.clear()
@@ -224,8 +222,7 @@ class GraphFragment : Fragment() {
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
         val cal = Calendar.getInstance()
         cal.time = Date()
-        val createdAt: String = simpleDateFormat.format(cal.time)  //현재시각
-        val fewdaysAgo:String  //현재시각으로부터 특정기간 전의 시각
+        createdAt = simpleDateFormat.format(cal.time)  //현재시각
 
         if(log_size==7){
             cal.add(Calendar.DATE, -7)
@@ -238,127 +235,9 @@ class GraphFragment : Fragment() {
             fewdaysAgo = simpleDateFormat.format(cal.time)
         }
 
-        //Statistic_LogAdapter에 로그 객체로 만들어 보내줄 값들. 로그 리사이클러뷰를 만들기위해
-        var time:String
-        var inner_opened:Number
-        var inner_new:Number
-        var outer_opened:Number
-        var outer_new:Number
-        var created_by:String
-        var modified_by:String
-        var log_id:String
-        var log: log
-        var comments:String
-
-
-        //서버로부터 특정기간 이용자별 로그를 가져옴.
-        server.getLog_period_Request(
-            "Bearer " + currentuser?.access_token,
-            id,
-            fewdaysAgo,
-            createdAt,
-            true
-        ).enqueue(object : Callback<GetAll> {
-            override fun onFailure(
-                call: Call<GetAll>,
-                t: Throwable
-            ) {  //object로 받아옴. 서버에서 받은 object모델과 맞지 않으면 실패함수로 빠짐
-                Log.e("태그", "fragUpdate()함수안에서 특정기간 이용자별 로그 페이지네이션해주는 통신 아예 실패")
-            }
-
-            @RequiresApi(Build.VERSION_CODES.O)
-            override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
-                if (response.isSuccessful) {
-
-                    var jsonArray = JSONArray(response.body()?.result)
-
-                    if(jsonArray.length()==0){  //이용자를 처음 생성해서 LOG기록이 하나도 없을때
-                        noexist_log_layout.visibility=View.VISIBLE
-                    }else{  //log기록이 있을때
-                        if( noexist_log_layout.visibility==View.VISIBLE) //기록이 존재하지 않습니다. 띄워주는 layout을 가려줌
-                            noexist_log_layout.visibility=View.GONE
-
-                        Log.e(
-                            "태그",
-                            "fragUpdate()함수안에서 이용자 기간 로그리스트 조회성공:" + jsonArray + "   jsonArray.length(): " + jsonArray.length()
-                        )
-                        //간단한 날짜로 변경해주려고
-                        var parser:SimpleDateFormat
-                        var formatter:SimpleDateFormat
-                        var output:String
-                        var i = 0
-                        //여기안에 순서대로 1. 겉기저귀 평균 보유량, 2. 속기저귀 평균 보유량 3. 겉 기저귀 재고 무보유 일수 4. 속기저귀 재고 무보유 일수 를 저장함
-                        var statistic_numbers = ArrayList<Double>()
-                        var outer_average_sum =0 //겉기저귀 평균 보유량 합
-                        var inner_average_sum=0  //속 기저귀 평균 보유량 합
-                        var outer_nohold_daysum=0  //겉 기저귀 재고 무보유 일수
-                        var inner_nohold_daysum=0 //속 기저귀 재고 무보유 일수
-
-                        repeat(jsonArray.length()) {
-                            val iObject = jsonArray.getJSONObject(i)
-                            //받아온 각각의 로그값들을 로그객체로 만들어서 logArray안에 넣어줌. 어댑터 클래스 인자로 보내줄거임
-                            time = iObject.getString("time")
-                            inner_opened = iObject.getInt("inner_opened")
-                            inner_new = iObject.getInt("inner_new")
-                            outer_opened= iObject.getInt("outer_opened")
-                            outer_new= iObject.getInt("outer_new")
-                            created_by= iObject.getString("created_by")
-                            modified_by = iObject.getString("modified_by")
-                            comments = iObject.getString("comment")
-
-
-                            log_id = iObject.get("id").toString()  //로그의 id값 가져옴. 이를 통해 로그삭제, 수정 해줄거임
-                            log = log(id,time,inner_opened, inner_new, outer_opened, outer_new,comments, created_by, modified_by, log_id)
-                            logArray.add(log)
-
-                            //통계프래그먼트에 보내줘서 통계치 만들 값들 함께 생성
-                            outer_average_sum += outer_new.toInt()
-                            inner_average_sum += inner_new.toInt()
-                            if(outer_new.toInt()==0 && outer_opened.toInt()==0 ){
-                                outer_nohold_daysum++  //재고 무보유 일수를 1증가
-                            }
-                            if(inner_new.toInt()==0 && inner_opened.toInt()==0 ){
-                                inner_nohold_daysum++
-                            }
-
-                            //그래프를 만들어주는 데이터셋의 리스트요소에다가 겉기저귀, 속기저귀 로그값을 추가함.
-                            //그래프에서 데이터보여주는 순서 바꾸는법: 인덱스 0번째에 값을 넣어줌. 이러면 앞에 값이 있었으면 그대로 한칸씩 밀림. 즉 이런식으로 거꾸로 저장할수있음
-                            entries?.add(0,
-                                BarEntry(
-                                    (i + 1).toFloat(),
-                                    iObject.getInt("outer_new").toFloat()
-                                )
-                            )
-                            Log.e("태그","entries순서: "+entries)
-
-                            entries2?.add(0,
-                                BarEntry(
-                                    (i + 1).toFloat(),
-                                    iObject.getInt("inner_new").toFloat()
-                                )
-                            )
-                            //가져온 날짜값을 다른 패턴으로 변환해서 그래프의 x축에 띄워줄거임
-                            parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                            formatter = SimpleDateFormat("MM/dd")
-                            output = formatter.format(parser.parse(iObject.getString("time")  ))
-                            days.add(0,output)  //days 리스트안에 저장.
-                            i++
-                        }
-                        outer_average_sum/i
-                        //arrayList안에 위에서 구한 값들을 넣어줌
-                        statistic_numbers.add((outer_average_sum/i).toDouble() )
-                        statistic_numbers.add((inner_average_sum/i).toDouble() )
-                        statistic_numbers.add(outer_nohold_daysum.toDouble())
-                        statistic_numbers.add(inner_nohold_daysum.toDouble())
-                        Log.e("태그", "fragUpdate()함수안에서 fragmentListener?.onCommand실행 ")
-                        fragmentListener?.onCommand(statistic_numbers)  //어떻게 보면 액티비티 객체라고 할 수 있는 fragmentListener을 이용해서 액티비티에 있는 onCommand함수를 실행
-                    }
-                } else {
-                    Log.e("태그", "기간 로그 조회실패" + response.body().toString())
-                }
-            }
-        })
+        thread_start()   //서버로부터 특정기간 이용자별 로그를 가져오는 스레드 시작
     }
+
 
     //리사이클러뷰를 여기서 제대로 만들어줌.
     fun makerecyclerView(){
@@ -373,66 +252,14 @@ class GraphFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-
-        //로딩화면 보여주기
-        if(entries.size<=0) {
-            LinearLayout_record.visibility = View.INVISIBLE //로그들 보여주는 리사이클러뷰를 가려줌
-            LinearLayout_title.visibility = View.INVISIBLE
-            chart.visibility = View.GONE
-            loaderLayout.visibility = View.VISIBLE
-            textView_clickorder.visibility = View.VISIBLE
-        }
     }
 
     //다른 프래그먼트로 갔다가 다시 이 프래그먼트로 돌아오거나, 뭔가를 사용자가 클릭해서 상호작용할때마다 작동되는 함수인듯?
     override fun onResume() {
         super.onResume()
-
          Log.e("태그","onResume돌아감")
 
-        //다른 프래그먼트 갔다가 여기 왔을때 동작완료되었다면 그래프띄워주기 위함
-        if(entries.size>0){
-            makerecyclerView()  //로그 리사이클러뷰 생성
-            chart.visibility = View.VISIBLE
-            LinearLayout_title.visibility = View.VISIBLE
-            LinearLayout_record.visibility = View.VISIBLE
-            loaderLayout.visibility = View.GONE
-            makeChart()
-            textView_clickorder.visibility = View.INVISIBLE
-        }
-
-
-        //주로 앱 실행하고 처음 통계 액티비티 들어왔을때나 스피너로 가져올 날짜 일수 바꿀때 실행됨. 그 후엔 밑의 조건문들이 수행될 가능성 높음
-        if(entries.size<=0){
-            Handler().postDelayed({
-                Log.e("태그", " Handler().postDelayed 구문 들어옴-그래프 프래그먼트onResume에서")
-                if (entries.size>0) {
-                    //textView_clickorder2.visibility = View.INVISIBLE
-                    makerecyclerView()  //로그 리사이클러뷰 생성
-                    LinearLayout_title.visibility = View.VISIBLE
-                    chart.visibility = View.VISIBLE
-                    LinearLayout_record.visibility = View.VISIBLE
-                    loaderLayout.visibility = View.GONE
-                    makeChart()
-                    textView_clickorder.visibility = View.INVISIBLE
-                }
-            }, 2000)  //4초가 지났을때 {}괄호안의 내용을 수행하게되는 명령임.
-        }
-
-        //화면 클릭했을때 동작완료되었다면 그래프띄워주기 위함
-        loaderLayout.setOnClickListener {
-            if(entries.size>0){
-                makerecyclerView()  //로그 리사이클러뷰 생성
-                LinearLayout_title.visibility = View.VISIBLE
-                chart.visibility = View.VISIBLE
-                LinearLayout_record.visibility = View.VISIBLE
-                loaderLayout.visibility = View.GONE
-                makeChart()
-                textView_clickorder.visibility = View.INVISIBLE
-            }
-        }
     }
-
 
     //차트세팅, 만들기
     fun makeChart(){
@@ -520,19 +347,161 @@ class GraphFragment : Fragment() {
                 when (resultCode) {
                     Activity.RESULT_OK -> {  //로그 수정에 성공했다면
                         fragUpdate()  //다시 새로 리사이클러뷰와 그래프를 만들거임, 즉 갱신해줄거임
-                        //onStart()함수와 같은 작업(서버로부터 데이터 다 안가져왔으면 로딩화면 보여줌)
-                        if(entries.size<=0) {
-                            LinearLayout_record.visibility = View.INVISIBLE //로그들 보여주는 리사이클러뷰를 가려줌
-                            chart.visibility = View.GONE
-                            loaderLayout.visibility = View.VISIBLE
-                            textView_clickorder.visibility = View.VISIBLE
-                        }
                     }
                     Activity.RESULT_CANCELED -> {
                     }
                 }
             }
         }
+    }
+
+    fun get_log_period(){
+        //서버로부터 특정기간 이용자별 로그를 가져옴.
+        server.getLog_period_Request(
+            "Bearer " + currentuser?.access_token,
+            id,
+            fewdaysAgo,
+            createdAt,
+            true
+        ).enqueue(object : Callback<GetAll> {
+            override fun onFailure(
+                call: Call<GetAll>,
+                t: Throwable
+            ) {  //object로 받아옴. 서버에서 받은 object모델과 맞지 않으면 실패함수로 빠짐
+                Log.e("태그", "fragUpdate()함수안에서 특정기간 이용자별 로그 페이지네이션해주는 통신 아예 실패")
+            }
+
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
+                if (response.isSuccessful) {
+
+                    var jsonArray = JSONArray(response.body()?.result)
+
+                    if(jsonArray.length()==0){  //이용자를 처음 생성해서 LOG기록이 하나도 없을때
+
+                        noexist_log_layout.visibility=View.VISIBLE
+                    }else{  //log기록이 있을때
+                        if( noexist_log_layout.visibility==View.VISIBLE) //기록이 존재하지 않습니다. 띄워주는 layout을 가려줌
+                            noexist_log_layout.visibility=View.GONE
+
+                        Log.e(
+                            "태그",
+                            "fragUpdate()함수안에서 이용자 기간 로그리스트 조회성공:" + jsonArray + "   jsonArray.length(): " + jsonArray.length()
+                        )
+                        //간단한 날짜로 변경해주려고
+                        var parser:SimpleDateFormat
+                        var formatter:SimpleDateFormat
+                        var output:String
+                        var i = 0
+                        //여기안에 순서대로 1. 겉기저귀 평균 보유량, 2. 속기저귀 평균 보유량 3. 겉 기저귀 재고 무보유 일수 4. 속기저귀 재고 무보유 일수 를 저장함
+                        var statistic_numbers = ArrayList<Double>()
+                        var outer_average_sum =0 //겉기저귀 평균 보유량 합
+                        var inner_average_sum=0  //속 기저귀 평균 보유량 합
+                        var outer_nohold_daysum=0  //겉 기저귀 재고 무보유 일수
+                        var inner_nohold_daysum=0 //속 기저귀 재고 무보유 일수
+
+                        repeat(jsonArray.length()) {
+                            val iObject = jsonArray.getJSONObject(i)
+                            //받아온 각각의 로그값들을 로그객체로 만들어서 logArray안에 넣어줌. 어댑터 클래스 인자로 보내줄거임
+                            time = iObject.getString("time")
+                            inner_opened = iObject.getInt("inner_opened")
+                            inner_new = iObject.getInt("inner_new")
+                            outer_opened= iObject.getInt("outer_opened")
+                            outer_new= iObject.getInt("outer_new")
+                            created_by= iObject.getString("created_by")
+                            modified_by = iObject.getString("modified_by")
+                            comments = iObject.getString("comment")
+
+
+                            log_id = iObject.get("id").toString()  //로그의 id값 가져옴. 이를 통해 로그삭제, 수정 해줄거임
+                            log = log(id,time,inner_opened, inner_new, outer_opened, outer_new, comments, created_by, modified_by, log_id)
+                            logArray.add(log)
+
+                            //통계프래그먼트에 보내줘서 통계치 만들 값들 함께 생성
+                            outer_average_sum += outer_new.toInt()
+                            inner_average_sum += inner_new.toInt()
+                            if(outer_new.toInt()==0 && outer_opened.toInt()==0 ){
+                                outer_nohold_daysum++  //재고 무보유 일수를 1증가
+                            }
+                            if(inner_new.toInt()==0 && inner_opened.toInt()==0 ){
+                                inner_nohold_daysum++
+                            }
+
+                            //그래프를 만들어주는 데이터셋의 리스트요소에다가 겉기저귀, 속기저귀 로그값을 추가함.
+                            //그래프에서 데이터보여주는 순서 바꾸는법: 인덱스 0번째에 값을 넣어줌. 이러면 앞에 값이 있었으면 그대로 한칸씩 밀림. 즉 이런식으로 거꾸로 저장할수있음
+                            entries?.add(0,
+                                BarEntry(
+                                    (i + 1).toFloat(),
+                                    iObject.getInt("outer_new").toFloat()
+                                )
+                            )
+                            Log.e("태그","entries순서: "+entries)
+
+                            entries2?.add(0,
+                                BarEntry(
+                                    (i + 1).toFloat(),
+                                    iObject.getInt("inner_new").toFloat()
+                                )
+                            )
+                            //가져온 날짜값을 다른 패턴으로 변환해서 그래프의 x축에 띄워줄거임
+                            parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                            formatter = SimpleDateFormat("MM/dd")
+                            output = formatter.format(parser.parse(iObject.getString("time")  ))
+                            days.add(0,output)  //days 리스트안에 저장.
+                            i++
+                        }
+                        outer_average_sum/i
+                        //arrayList안에 위에서 구한 값들을 넣어줌
+                        statistic_numbers.add((outer_average_sum/i).toDouble() )
+                        statistic_numbers.add((inner_average_sum/i).toDouble() )
+                        statistic_numbers.add(outer_nohold_daysum.toDouble())
+                        statistic_numbers.add(inner_nohold_daysum.toDouble())
+                        Log.e("태그", "fragUpdate()함수안에서 fragmentListener?.onCommand실행 ")
+                        fragmentListener?.onCommand(statistic_numbers)  //어떻게 보면 액티비티 객체라고 할 수 있는 fragmentListener을 이용해서 액티비티에 있는 onCommand함수를 실행
+                    }
+                    handler()
+                } else {
+                    handler()
+                    Log.e("태그", "기간 로그 조회실패" + response.body().toString())
+                }
+            }
+        })
+    }
+
+
+
+    private fun thread_start() {
+        var thread = Thread(null, getData()) //스레드 생성후 스레드에서 작업할 함수 지정(getDATA)
+        thread.start()
+        Log.e("태그", "thread_start시작됨.")
+    }
+
+    fun getData() = Runnable {
+        kotlin.run {
+            try {
+                //원하는 자료처리(데이터 로딩 등)
+                get_log_period()    //특정기간에 따른 이용자들의 로그값 가져오기
+            } catch (e: Exception) {
+               // Log.e("태그", "getRelevant_Contents_Request 실패 ")
+            }
+        }
+    }
+
+    //데이터 등록시키는 작업 다 끝났을때(성공하거나 실패했을때) 이 함수 호출해서 로딩화면 제거하는 등의 작업해주는 핸들러 함수
+    private fun handler() {
+        var handler = object : Handler(Looper.getMainLooper()) {
+            override fun handleMessage(msg: Message) {
+
+                //작업 다 끝나면 로딩화면 다시 보여줌
+                makerecyclerView()  //로그 리사이클러뷰 생성
+                LinearLayout_title.visibility = View.VISIBLE
+                chart.visibility = View.VISIBLE
+                LinearLayout_record.visibility = View.VISIBLE
+                loaderLayout.visibility = View.GONE
+                makeChart()
+            }
+        }
+        handler.obtainMessage().sendToTarget()
     }
 
 
