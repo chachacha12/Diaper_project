@@ -33,7 +33,6 @@ class Userinfo_Adapter(var activity: Activity, private var myDataset: JSONArray,
         val binding = ItemUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val mainViewHolder = MainViewHolder(binding)  //밑의 setOnClickListener에서 사용자가 선택한 특정뷰의 위치값 알아야해서 여기서 뷰홀더객체생성
 
-
         //게시글의 toolbar(점3개)버튼을 클릭했을때 효과
         binding.cardView.menu.setOnClickListener {
             showPopup(it, mainViewHolder.adapterPosition)      //post.xml을 띄워줌. 밑에 있음. 구글에 android menu검색하고 developers사이트들어가서 코드 가져옴
