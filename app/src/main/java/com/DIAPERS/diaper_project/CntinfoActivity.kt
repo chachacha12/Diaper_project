@@ -46,6 +46,7 @@ class CntinfoActivity : BasicActivity() {
         if (currentuser != null) {
             loaderLayout.visibility = View.VISIBLE  //로딩화면 보여줌
 
+
             var intent = intent  //메인액티비티에서 온 인텐트를 받음
             jsonarray= JSONArray(intent.getStringExtra("jsonarray"))  //이렇게 jsonarray를 인텐트로 받고자할땐, 우선 String으로 보내온걸 받고 바로 jsonArray 객체로 만들어주면 됨
 

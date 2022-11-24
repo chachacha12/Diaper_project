@@ -41,7 +41,7 @@
         android:gravity="center|center_horizontal"
         android:text="추가할 이용자 정보 입력"
         android:textColor="#050000"
-        android:textSize="22sp" />
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/textView9"
@@ -68,7 +68,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="이름"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textSize="14sp" />
 
         <LinearLayout
             android:layout_width="250dp"
@@ -81,7 +82,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="1999"
-                android:inputType="number" />
+                android:inputType="number"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/textView5"
@@ -97,7 +99,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="01"
-                android:inputType="number" />
+                android:inputType="number"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/textView6"
@@ -113,7 +116,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="06"
-                android:inputType="number" />
+                android:inputType="number"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/textView7"
@@ -121,7 +125,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="(생년월일)"
-                android:textSize="18sp" />
+                android:textSize="14sp" />
 
         </LinearLayout>
 
@@ -131,7 +135,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="겉기저귀 종류 (ex. 봄날 대형 테이프)"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textSize="14sp" />
 
         <EditText
             android:id="@+id/inner_productEditText"
@@ -139,7 +144,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="속기저귀 종류 (ex. 봄날 중대형 패드)"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textSize="14sp" />
 
         <EditText
             android:id="@+id/description_EditText"
@@ -147,7 +153,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="설명 (ex. 2층 00호 이용자)"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textSize="14sp" />
 
         <LinearLayout
             android:layout_width="match_parent"

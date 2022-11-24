@@ -12,7 +12,8 @@
         android:roundIcon="@drawable/icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.DIAPERS.diaper_project.SplashActivity">
+        <activity android:name="com.DIAPERS.diaper_project.SplashActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

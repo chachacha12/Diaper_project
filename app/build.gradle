@@ -10,14 +10,14 @@ android {
     }
 
 
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
         applicationId "com.DIAPERS.diaper_project"
         minSdkVersion 16
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 5
         versionName "5.0"
 

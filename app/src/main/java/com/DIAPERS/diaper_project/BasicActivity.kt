@@ -17,9 +17,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 open class BasicActivity : AppCompatActivity() {
 
+    //http://35.224.228.204:5000/
     //레트로핏을 만들어줌. 서버와 연결
     var retrofit = Retrofit.Builder()
-        .baseUrl("https://diapers-dungji.herokuapp.com/")
+        .baseUrl("http://35.224.228.204:5000/")  //https://diapers-dungji.herokuapp.com/
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     var server = retrofit.create(HowlService::class.java)  //서버와 만들어둔 인터페이스를 연결시켜줌.
