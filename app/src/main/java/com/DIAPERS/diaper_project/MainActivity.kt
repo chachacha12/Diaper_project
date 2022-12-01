@@ -18,13 +18,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.DIAPERS.diaper_project.Adapter.MainAdapter
 import com.DIAPERS.diaper_project.Class.GetAll
 import com.DIAPERS.diaper_project.Class.currentUser
+import com.DIAPERS.diaper_project.Class.log
 import com.auth0.android.jwt.JWT
+import com.github.mikephil.charting.data.BarEntry
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_graph.*
+import kotlinx.android.synthetic.main.noexisit_log.*
 import kotlinx.android.synthetic.main.view_loader.*
 import org.json.JSONArray
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -101,6 +106,8 @@ class MainActivity : BasicActivity() {
             var i = Intent(this, CntAddActivity::class.java)
             startActivityForResult(i, 100)
         }
+        thread_start2()
+
     }  //init
 
     private fun thread_start(){
@@ -322,5 +329,60 @@ class MainActivity : BasicActivity() {
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(i)
     }
+
+    ///////////
+
+ fun getLog_period_Request(){
+        //서버로부터 특정기간 이용자별 로그를 가져옴.
+
+        server.getLog_period(
+            "Bearer " + currentuser?.access_token,
+            "2yIBG0kMlHBGngM6I02L",
+            "2022-11-24 19:22",
+            "2022-12-01 19:22",
+            true
+        ).enqueue(object : Callback<GetAll> {
+            override fun onFailure(
+                call: Call<GetAll>,
+                t: Throwable
+            ) {  //object로 받아옴. 서버에서 받은 object모델과 맞지 않으면 실패함수로 빠짐
+                Log.e("태그", "로그 페이지네이션해주는 통신 아예 실패")
+            }
+
+            //@SuppressLint("SimpleDateFormat")
+            //@RequiresApi(Build.VERSION_CODES.O)
+            override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
+                if (response.isSuccessful) {
+                    Log.e("태그", "메인에서 테스트한 기간로그조회 성공@@@@@@")
+                     handler()
+                } else {
+                    handler()
+                    Log.e("태그", "기간 로그 조회실패 @@@@@@@@@@@" + response.body().toString()
+                            +"에러바디: "+response.errorBody())
+                }
+            }
+        })
+    }
+
+     fun thread_start2() {
+        var thread = Thread(null, getData2()) //스레드 생성후 스레드에서 작업할 함수 지정(getDATA)
+        thread.start()
+        Log.e("태그", "thread_start222222222222222시작됨.")
+    }
+
+    fun getData2() = Runnable {
+        kotlin.run {
+            try {
+                //원하는 자료처리(데이터 로딩 등)
+                getLog_period_Request()    //특정기간에 따른 이용자들의 로그값 가져오기
+            } catch (e: Exception) {
+                Log.e("태그", "getLog_period_Request 쓰레드 동작 실패 ")
+            }
+        }
+    }
+
+
+
+
 
 }

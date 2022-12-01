@@ -1,11 +1,18 @@
 package com.DIAPERS.diaper_project
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.DIAPERS.diaper_project.Class.GetAll
 import com.DIAPERS.diaper_project.databinding.FragmentAverageBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 
 class averageFragment : Fragment() {
@@ -24,11 +31,13 @@ class averageFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         //xml뷰에 접근하기 위해 뷰 바인딩 해줌 뷰 바인딩 가져오기. 뷰바인딩 클래스는 xml과 연동이 되어있기 때문에 layout를 명시해줄필요가없다.
         _binding = FragmentAverageBinding.inflate(inflater, container,false)
         val view = binding?.root
         return view
     }
+
 
     override fun onStart() {
         super.onStart()
@@ -59,7 +68,6 @@ class averageFragment : Fragment() {
         c = message[2].toString()
         d = message[3].toString()
     }
-
 
 
 

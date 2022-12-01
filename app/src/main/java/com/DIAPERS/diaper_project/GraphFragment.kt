@@ -1,5 +1,6 @@
 package com.DIAPERS.diaper_project
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -44,7 +45,7 @@ class GraphFragment : Fragment() {
 
     //레트로핏을 만들어줌. 서버와 연결.  //프래그먼트는 BasicActivity를 상속 못 받아서,, (Statistic액티비티에서 server를 받아오려고 해봤는데 잘 모르겠음..)
     var retrofit = Retrofit.Builder()
-        .baseUrl("https://diapers-dungji.herokuapp.com/")
+        .baseUrl("http://35.224.228.204:5000/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     var server = retrofit.create(HowlService::class.java)  //서버와 만들어둔 인터페이스를 연결시켜줌.
@@ -146,6 +147,7 @@ class GraphFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         //액티비티에서 보낸 cnt id값을 여기서 받기
+
         if (arguments != null){
             Log.e("태그","arguments: "+arguments)
             id = arguments!!.getString("cnt_id").toString()
@@ -159,8 +161,9 @@ class GraphFragment : Fragment() {
                 savedInstanceState?.getParcelableArrayList<BarEntry>("entries2") as java.util.ArrayList<BarEntry>
             Log.e("태그", "savedInstanceState에 값 있는거확인: " + entries)
         } else {  //처음 앱 실행했을때
-            Log.e("태그","@@onCreateView에서 fragUpdate()함수실행")
+            //Log.e("태그","@@onCreateView에서 fragUpdate()함수실행")
         }
+
         return  inflater.inflate(R.layout.fragment_graph, container, false)
     }
 
@@ -172,6 +175,8 @@ class GraphFragment : Fragment() {
         spinner_period.onItemSelectedListener = CustomOnItemSelectedListener()
         Log.e("태그","onViewCreated통해 리사이클러뷰 만드는 로직수행")
        makerecyclerView()  //로그 리사이클러뷰 생성
+
+        Log.e("태그:","리사이클러뷰 생성후에 쓰레드시작")
 
     }
 
@@ -248,10 +253,6 @@ class GraphFragment : Fragment() {
         recycler_log?.layoutManager = LinearLayoutManager(activity)         ///
         recycler_log?.adapter = Statistic_LogAdapter    //리사이클러뷰의 어댑터에 내가 만든 어댑터 붙힘. 사용자가 게시글 지우거나 수정 등 해서 데이터 바뀌면 어댑터를 다른걸로 또 바꿔줘야함 ->notifyDataSetChanged()이용
         Log.e("태그", "makerecyclerView()함수 돌아감"+ "logArray: "+logArray)
-    }
-
-    override fun onStart() {
-        super.onStart()
     }
 
     //다른 프래그먼트로 갔다가 다시 이 프래그먼트로 돌아오거나, 뭔가를 사용자가 클릭해서 상호작용할때마다 작동되는 함수인듯?
@@ -355,13 +356,18 @@ class GraphFragment : Fragment() {
         }
     }
 
-    fun get_log_period(){
+    fun getLog_period_Request(){
         //서버로부터 특정기간 이용자별 로그를 가져옴.
-        server.getLog_period_Request(
+        /*
+        Log.e("태그","currentuser?.access_token: "+ currentuser?.access_token
+        +",  id: "+ id+",  fewdaysAgo: "+fewdaysAgo+" , createdAt: "+createdAt)
+         */
+
+        server.getLog_period(
             "Bearer " + currentuser?.access_token,
-            id,
-            fewdaysAgo,
-            createdAt,
+            "2yIBG0kMlHBGngM6I02L",//id,
+            "2022-11-24 19:42",//fewdaysAgo,
+            "2022-12-01 19:42",//createdAt,
             true
         ).enqueue(object : Callback<GetAll> {
             override fun onFailure(
@@ -371,7 +377,8 @@ class GraphFragment : Fragment() {
                 Log.e("태그", "fragUpdate()함수안에서 특정기간 이용자별 로그 페이지네이션해주는 통신 아예 실패")
             }
 
-            @RequiresApi(Build.VERSION_CODES.O)
+            //@SuppressLint("SimpleDateFormat")
+            //@RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(call: Call<GetAll>, response: Response<GetAll>) {
                 if (response.isSuccessful) {
 
@@ -429,7 +436,7 @@ class GraphFragment : Fragment() {
 
                             //그래프를 만들어주는 데이터셋의 리스트요소에다가 겉기저귀, 속기저귀 로그값을 추가함.
                             //그래프에서 데이터보여주는 순서 바꾸는법: 인덱스 0번째에 값을 넣어줌. 이러면 앞에 값이 있었으면 그대로 한칸씩 밀림. 즉 이런식으로 거꾸로 저장할수있음
-                            entries?.add(0,
+                            entries.add(0,
                                 BarEntry(
                                     (i + 1).toFloat(),
                                     iObject.getInt("outer_new").toFloat()
@@ -437,7 +444,7 @@ class GraphFragment : Fragment() {
                             )
                             Log.e("태그","entries순서: "+entries)
 
-                            entries2?.add(0,
+                            entries2.add(0,
                                 BarEntry(
                                     (i + 1).toFloat(),
                                     iObject.getInt("inner_new").toFloat()
@@ -446,7 +453,8 @@ class GraphFragment : Fragment() {
                             //가져온 날짜값을 다른 패턴으로 변환해서 그래프의 x축에 띄워줄거임
                             parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                             formatter = SimpleDateFormat("MM/dd")
-                            output = formatter.format(parser.parse(iObject.getString("time")  ))
+                            output = parser.parse(iObject.getString("time")  )
+                                ?.let { it1 -> formatter.format(it1) }.toString()
                             days.add(0,output)  //days 리스트안에 저장.
                             i++
                         }
@@ -462,13 +470,12 @@ class GraphFragment : Fragment() {
                     handler()
                 } else {
                     handler()
-                    Log.e("태그", "기간 로그 조회실패" + response.body().toString())
+                    Log.e("태그", "기간 로그 조회실패" + response.body().toString()
+                    +"에러바디: "+response.errorBody())
                 }
             }
         })
     }
-
-
 
     private fun thread_start() {
         var thread = Thread(null, getData()) //스레드 생성후 스레드에서 작업할 함수 지정(getDATA)
@@ -480,9 +487,9 @@ class GraphFragment : Fragment() {
         kotlin.run {
             try {
                 //원하는 자료처리(데이터 로딩 등)
-                get_log_period()    //특정기간에 따른 이용자들의 로그값 가져오기
+                getLog_period_Request()    //특정기간에 따른 이용자들의 로그값 가져오기
             } catch (e: Exception) {
-               // Log.e("태그", "getRelevant_Contents_Request 실패 ")
+                Log.e("태그", "getLog_period_Request 쓰레드 동작 실패 :"+e)
             }
         }
     }

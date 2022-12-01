@@ -1,10 +1,13 @@
 package com.DIAPERS.diaper_project
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.annotation.RequiresApi
 import com.DIAPERS.diaper_project.Adapter.MyFragStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_statistic.*
@@ -73,12 +76,14 @@ class StatisticActivity  :  BasicActivity(),
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_statistic)
         init()
     }
 
+    @SuppressLint("SuspiciousIndentation")
     fun init(){
         //프래그먼트들 여기서 초기화
         gfragment = GraphFragment()
