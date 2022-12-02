@@ -106,6 +106,8 @@ class MainActivity : BasicActivity() {
             var i = Intent(this, CntAddActivity::class.java)
             startActivityForResult(i, 100)
         }
+        floatingActionButton.visibility = View.GONE  //일단 플로팅 버튼 없애서 이용자 추가 관리자메뉴에서만 가능하도록 변경
+
         thread_start2()
 
     }  //init

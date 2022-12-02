@@ -61,7 +61,7 @@
                     android:id="@+id/nametextView"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="내 계정:"
+                    android:text="접속한 아이디:"
                     android:textColor="#090909"
                     android:textSize="18sp" />
 

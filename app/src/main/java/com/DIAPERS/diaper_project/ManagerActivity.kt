@@ -25,6 +25,6 @@ class ManagerActivity : BasicActivity() {
         webView_manager.settings.loadWithOverviewMode = true
         webView_manager.settings.useWideViewPort = true
         webView_manager.settings.defaultTextEncodingName = "utf-8"
-        webView_manager.loadUrl("https://diapers-dungji.herokuapp.com/admin/")
+        webView_manager.loadUrl("http://35.224.228.204:5000/admin/") //https://diapers-dungji.herokuapp.com/admin/
     }
 }
