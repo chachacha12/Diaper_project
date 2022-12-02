@@ -18,8 +18,8 @@ android {
         applicationId "com.DIAPERS.diaper_project"
         minSdkVersion 16
         targetSdkVersion 32
-        versionCode 6
-        versionName "1.0.6"
+        versionCode 7
+        versionName "1.0.7"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
