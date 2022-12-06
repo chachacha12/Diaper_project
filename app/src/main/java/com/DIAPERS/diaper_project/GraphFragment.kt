@@ -358,16 +358,16 @@ class GraphFragment : Fragment() {
 
     fun getLog_period_Request(){
         //서버로부터 특정기간 이용자별 로그를 가져옴.
-        /*
+
         Log.e("태그","currentuser?.access_token: "+ currentuser?.access_token
         +",  id: "+ id+",  fewdaysAgo: "+fewdaysAgo+" , createdAt: "+createdAt)
-         */
+
 
         server.getLog_period(
             "Bearer " + currentuser?.access_token,
-            "2yIBG0kMlHBGngM6I02L",//id,
-            "2022-11-24 19:42",//fewdaysAgo,
-            "2022-12-01 19:42",//createdAt,
+            id,//"2yIBG0kMlHBGngM6I02L",//id,
+            fewdaysAgo,//"2022-11-24 19:42",//fewdaysAgo,
+            createdAt, //"2022-12-01 19:42",//createdAt,
             true
         ).enqueue(object : Callback<GetAll> {
             override fun onFailure(
